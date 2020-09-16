@@ -112,7 +112,7 @@ const executiveMinisterModel = {
       const response = yield call(salaryAssign, payload);
       if (response.code === 200){
         message.success("操作成功!");
-        yield put(history.push('/ExecutiveMinister/distribution'));
+        history.push('/ExecutiveMinister/distribution');
       }else {
         message.error("操作失败!")
       }

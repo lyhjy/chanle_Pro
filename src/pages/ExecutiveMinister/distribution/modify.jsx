@@ -97,26 +97,26 @@ class DistributionMidify extends React.Component{
                 </FormItem>
                 <FormItem name="workMoney" label="工资结构">
                   <Space size={10}>
-                    <Input style={{width: 330}}/> <Input style={{width: 100}}/>
+                    <Input style={{width: 330}}/> <Input style={{width: 100}} value="1 天" disabled/>
                   </Space>
                 </FormItem>
                 <FormItem name="days" label="实际天数">
-                   <Input />
+                   <Input placeholder="单位：天"/>
                 </FormItem>
                 <FormItem name="awardMoney" label="奖惩金额">
                   <Space size={10}>
-                    <span style={{width: 80}}><PlusOutlined /></span><Input style={{width: 330}}/>
+                    <span style={{width: 80}}><PlusOutlined /></span><Input style={{width: 330}} placeholder="请输入奖励金额"/>
                   </Space>
                 </FormItem>
                 <FormItem name="punishMoney" label=" ">
                   <Space size={10}>
-                    <span style={{width: 80}}> <MinusOutlined /></span><Input style={{width: 330}}/>
+                    <span style={{width: 80}}> <MinusOutlined /></span><Input style={{width: 330}} placeholder="请输入惩罚金额"/>
                   </Space>
                 </FormItem>
               </Col>
               <Col span={12}>
                 <FormItem name="remarks" label="备注内容">
-                  <Input.TextArea style={{height: 350}}/>
+                  <Input.TextArea style={{height: 350}} placeholder="请输入备注内容"/>
                 </FormItem>
               </Col>
             </Row>

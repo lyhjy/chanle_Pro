@@ -9,6 +9,7 @@ class BusinessOperations extends React.Component{
     super(props);
     this.state = {
       memberId: '执行部长',
+      total: '',
       columns: [
         {
           title: '客户名称',dataIndex: '',key: '',hideInSearch: true,align: 'center',
@@ -73,7 +74,13 @@ class BusinessOperations extends React.Component{
         pageNo: current,
         pageSize,
       }).then((res) => {
-        result.data = res.result.records
+        if (res.result.records.length > 0){
+          result.data = res.result.records;
+          this.setState({total: res.result.total})
+        } else {
+           result.data = [];
+        }
+
       })
     }catch (e) {
       message.error('加载失败,请重试！！！');
@@ -81,7 +88,7 @@ class BusinessOperations extends React.Component{
     return result;
   }
 
-  render(){
+  render() {
     return (
       <PageContainer content="用于对业务成本单进行管理">
         <ProTable
@@ -93,7 +100,8 @@ class BusinessOperations extends React.Component{
           actionRef={(ref) => (this.ref = ref)}
           request={( params ) => this.initTableData({ ...params })}
           pagination={{
-            pageSize: 10
+            pageSize: 10,
+            total: this.state.total
           }}
           columns={this.state.columns}
         >

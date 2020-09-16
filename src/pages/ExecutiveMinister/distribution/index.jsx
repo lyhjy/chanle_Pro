@@ -10,6 +10,7 @@ class Distrbution extends React.Component{
     super(props);
     this.state = {
       reviewVisible: false,
+      costList: [],
       columns: [{
         title: '订单号', dataIndex: 'orderNo', key: 'orderNo', align: 'center',
       },{
@@ -29,48 +30,45 @@ class Distrbution extends React.Component{
       },{
         title: '实际天数', dataIndex: 'days', key: 'days', hideInSearch: true, align: 'center',
       },{
-        title: '工资总额', dataIndex: 'workMoney', key: 'workMoney', hideInSearch: true, align: 'center',
+        title: '工资结构', dataIndex: 'workMoney', key: 'workMoney', hideInSearch: true, align: 'center',
       },{
         title: '奖惩金额', dataIndex: 'apMoney', key: 'apMoney', hideInSearch: true, align: 'center',
       },{
+        title: '工资总额',dataIndex: 'realMoney',key: 'realMoney',hideInSearch: true,align: 'center',
+      },{
         title: '备注', dataIndex: 'remarks', key: 'remarks', hideInSearch: true, align: 'center',
       },{
-        title: '领导审核',hideInSearch: true, align: 'center',render: (_, recode) => {
-          return (
-            <a onClick={() => {
-              this.setState({
-                reviewVisible: true
-              })
-            }}>查看</a>
-          )
-        }
+        title: '领导审核',hideInSearch: true, align: 'center',render: (_,record) => {
+          return (<a onClick={() => this.viewReview(record.id)}>查看</a>)
+        },
       },{
         title: '操作', dataIndex: 'option', valueType: 'option' , align: 'center',render: (_,recode) => (
           <>
-            <a>修改</a>
+            <a onConfirm={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}>修改</a>
             <Divider type="vertical" />
-            <Popconfirm
-              title="是否进行分配"
-              placement="topRight"
-              cancelText="取消"
-              okText="确定"
-              onConfirm={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}
-            >
-              <a>分配</a>
-            </Popconfirm>
+            {
+              recode.workMoney > 0 && <Popconfirm
+                title="是否进行分配"
+                placement="topRight"
+                cancelText="取消"
+                okText="确定"
+                onConfirm={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}
+              >
+                <a>分配</a>
+              </Popconfirm>
+            }
+
           </>
         )
       }],
-      reviewColumns: [{
-        title: '职位',dataIndex: '',key: '',align: 'center'
+      modelColumns: [{
+        title: '职位',dataIndex: 'levelName',key: 'levelName',align: 'center'
       },{
-        title: '备注',dataIndex: '',key: '',align: 'center'
+        title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
       },{
-        title: '操作',render: (_,recode) => {
+        title: '状态',dataIndex: 'operatorStatus',key: 'operatorStatus',align: 'center',render: (_,record) => {
           return (
-            <>
-              <a>已通过</a>
-            </>
+            _ == 1 ? <a>已通过</a> : <span style={{color: 'red'}}>未通过</span>
           )
         }
       }]
@@ -94,12 +92,31 @@ class Distrbution extends React.Component{
       const { executiveMinister } = this.props;
       const { wagesList } = executiveMinister;
       if (wagesList.records.length > 0){
+        for (let k in wagesList.records){
+          wagesList.records[k].realMoney = (wagesList.records[k].days * wagesList.records[k].workMoney + wagesList.records[k].apMoney);
+        }
         result.data = wagesList.records;
       }else{
         result.data = wagesList
       }
     })
     return result;
+  }
+
+  viewReview = id => {
+    const { dispatch } = this.props;
+    const { memberId } = this.state;
+    dispatch({
+      type: 'activity/costCheck',
+      payload: { id: id , memberId }
+    }).then(() => {
+      const { activity } = this.props;
+      const { costList } = activity;
+      if (costList.result.length > 0){
+        this.setState({costList: costList.result})
+      }
+    })
+    this.setState({reviewVisible: true})
   }
 
   handleCancel = () => {
@@ -109,6 +126,7 @@ class Distrbution extends React.Component{
   }
 
   render(){
+    const { reviewVisible } = this.state;
     return (
       <PageContainer content="用于对组员工资进行管理">
         <ProTable
@@ -125,30 +143,28 @@ class Distrbution extends React.Component{
         >
 
         </ProTable>
-        <Modal
-          title="领导审核情况"
-          style={{textAlign: 'center'}}
-          visible={this.state.reviewVisible}
-          width={600}
-          footer={[
-            <div className={styles.tc}>
-              <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>取消</Button>
-              <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={() => {history.push('/ExecutiveMinister/distribution/modify')}}>重新编辑</Button>
-            </div>
-          ]}
-          centered={true}
-          onCancel={
-            this.handleCancel
-          }
+        <Modal title="领导审核情况"
+               style={{textAlign: 'center'}}
+               visible={reviewVisible}
+               width={900}
+               footer={[
+                 <div className={styles.tc}>
+                   <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>返回</Button>
+                   <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={this.handleCancel}>确定</Button>
+                 </div>
+               ]}
+               centered={true}
+               onCancel={
+                 this.handleCancel
+               }
         >
-          <Table columns={this.state.reviewColumns}>
-
+          <Table columns={this.state.modelColumns} dataSource={this.state.costList}>
           </Table>
         </Modal>
       </PageContainer>
     )
   }
 }
-export default connect(({ executiveMinister }) => ({
-  executiveMinister
+export default connect(({ executiveMinister,activity }) => ({
+  executiveMinister,activity
 }))(Distrbution);
