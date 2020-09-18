@@ -17,7 +17,11 @@ class DistributionMidify extends React.Component{
     super(props);
     this.state = {
       id: '',
-      assignInfo: {}
+      assignInfo: {},
+      salaryAssInfo: {},
+      cf: '',
+      jc: '',
+      jg: ''
     }
   }
   componentDidMount(){
@@ -25,8 +29,29 @@ class DistributionMidify extends React.Component{
     const { state } = location;
     if (state.id){
       this.setState({id: state.id});
+      this.initSalary(state.id);
       this.initData(state.id);
     }
+  }
+
+
+  initSalary = id => {
+    const { dispatch } = this.props;
+    const { memberId } = this.state;
+    dispatch({
+      type: 'executiveMinister/salaryAssignDetail',
+      payload: {
+        id,
+        memberId
+      }
+    }).then(() => {
+      const { executiveMinister } = this.props;
+      const { salaryAssInfo } = executiveMinister;
+      if (salaryAssInfo != null){
+        this.setState({salaryAssInfo: salaryAssInfo,cf: salaryAssInfo.punishMoney,jc: salaryAssInfo.awardMoney,jg: salaryAssInfo.workMoney})
+      }
+      this.refs.resForm.setFieldsValue(salaryAssInfo);
+    })
   }
   initData = id => {
     const { dispatch } = this.props;
@@ -61,7 +86,7 @@ class DistributionMidify extends React.Component{
     })
   }
   render(){
-    const {} = this.state;
+    const { salaryAssInfo , cf , jg , jc } = this.state;
     const layoutForm = {
       labelCol: {span: 4},
       wrapperCol: {span: 18}
@@ -97,7 +122,7 @@ class DistributionMidify extends React.Component{
                 </FormItem>
                 <FormItem name="workMoney" label="工资结构">
                   <Space size={10}>
-                    <Input style={{width: 330}}/> <Input style={{width: 100}} value="1 天" disabled/>
+                    <Input style={{width: 330}} defaultValue={jg}/> <Input style={{width: 100}} value="1 天" disabled/>
                   </Space>
                 </FormItem>
                 <FormItem name="days" label="实际天数">
@@ -105,12 +130,16 @@ class DistributionMidify extends React.Component{
                 </FormItem>
                 <FormItem name="awardMoney" label="奖惩金额">
                   <Space size={10}>
-                    <span style={{width: 80}}><PlusOutlined /></span><Input style={{width: 330}} placeholder="请输入奖励金额"/>
+                    <span style={{width: 80}}><PlusOutlined /></span>
+                    {
+                      salaryAssInfo.awardMoney && <Input style={{width: 330}} defaultValue={111} placeholder="请输入奖励金额"/> || <Input style={{width: 330}} defaultValue={111} placeholder="请输入奖励金额"/>
+                    }
+                    <Input value={jc}/>
                   </Space>
                 </FormItem>
                 <FormItem name="punishMoney" label=" ">
                   <Space size={10}>
-                    <span style={{width: 80}}> <MinusOutlined /></span><Input style={{width: 330}} placeholder="请输入惩罚金额"/>
+                    <span style={{width: 80}}> <MinusOutlined /></span><Input style={{width: 330}} defaultValue={cf} placeholder="请输入惩罚金额"/>
                   </Space>
                 </FormItem>
               </Col>

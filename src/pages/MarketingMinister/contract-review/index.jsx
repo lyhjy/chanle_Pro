@@ -2,14 +2,14 @@ import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {Button, Divider, message, Modal, Popconfirm, Table} from "antd";
-import styles from "../../ActivityManage/business-config/style.less";
 import {connect} from "umi";
+import styles from "../../ActivityManage/business-config/style.less";
 
 class ContractReview extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff710',
+      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff79',
       leadershipVisible: false,
       costList: [],
       columns: [{

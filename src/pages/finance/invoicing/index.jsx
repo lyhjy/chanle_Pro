@@ -20,23 +20,6 @@ import InvoiceInfoModel from './components/InvoiceInfoModel';
 
 const { Option } = Select;
 const FormItem = Form.Item;
-const initTableData = async params => {
-  const { current, pageSize , orderNo } = params;
-  let result = {};
-  try {
-    await queryInvoicing({
-      pageNum: current,
-      pageSize,
-      orderNo
-    }).then((res) => {
-      result.data = res.result.records
-    })
-  }catch (e) {
-    message.error("服务异常，请重试!")
-  }
-  return result;
-}
-
 
 const Invoicing = () => {
   const [] = useState();
@@ -46,7 +29,31 @@ const Invoicing = () => {
   const [ createInvoiceInfo , setInvoiceInfo] = useState({});
   const actionRef = useRef();
   const [row, setRow] = useState();
+  const [total, setTotal] = useState(0);
   const [selectedRowsState, setSelectedRows] = useState([]);
+
+  const initTableData = async params => {
+    const { current, pageSize , orderNo } = params;
+    let result = {};
+    try {
+      await queryInvoicing({
+        pageNum: current,
+        pageSize,
+        orderNo
+      }).then((res) => {
+        if (res.result.list.length > 0){
+          setTotal(res.result.total);
+          result.data = res.result.list
+        }else {
+         result.data = [];
+        }
+      })
+    }catch (e) {
+      message.error("服务异常，请重试!")
+    }
+    return result;
+  }
+
   const columns = [
         {
           title: '订单号',dataIndex: 'orderNo',key: 'orderNo',align: 'center',
@@ -69,12 +76,14 @@ const Invoicing = () => {
         },{
           title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_,recode) => (
             <>
+              {
+                recode.status == 0 ? <>
                   <Popconfirm
                     title="是否进行通过"
                     placement="topRight"
                     cancelText="取消"
                     okText="确定"
-                    onConfirm={() => { const data = {id: recode.id,status: 1,memberId: recode.memberId,remarks: ''}; modifyTableData(data)}}
+                    onConfirm={() => { const data = {id: recode.id,status: 1,memberId: '财务',remarks: ''}; modifyTableData(data)}}
                     // onCancel={}
                   >
                     <a>通过</a>
@@ -90,6 +99,9 @@ const Invoicing = () => {
                   >
                     <a>驳回</a>
                   </Popconfirm>
+                </> : recode.status == 1 ? <span>已通过</span> : <span style={{color: 'red'}}>已驳回</span>
+              }
+
           </>
         )}
   ];
@@ -98,7 +110,7 @@ const Invoicing = () => {
     try {
       await review(data).then((res) => {
         if (res.code === 200){
-          initTableData({pageNum: 1,pageSize: 10});
+          actionRef.current.reload();
         } else {
           message.error("操作失败!")
         }
@@ -112,7 +124,6 @@ const Invoicing = () => {
   }
   const viewOrder = async id => {
     handleOrderModalVisible(true);
-
     try {
       await getOderInfo({
         id: id
@@ -148,6 +159,10 @@ const Invoicing = () => {
         rowKey="key"
         search={{
           labelWidth: 120,
+        }}
+        pagination={{
+          pageSize: 10,
+          total
         }}
         columns={columns}
         request={(params, sorter, filter) => initTableData({ ...params })}

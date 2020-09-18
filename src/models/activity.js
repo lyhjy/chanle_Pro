@@ -12,7 +12,9 @@ import {
   delCommission,
   serviceConfigDetail,
   costCheck,
-  getFeedbackId
+  getFeedbackId,
+  missionAudit,
+  missionAssign
 } from '@/services/activityAPI';
 
 const activityModel = {
@@ -30,10 +32,13 @@ const activityModel = {
     comDetailInfo: {},
     costList: [],
     feedbackInfo: {},
+
+    missionAcdRes: {},
+    assignRes: {},
   },
   effects: {
-    *missionList(_, { call, put }) {
-      const response = yield call(missionList);
+    *missionList({ payload }, { call, put }) {
+      const response = yield call(missionList,payload);
       yield put({
         type: 'getMission',
         payload: response,
@@ -111,6 +116,20 @@ const activityModel = {
         payload: response,
       });
     },
+    *missionAudit({ payload }, { call, put }) {
+      const response = yield call(missionAudit,payload);
+      yield put({
+        type: 'missionAcd',
+        payload: response,
+      });
+    },
+    *missionAssign({ payload }, { call, put }) {
+      const response = yield call(missionAssign,payload);
+      yield put({
+        type: 'assign',
+        payload: response,
+      });
+    },
   },
   reducers: {
     getMission (state, action) {
@@ -142,6 +161,12 @@ const activityModel = {
     },
     feedback(state, action) {
       return { ...state, feedbackInfo: action.payload.result };
+    },
+    missionAcd(state, action) {
+      return { ...state, missionAcdRes: action.payload };
+    },
+    assign(state, action) {
+      return { ...state, assignRes: action.payload };
     },
   }
 }

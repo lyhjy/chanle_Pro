@@ -24,9 +24,9 @@ class AddEmployee extends React.Component{
       }).then(() => {
         const { generalDepartment } = this.props;
         const { employeePollList } = generalDepartment;
-        this.refs.hx.setFieldsValue(employeePollList[0])
+        this.refs.hx.setFieldsValue(employeePollList.list[0])
         this.setState({
-          detailInfo: employeePollList[0]
+          detailInfo: employeePollList.list[0]
         })
       })
     }
@@ -49,8 +49,10 @@ class AddEmployee extends React.Component{
 
   submitForm = async event => {
     event.memberId = 'f1e92f22a3b549ada2b3d45d14a3ff70'; //默认
+    event.sectorId = event.sector;
     const { dispatch } = this.props;
     const { staffId } = this.state;
+
     if (staffId > 0) {
       event.id = staffId;
       await dispatch({

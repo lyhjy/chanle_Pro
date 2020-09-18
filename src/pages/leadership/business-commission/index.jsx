@@ -67,7 +67,6 @@ class BusinessCommission extends React.Component{
   modifyTableData = async (id,type) => {
     const { dispatch } = this.props;
     const { pageNo , pageSize , memberId } = this.state;
-    const hide = message.loading("正在操作中...");
     try {
       await dispatch({
         type: 'generalDepartment/contractReview',
@@ -80,13 +79,6 @@ class BusinessCommission extends React.Component{
         const { generalDepartment } = this.props;
         const { reviewStatus } = generalDepartment;
         if (reviewStatus.code === 200){
-          // this.initTableData({
-          //   pageNo,
-          //   pageSize,
-          //   memberId,
-          //   id: ''
-          // });
-          hide();
           this.ref.reload();
         }
       })

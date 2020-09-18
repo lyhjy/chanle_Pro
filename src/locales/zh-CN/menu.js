@@ -76,6 +76,7 @@ export default {
   'menu.marketing-minister.marketing-settlement': '营收结算单审核',
   'menu.marketing-minister.contract-initiation': '合同发起审核',
   'menu.marketing-minister.take-over': '接团任务单审核',
+  'menu.marketing-minister.contract-review': '业务提成修改审核',
   'menu.executive-minister': '执行部长',
   'menu.executive-minister.activity-allocation': '活动分配',
   'menu.executive-minister.cost-budget': '成本预算',

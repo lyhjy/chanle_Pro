@@ -3,7 +3,7 @@ import url from '../../config/path';
 //员工库员工列表查询
 export async function queryEmployeePoll(params){
   let getTimestamp = new Date().getTime();
-  return request(`${url}/staff/query?timestamp=${getTimestamp}`, {
+  return request(`${url}/staff/query`, {
     method: 'GET',
     params: params,
   });
@@ -57,6 +57,13 @@ export async function contractReview(params) {
 //合同审核进度
 export async function schedule(params) {
   return request(`${url}/contract/schedule`,{
+    method: 'GET',
+    params: params
+  })
+}
+//组员工资汇总
+export async function gather(params) {
+  return request(`${url}/mission/list/gather`,{
     method: 'GET',
     params: params
   })

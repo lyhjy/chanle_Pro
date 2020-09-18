@@ -44,7 +44,7 @@ export async function showEmployees(params) {
 }
 //添加分配员工
 export async function addEmployees(params) {
-  return request(`${url}/chanle/employee/assign/addEmployees`,{
+  return request(`${url}/employee/assign/addEmployees`,{
     method: 'GET',
     params: params
   })
@@ -82,5 +82,33 @@ export async function salaryAssign(params) {
   return request(`${url}/employee/salary/salaryAssign`,{
     method: 'POST',
     data: params
+  })
+}
+//业务提成修改审核列表
+export async function CostCheckList(params) {
+  return request(`${url}/show/review/CostCheckList`,{
+    method: 'GET',
+    params: params
+  })
+}
+//业务提成修改审核列表操作
+export async function businessCheck(params) {
+  return request(`${url}/show/review/businessCheck`,{
+    method: 'GET',
+    params: params
+  })
+}
+//分配工资详情
+export async function salaryAssignDetail(params) {
+  return request(`${url}/employee/salary/salaryAssignDetail`,{
+    method: 'GET',
+    params: params
+  })
+}
+//
+export async function revenueReady(params) {
+  return request(`${url}/revenue/statement/revenueReady`,{
+    method: 'GET',
+    params: params
   })
 }

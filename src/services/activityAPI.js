@@ -3,7 +3,7 @@ import url from '../../config/path';
 export async function missionList(params) {
   return request(`${url}/mission/list/missionList`, {
     method: 'GET',
-    data: { ...params, method: 'get' },
+    params: params
   });
 }
 export async function missionCheck(params) {
@@ -68,6 +68,18 @@ export async function costCheck(params) {
 }
 export async function getFeedbackId(params) {
   return request(`${url}/userFeedback/getFeedbackId`,{
+    method: 'GET',
+    params: params
+  })
+}
+export async function missionAudit(params) {
+  return request(`${url}/show/review/missionAudit`,{
+    method: 'GET',
+    params: params
+  })
+}
+export async function missionAssign(params) {
+  return request(`${url}/mission/list/missionAssign`,{
     method: 'GET',
     params: params
   })

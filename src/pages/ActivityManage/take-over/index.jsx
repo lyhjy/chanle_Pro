@@ -4,7 +4,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {Divider, message, Popconfirm, Modal, Form, Button , Input , DatePicker , Radio } from 'antd';
 import { connect } from 'umi';
-import {queryActAppointmentManage} from "../activity-reservation/service";
+import {queryActAppointmentManage, reportAuditing} from "../activity-reservation/service";
 import styles from "./style.less";
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
@@ -19,8 +19,8 @@ class TakeOver extends React.Component{
       missionInfo: {},
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
       visible: false,
-      dispatch: 1,
-      total: '',
+      dapId: 1,
+      total: 0,
       columns: [{
         title: '订单号',dataIndex: 'orderNo',key: 'orderNo',align: 'center',tip: '订单号是唯一的',
       },{
@@ -38,23 +38,36 @@ class TakeOver extends React.Component{
       },{
         title: '备注',align: 'center',dataIndex: 'remarks',key: 'remarks',valueType: 'textarea',hideInSearch: true,
       },{
-        title: '状态',align: 'center',dataIndex: 'status',key: 'status',hideInSearch: true,valueEnum: {
-          0: { text: '未审核', status: 'Default'},
-          1: { text: '通过', status: 'Processing'},
-          2: { text: '未通过', status: 'Error' },
-        },
+        title: '状态',align: 'center',dataIndex: 'status',key: 'status',hideInSearch: true,render: (_,recode) => {
+          let operatorStatus = recode.operatorStatus;
+          let status = recode.status;
+          if (operatorStatus == 1 && status == 0) {
+            return (<a>等待审核</a>)
+          } else if (operatorStatus == 1 && status == 1) {
+            return (<a>通过</a>)
+          } else if (status == 2){
+            return (<span style={{color: 'red'}}>未通过</span>)
+          }
+        }
+
+        // valueEnum: {
+        //   0: { text: '等待审核', status: 'Default'},
+        //   1: { text: '通过', status: 'Processing'},
+        //   2: { text: '未通过', status: 'Error' },
+        // },
       },{
-        title: '操作',align: 'center',dataIndex: 'option',key: 'option',valueType: 'option',render: (_, record) =>
-        (
-          <>
-            {record.operatorStatus == 0 ?
+        title: '操作',align: 'center',dataIndex: 'option',key: 'option',valueType: 'option',render: (_, record) => {
+          let operatorStatus = record.operatorStatus;
+          let status = record.status;
+          if (operatorStatus == 0 && status == 0){
+            return (
               <>
                 <Popconfirm
-                  title="是否进行通过"
+                  title="是否进行发起"
                   placement="topRight"
                   cancelText="取消"
                   okText="确定"
-                  onConfirm={this.modifyTableData}
+                  onConfirm={() => this.modifyTableData({ id: record.id , status: 1})}
                 >
                   <a>发起</a>
                 </Popconfirm>
@@ -64,55 +77,76 @@ class TakeOver extends React.Component{
                   placement="topRight"
                   cancelText="取消"
                   okText="确定"
-                  onConfirm={this.modifyTableData}
+                  onConfirm={() => this.modifyTableData({ id: record.id , status: 2})}
                   // onCancel={}
                 >
                   <a>驳回</a>
                 </Popconfirm>
               </>
-              : record.operatorStatus == 1 ?  <>
-                <Popconfirm
-                  title={
-                    <Radio.Group onChange={(e) => this.radioChange(e)} defaultValue={this.state.dispatch}>
-                      <Radio value={1}>
-                        假日部
-                      </Radio>
-                      <Radio value={2}>
-                        学校部
-                      </Radio>
-                    </Radio.Group>
+            )
+          }else if (operatorStatus == 1 && status == 1){
+            return (
+              <Popconfirm
+                title={
+                  <Radio.Group onChange={(e) => this.radioChange(e)} defaultValue={this.state.dapId}>
+                    <Radio value={1}>
+                      假日部
+                    </Radio>
+                    <Radio value={2}>
+                      学校部
+                    </Radio>
+                  </Radio.Group>
 
-                  }
-                  icon={null}
-                  placement="topRight"
-                  cancelText="取消"
-                  okText="确定"
-                  style={{textAlign: 'center'}}
-                  onConfirm={this.submitDispatch}
-                >
-                  <a>分派</a>
-                </Popconfirm>
-              </> : <>
-                <span style={{color: 'red'}}>已驳回</span>
-              </>
-            }
-
-          </>
-        )
+                }
+                icon={null}
+                placement="topRight"
+                cancelText="取消"
+                okText="确定"
+                style={{textAlign: 'center'}}
+                onConfirm={() => this.submitDispatch({ id: record.id })}
+              >
+                <a>分派</a>
+              </Popconfirm>
+            )
+          }else if (operatorStatus == 2){
+            return (
+              <span style={{color: 'red'}}>已驳回</span>
+            )
+          }else if (operatorStatus == 1 && status == 0){
+            return (
+              <a>已发起</a>
+            )
+          }
+        }
       }],
       data: [],
     }
   }
-  componentDidMount(){
 
-  }
   radioChange = e => {
     this.setState({
-      dispatch: e.target.value
+      dapId: e.target.value
     })
   }
-  submitDispatch = () => {
-    console.log(this.state.dispatch)
+  submitDispatch = ({ id }) => {
+    const { dispatch } = this.props;
+    const { dapId , memberId } = this.state;
+    dispatch({
+      type: 'activity/missionAssign',
+      payload: {
+        memberId,
+        dapId,
+        id
+      }
+    }).then(() => {
+      const { activity } = this.props;
+      const { assignRes } = activity;
+      if (assignRes.code === 200){
+        message.success("分派操作完成!")
+      }else {
+        message.error("分派操作失败!")
+      }
+    })
   }
   clickBasic = async (id,target) =>{
     const { dispatch } = this.props;
@@ -147,6 +181,32 @@ class TakeOver extends React.Component{
       foodVisible: false,
       siteVisible: false,
     })
+  }
+
+  modifyTableData = async ({ id , status , remarks }) => {
+    const { memberId } = this.state;
+    const { dispatch } = this.props;
+    try {
+      await dispatch({
+        type: 'activity/missionAudit',
+        payload: {
+          memberId,
+          id,
+          status,
+          remarks
+        }
+      }).then(() => {
+        const { activity } = this.props;
+        const { missionAcdRes } = activity;
+        if (missionAcdRes.code === 200){
+          this.ref.reload();
+        } else {
+          message.error("操作失败!")
+        }
+      })
+    }catch (e) {
+      message.error("服务异常!")
+    }
   }
 
   initTableData = async (params) => {
@@ -189,11 +249,12 @@ class TakeOver extends React.Component{
           search={{
             labelWidth: 120,
           }}
+          actionRef={(ref) => (this.ref = ref)}
           request={(params) => this.initTableData({...params })}
           columns={this.state.columns}
           pagination={{
             pageSize: 10,
-            total: ''
+            total: total
           }}
         >
         </ProTable>

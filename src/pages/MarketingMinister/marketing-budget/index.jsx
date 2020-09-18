@@ -45,7 +45,7 @@ class MarketingDudget extends React.Component{
                   placement="topRight"
                   cancelText="取消"
                   okText="确定"
-                  onConfirm={this.modifyTableData}
+                  onConfirm={() => this.modifyTableData({ id: recode.id,status: 1})}
                 >
                   <a>通过</a>
                 </Popconfirm>
@@ -55,7 +55,7 @@ class MarketingDudget extends React.Component{
                   placement="topRight"
                   cancelText="取消"
                   okText="确定"
-                  onConfirm={this.modifyTableData}
+                  onConfirm={() => this.modifyTableData({ id: recode.id,status: 2})}
                   // onCancel={}
                 >
                   <a>驳回</a>
@@ -173,8 +173,25 @@ class MarketingDudget extends React.Component{
     })
   }
 
-  modifyTableData = () => {
-
+  modifyTableData = ({ id , status }) => {
+    const { memberId } = this.state;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'activity/revenueStatementsReview',
+      payload: {
+        id,
+        status,
+        memberId
+      }
+    }).then(() => {
+      const { activity } = this.props;
+      const { revenueReviewCode } = activity;
+      if (revenueReviewCode === 200){
+        this.ref.reload();
+      } else {
+        message.error("操作失败!")
+      }
+    })
   }
 
   handleCancel = () => {

@@ -9,7 +9,7 @@ class MarketingSettlement extends React.Component{
   constructor(props) {
     super(props)
     this.state = {
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff79',
+      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
       costVisible: false,
       costList: [],
       feedbackVisible: false,

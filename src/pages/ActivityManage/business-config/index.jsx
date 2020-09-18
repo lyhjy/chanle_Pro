@@ -62,12 +62,13 @@ class BushinessConfig extends React.Component{
       }]
     }
   }
+
   viewReview = id => {
     const { dispatch } = this.props;
     const { memberId } = this.state;
     dispatch({
       type: 'activity/costCheck',
-      payload: { id: id , memberId: memberId }
+      payload: { id: id , memberId: memberId , type: 7 }
     }).then(() => {
       const { activity } = this.props;
       const { costList } = activity;
@@ -80,6 +81,7 @@ class BushinessConfig extends React.Component{
       id: id,
     })
   }
+
   addConfig(){
     history.push('/ActivityManage/business-config/add')
   }

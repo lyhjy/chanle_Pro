@@ -9,6 +9,7 @@ class Distrbution extends React.Component{
   constructor(props){
     super(props);
     this.state = {
+      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
       reviewVisible: false,
       costList: [],
       columns: [{
@@ -44,10 +45,10 @@ class Distrbution extends React.Component{
       },{
         title: '操作', dataIndex: 'option', valueType: 'option' , align: 'center',render: (_,recode) => (
           <>
-            <a onConfirm={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}>修改</a>
+            <a onClick={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}>修改</a>
             <Divider type="vertical" />
             {
-              recode.workMoney > 0 && <Popconfirm
+              recode.workMoney < 0 || recode.workMoney == '' && <Popconfirm
                 title="是否进行分配"
                 placement="topRight"
                 cancelText="取消"
@@ -75,7 +76,7 @@ class Distrbution extends React.Component{
     }
   }
 
-  initTableData = async (params,sorter,filter) =>{
+  initTableData = async ( params ) =>{
     const { current , pageSize , orderNo , name , customName } = params;
     const { dispatch } = this.props;
     let result = {};
@@ -93,14 +94,14 @@ class Distrbution extends React.Component{
       const { wagesList } = executiveMinister;
       if (wagesList.records.length > 0){
         for (let k in wagesList.records){
-          wagesList.records[k].realMoney = (wagesList.records[k].days * wagesList.records[k].workMoney + wagesList.records[k].apMoney);
+          wagesList.records[k].realMoney = ((wagesList.records[k].days * wagesList.records[k].workMoney) + wagesList.records[k].apMoney);
         }
         result.data = wagesList.records;
       }else{
         result.data = wagesList
       }
     })
-    return result;
+    return result
   }
 
   viewReview = id => {
@@ -108,7 +109,7 @@ class Distrbution extends React.Component{
     const { memberId } = this.state;
     dispatch({
       type: 'activity/costCheck',
-      payload: { id: id , memberId }
+      payload: { id: id , memberId , type: 8 }
     }).then(() => {
       const { activity } = this.props;
       const { costList } = activity;
@@ -137,7 +138,7 @@ class Distrbution extends React.Component{
           }}
           request={(params, sorter, filter) => this.initTableData({ ...params})}
           pagination={{
-            current: 10
+            pageSize: 10
           }}
           columns={this.state.columns}
         >

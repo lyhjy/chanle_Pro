@@ -102,7 +102,6 @@ class ActivityReservation extends React.Component{
 
   modifyTableData = async (id,status) => {
     const { pageSize , pageNo } = this.state;
-    const hide = message.loading("正在操作中...");
     try {
       await reportAuditing({
         id: id,
@@ -110,18 +109,13 @@ class ActivityReservation extends React.Component{
         memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78'
       }).then((res) => {
         if (res.code === 200){
-          hide();
           this.ref.reload();
-          this.initTableData({pageNo,pageSize});
+          // this.initTableData({pageNo,pageSize});
         }
       })
     }catch (e) {
       message.error("服务异常!")
     }
-  }
-
-  deleteTableData = () => {
-
   }
   render() {
     const { columns } = this.state;

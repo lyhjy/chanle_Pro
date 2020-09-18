@@ -12,7 +12,11 @@ import {
   removeEmployee,
   wagesList,
   assignMsg,
-  salaryAssign
+  salaryAssign,
+  CostCheckList,
+  businessCheck,
+  salaryAssignDetail,
+  revenueReady
 } from '@/services/executiveMinisterAPI';
 const executiveMinisterModel = {
   namespace: 'executiveMinister',
@@ -27,6 +31,12 @@ const executiveMinisterModel = {
 
     wagesList: [],
     assignsList: [],
+
+    costsList: [],
+    businessCode: '',
+
+    salaryAssInfo: {},
+    revenueInfo: {}
   },
   effects: {
     *actAllocation({ payload }, { call, put }) {
@@ -61,10 +71,12 @@ const executiveMinisterModel = {
       const response = yield call(addOrUpdateCostBudget, payload);
       if (response.code === 200){
         message.success("添加成功!")
+        history.push('/ExecutiveMinister/cost-budget');
       }else{
         message.error("操作失败!")
       }
     },
+
     *showEmployees({ payload }, { call, put }) {
       const response = yield call(showEmployees, payload);
       yield put({
@@ -117,6 +129,34 @@ const executiveMinisterModel = {
         message.error("操作失败!")
       }
     },
+    *CostCheckList({ payload }, { call, put }){
+      const response = yield call(CostCheckList, payload);
+      yield put({
+        type: 'cost',
+        payload: response.result,
+      });
+    },
+    *businessCheck({ payload }, { call, put }){
+      const response = yield call(businessCheck, payload);
+      yield put({
+        type: 'business',
+        payload: response,
+      });
+    },
+    *salaryAssignDetail({ payload }, { call, put }){
+      const response = yield call(salaryAssignDetail, payload);
+      yield put({
+        type: 'salaryAss',
+        payload: response.result,
+      });
+    },
+    *revenueReady({ payload }, { call, put }){
+      const response = yield call(revenueReady, payload);
+      yield put({
+        type: 'revenue',
+        payload: response.result,
+      });
+    },
   },
   reducers: {
     queryAct (state, action) {
@@ -146,7 +186,18 @@ const executiveMinisterModel = {
     assign(state, action) {
       return { ...state, assignsList: action.payload || {} };
     },
-
+    cost(state, action) {
+      return { ...state, costsList: action.payload || {} };
+    },
+    business(state, action) {
+      return { ...state, businessCode: action.payload.code || {} };
+    },
+    salaryAss(state, action) {
+      return { ...state, salaryAssInfo: action.payload || {} };
+    },
+    revenue(state, action) {
+      return { ...state, revenueInfo: action.payload || {} };
+    },
   }
 }
 export default executiveMinisterModel;

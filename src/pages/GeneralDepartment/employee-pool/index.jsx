@@ -16,35 +16,7 @@ class EmployeePool extends React.Component{
       },{
         title: '联系方式',dataIndex: 'phone',key: 'phone',hideInSearch: true,align: 'center',
       },{
-        title: '所属部门',dataIndex: 'sector',key: 'sector',hideInSearch: true,align: 'center',render: (_,recode) => {
-         let str;
-          switch (recode.sector) {
-           case 1: str = '综合部'
-              break;
-            case 2: str = '市场营销部'
-              break;
-            case 3: str = '假日活动部'
-              break;
-            case 4: str = '学校事业部'
-              break;
-            case 5: str = '课程研发部'
-              break;
-            case 6: str = '后勤管理部'
-              break;
-            case 7: str = '非遗中心'
-              break;
-            case 8: str = '财务室'
-              break;
-            case 9: str = '临聘人员'
-              break;
-            default: str = '类型错误'
-          }
-          return (
-            <>
-              {str}
-            </>
-          )
-        }
+        title: '所属部门',dataIndex: 'sector',key: 'sector',hideInSearch: true,align: 'center'
       },{
         title: '操作人',dataIndex: 'userName',key: 'userName',hideInSearch: true,align: 'center',
       },{
@@ -80,8 +52,8 @@ class EmployeePool extends React.Component{
     }).then(() => {
       const {generalDepartment} = this.props;
       const {employeePollList} = generalDepartment;
-      if (employeePollList.records) {
-        result.data = employeePollList.records;
+      if (employeePollList.list) {
+        result.data = employeePollList.list;
       } else {
         result.data = [];
       }

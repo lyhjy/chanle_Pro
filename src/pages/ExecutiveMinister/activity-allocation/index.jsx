@@ -17,6 +17,8 @@ class ActivityAllocation extends React.Component{
       costList: [],
       employeesList: [],
       assignList: [],
+      selectedRowKey: [],
+      selectedLevel: [],
       columns: [{
         title: '客户名称', dataIndex: 'customName', key: 'customName', align: 'center',
       }, {
@@ -49,8 +51,9 @@ class ActivityAllocation extends React.Component{
           1: { text: '通过', status: 'Processing'},
           2: { text: '未通过', status: 'Error' },
         }
-      },{
-        title: '操作', dataIndex: '', key: '', hideInSearch: true, align: 'center', render: (_, recode) => (
+      }
+      ,{
+        title: '操作', hideInSearch: true, align: 'center', render: (_, recode) => (
           <>
             {
               recode.auditStatus == 1 ? <a onClick={() => this.assignExecution(recode.id)}>分配执行</a> : recode.auditStatus == 0 ? <span style={{color: '#999'}}>等待分配</span> :
@@ -121,7 +124,7 @@ class ActivityAllocation extends React.Component{
                 placement="topRight"
                 cancelText="取消"
                 okText="确定"
-                onConfirm={() => this.del(recode.id)}
+                onConfirm={() => this.del({ id : recode.id})}
               >
                 <a>移除</a>
               </Popconfirm>
@@ -130,7 +133,22 @@ class ActivityAllocation extends React.Component{
         }]
     }
   }
-
+  del = ({ id }) => {
+    const { costId , memberId } = this.state;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'executiveMinister/removeEmployee',
+      payload: { id }
+    }).then(() =>{
+      const { executiveMinister } = this.props;
+      const { delEmpStatus } = executiveMinister;
+      if (delEmpStatus.code === 200){
+        this.initEmployees(costId, memberId);
+      }else {
+        message.error("操作失败!")
+      }
+    })
+  }
   assignExecution = id => {
     const {memberId} = this.state;
     this.initEmployees(id, memberId);
@@ -150,8 +168,15 @@ class ActivityAllocation extends React.Component{
       const {executiveMinister} = this.props;
       const {assignList} = executiveMinister;
       if (assignList.result.length > 0) {
+        let arr = [];
+        for (let i in assignList.result){
+          if (assignList.result[i].level == 1) {
+            arr.push(assignList.result[i].id);
+          }
+        }
         this.setState({
-          assignList: assignList.result
+          assignList: assignList.result,
+          selectedLevel: arr
         })
       }
     })
@@ -174,7 +199,7 @@ class ActivityAllocation extends React.Component{
   }
 
   onChangeActivity = (selectedRowKeys, selectedRows) => {
-    const {assignList} = this.state;
+    const { assignList, selectedRowKey} = this.state;
     for (let k in assignList) {
       if (selectedRows.length > 0) {
         for (let j in selectedRows) {
@@ -187,7 +212,8 @@ class ActivityAllocation extends React.Component{
       }
     }
     this.setState({
-      leaderIds: selectedRowKeys
+      leaderIds: selectedRowKeys,
+      selectedRowKey: selectedRowKeys
     })
   }
 
@@ -211,7 +237,7 @@ class ActivityAllocation extends React.Component{
   }
 
   initTableData = async (params,sorter,filter) =>{
-    const { name , current , pageSize , customName , orderNo , } = params;
+    const { name , current , pageSize , customName , orderNo } = params;
     const { memberId } = this.state;
     const { dispatch } = this.props;
     let result = {};
@@ -224,6 +250,9 @@ class ActivityAllocation extends React.Component{
       if (expectList.records){
         for (let i in expectList.records){
           expectList.records[i].orderTime = [expectList.records[i].orderBeginTime,expectList.records[i].orderEndTime];
+          if (expectList.records[i].auditStatus == null){
+            expectList.records[i].auditStatus = 0;
+          }
         }
         result.data = expectList.records;
       }else{
@@ -261,16 +290,24 @@ class ActivityAllocation extends React.Component{
     })
   }
 
+  editConfig = () => {
+    const { leaderIds } = this.state;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'executiveMinister/toLeader',
+      payload: {ids: leaderIds}
+    })
+  }
+
   configCostDetail = () => {
 
   }
   render(){
-    const { costVisible , costList , activityVisible , employeesList , assignList } = this.state;
+    const { costVisible , costList , activityVisible , employeesList , assignList , selectedRowKey , selectedLevel } = this.state;
     const rowSelection = {
+      selectedRowKeys: selectedRowKey.length > 0 ? selectedRowKey : selectedLevel,
       onChange: (selectedRowKeys, selectedRows) => this.onChangeActivity(selectedRowKeys, selectedRows),
-      getCheckboxProps: record => ({
-        disabled: record.name === 'Disabled User', // Column configuration not to be checked
-      }),
+      // getCheckboxProps: record => (console.log(selectedRowKeys)),
     }
     return (
       <PageContainer content="用于对成本预算进行管理">
@@ -345,7 +382,7 @@ class ActivityAllocation extends React.Component{
             }
           </Select>
           <div style={{marginTop: 10}}>
-            <Table rowKey={"id"} rowSelection={{...rowSelection}} columns={this.state.activityColumns}
+            <Table rowKey={"id"}  rowSelection={{...rowSelection}} columns={this.state.activityColumns}
                    dataSource={assignList}>
             </Table>
           </div>

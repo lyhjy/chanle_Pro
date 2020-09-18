@@ -8,7 +8,8 @@ import {
   getAllDepartment,
   contractList as getContractList,
   contractReview,
-  schedule
+  schedule,
+  gather
 } from '@/services/generalDepartmentAPI';
 
 const generalDepartmentModel = {
@@ -20,6 +21,8 @@ const generalDepartmentModel = {
 
     contractList: [],
     reviewStatus: {},
+
+    gatherList: [],
   },
   effects: {
     *queryEmployeePoll({ payload }, { call, put }) {
@@ -71,13 +74,20 @@ const generalDepartmentModel = {
         payload: response,
       });
     },
+    *gather({ payload }, { call, put }) {
+      const response = yield call(gather, payload);
+      yield put({
+        type: 'ther',
+        payload: response.result,
+      });
+    },
   },
   reducers: {
     queryEP (state, action) {
-      return { ...state, employeePollList: action.payload.staffs || {} };
+      return { ...state, employeePollList: action.payload || {} };
     },
     addEP(state, action) {
-      return { ...state, employeePollList: action.payload.staffs || {} };
+      return { ...state, employeePollList: action.payload || {} };
     },
     deleteEP(state, action) {
       return { ...state, delEmployeeCode: action.payload.code };
@@ -90,6 +100,9 @@ const generalDepartmentModel = {
     },
     review(state, action) {
       return { ...state, reviewStatus: action.payload };
+    },
+    ther(state, action) {
+      return { ...state, gatherList: action.payload };
     },
   }
 }

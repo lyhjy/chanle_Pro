@@ -8,7 +8,7 @@ export default [
   //       path: '/user/login',
   //       component: './user/login',
   //     },
-  //   ],
+  //   ],MarketingMinister
   // },
   {
     path: '/',
@@ -37,26 +37,26 @@ export default [
               }
             ]
           },
-          {
-            path: '/GroupMember',
-            name: 'group-member',
-            icon: 'dashboard',
-            authority: ['a'],
-            routes: [
-              {
-                name: 'business-operations',
-                icon: '',
-                path: '/GroupMember/business',
-                component: './GroupMember/business'
-              },
-              {
-                name: 'business-feedback',
-                icon: '',
-                path: '/GroupMember/feedback-form',
-                component: './GroupMember/feedback-form'
-              }
-            ]
-          },
+          // {
+          //   path: '/GroupMember',
+          //   name: 'group-member',
+          //   icon: 'dashboard',
+          //   authority: ['a'],
+          //   routes: [
+          //     {
+          //       name: 'business-operations',
+          //       icon: '',
+          //       path: '/GroupMember/business',
+          //       component: './GroupMember/business'
+          //     },
+          //     {
+          //       name: 'business-feedback',
+          //       icon: '',
+          //       path: '/GroupMember/feedback-form',
+          //       component: './GroupMember/feedback-form'
+          //     }
+          //   ]
+          // },
           {
             path: '/LogisticsMinister',
             name: 'logistics-minister',
@@ -200,6 +200,12 @@ export default [
                 icon: '',
                 path: '/MarketingMinister/take-over',
                 component: './MarketingMinister/take-over',
+              },
+              {
+                name: 'contract-review',
+                icon: '',
+                path: '/MarketingMinister/contract-review',
+                component: './MarketingMinister/contract-review',
               }
             ]
           },

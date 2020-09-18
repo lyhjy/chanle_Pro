@@ -64,7 +64,10 @@ class CostBudget extends React.Component {
       }, {
         title: '操作', dataIndex: '', key: '', hideInSearch: true, align: 'center', render: (_, recode) => (
           <>
-            <a onClick={() => history.push('/ExecutiveMinister/cost-budget/add')}>填写成本</a>
+            {
+              recode.operatorStatus > 0 ?  <a onClick={() => history.push({pathname: '/ExecutiveMinister/cost-budget/add',state: {orderNo: recode.orderNo}})}>填写成本</a> : <span>已填写</span>
+            }
+
           </>
         )
       }],
