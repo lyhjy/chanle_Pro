@@ -65,7 +65,7 @@ class CostBudget extends React.Component {
         title: '操作', dataIndex: '', key: '', hideInSearch: true, align: 'center', render: (_, recode) => (
           <>
             {
-              recode.operatorStatus > 0 ?  <a onClick={() => history.push({pathname: '/ExecutiveMinister/cost-budget/add',state: {orderNo: recode.orderNo}})}>填写成本</a> : <span>已填写</span>
+              recode.operatorStatus > 0 ?  <span>已填写</span> : <a onClick={() => history.push({pathname: '/ExecutiveMinister/cost-budget/add',state: {orderNo: recode.orderNo}})}>填写成本</a>
             }
 
           </>
@@ -94,7 +94,6 @@ class CostBudget extends React.Component {
     }).then(() => {
       const {activity} = this.props;
       const {missionsList} = activity;
-      debugger
       if (JSON.stringify(missionsList.result) != "{}") {
         this.setState({
           missionInfo: missionsList.result

@@ -86,7 +86,7 @@ class DistributionMidify extends React.Component{
     })
   }
   render(){
-    const { salaryAssInfo , cf , jg , jc } = this.state;
+    const { salaryAssInfo } = this.state;
     const layoutForm = {
       labelCol: {span: 4},
       wrapperCol: {span: 18}
@@ -122,7 +122,10 @@ class DistributionMidify extends React.Component{
                 </FormItem>
                 <FormItem name="workMoney" label="工资结构">
                   <Space size={10}>
-                    <Input style={{width: 330}} defaultValue={jg}/> <Input style={{width: 100}} value="1 天" disabled/>
+                    {
+                      salaryAssInfo.workMoney &&  <Input style={{width: 330}} defaultValue={salaryAssInfo.workMoney}/>
+                    }
+                    <Input style={{width: 100}} value="1 天" disabled/>
                   </Space>
                 </FormItem>
                 <FormItem name="days" label="实际天数">
@@ -132,14 +135,16 @@ class DistributionMidify extends React.Component{
                   <Space size={10}>
                     <span style={{width: 80}}><PlusOutlined /></span>
                     {
-                      salaryAssInfo.awardMoney && <Input style={{width: 330}} defaultValue={111} placeholder="请输入奖励金额"/> || <Input style={{width: 330}} defaultValue={111} placeholder="请输入奖励金额"/>
+                      salaryAssInfo.awardMoney && <Input style={{width: 330}} defaultValue={salaryAssInfo.awardMoney} placeholder="请输入奖励金额"/>
                     }
-                    <Input value={jc}/>
                   </Space>
                 </FormItem>
                 <FormItem name="punishMoney" label=" ">
                   <Space size={10}>
-                    <span style={{width: 80}}> <MinusOutlined /></span><Input style={{width: 330}} defaultValue={cf} placeholder="请输入惩罚金额"/>
+                    <span style={{width: 80}}> <MinusOutlined /></span>
+                    {
+                      salaryAssInfo.punishMoney && <Input style={{width: 330}} defaultValue={salaryAssInfo.punishMoney} placeholder="请输入惩罚金额"/>
+                    }
                   </Space>
                 </FormItem>
               </Col>

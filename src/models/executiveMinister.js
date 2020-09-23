@@ -16,7 +16,9 @@ import {
   CostCheckList,
   businessCheck,
   salaryAssignDetail,
-  revenueReady
+  revenueReady,
+  businessSummaryList,
+  costBudgetDetails
 } from '@/services/executiveMinisterAPI';
 const executiveMinisterModel = {
   namespace: 'executiveMinister',
@@ -36,7 +38,11 @@ const executiveMinisterModel = {
     businessCode: '',
 
     salaryAssInfo: {},
-    revenueInfo: {}
+    revenueInfo: {},
+
+    summaryList: [],
+
+    budgetInfo: {}
   },
   effects: {
     *actAllocation({ payload }, { call, put }) {
@@ -70,7 +76,7 @@ const executiveMinisterModel = {
     *addOrUpdateCostBudget({ payload }, { call, put }) {
       const response = yield call(addOrUpdateCostBudget, payload);
       if (response.code === 200){
-        message.success("添加成功!")
+        message.success("操作成功!")
         history.push('/ExecutiveMinister/cost-budget');
       }else{
         message.error("操作失败!")
@@ -157,6 +163,20 @@ const executiveMinisterModel = {
         payload: response.result,
       });
     },
+    *businessSummaryList({ payload }, { call, put }){
+      const response = yield call(businessSummaryList, payload);
+      yield put({
+        type: 'summary',
+        payload: response.result,
+      });
+    },
+    *costBudgetDetails({ payload }, { call, put }){
+      const response = yield call(costBudgetDetails, payload);
+      yield put({
+        type: 'budgetDes',
+        payload: response.result,
+      });
+    },
   },
   reducers: {
     queryAct (state, action) {
@@ -197,6 +217,12 @@ const executiveMinisterModel = {
     },
     revenue(state, action) {
       return { ...state, revenueInfo: action.payload || {} };
+    },
+    summary(state, action) {
+      return { ...state, summaryList: action.payload || {} };
+    },
+    budgetDes(state, action) {
+      return { ...state, budgetInfo: action.payload || {} };
     },
   }
 }

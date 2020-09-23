@@ -46,17 +46,18 @@ class Distrbution extends React.Component{
         title: '操作', dataIndex: 'option', valueType: 'option' , align: 'center',render: (_,recode) => (
           <>
             <a onClick={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}>修改</a>
-            <Divider type="vertical" />
             {
-              recode.workMoney < 0 || recode.workMoney == '' && <Popconfirm
-                title="是否进行分配"
-                placement="topRight"
-                cancelText="取消"
-                okText="确定"
-                onConfirm={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}
-              >
-                <a>分配</a>
-              </Popconfirm>
+              recode.workMoney < 0 || recode.workMoney == '' && <> <Divider type="vertical" />
+                <Popconfirm
+                  title="是否进行分配"
+                  placement="topRight"
+                  cancelText="取消"
+                  okText="确定"
+                  onConfirm={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}
+                >
+                  <a>分配</a>
+                </Popconfirm>
+              </>
             }
 
           </>

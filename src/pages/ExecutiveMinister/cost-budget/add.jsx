@@ -5,6 +5,7 @@ import ProTable from '@ant-design/pro-table';
 import { Button , Radio, Form , Row , Col , Input , Space , DatePicker , message } from 'antd';
 import styles from '../activity-allocation/style.less';
 import {connect} from "umi";
+import {costDetailed} from "../business-operations/service";
 const FormItem = Form.Item;
 const RadioButton = Radio.Button;
 const { RangePicker } = DatePicker;
@@ -15,21 +16,25 @@ class AddCost extends React.Component{
       revenueInfo: {},
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
       flag: 1,
+      id: 0,
       costDetails: [],
       type: [{title: '人工费',value: 1},{title: '器材及产地费',value: 2},{title: '餐费',value: 3},{title: '住宿费',value: 4},{title: '车费',value: 5},{title: '其他1',value: 6},{title: '其他2',value: 7},{title: '其他3',value: 8}]
     }
   }
   componentDidMount(){
-    const { flag } = this.state;
+    const { flag , memberId } = this.state;
     const { history , dispatch } = this.props;
     const { location } = history;
-    let orderNum;
+    let orderNum,cb_id;
     if (location.state != undefined && location.state != null && location.state != ''){
       const { orderNo } = location.state;
+      const { id } = location.state;
       sessionStorage.setItem('orderNo',orderNo)
+      sessionStorage.setItem('cb_id',id)
     }
     orderNum = sessionStorage.getItem('orderNo');
-    if (orderNum){
+    cb_id = sessionStorage.getItem('cb_id');
+    if (orderNum != 'undefined' && orderNum != '' && orderNum != ''){
         dispatch({
           type: 'executiveMinister/revenueReady',
           payload: {
@@ -44,12 +49,57 @@ class AddCost extends React.Component{
             this.refs.formRef.setFieldsValue(revenueInfo)
           }
         })
+    }else if (cb_id != 'undefined' && cb_id != '' && cb_id != ''){
+      dispatch({
+        type: 'executiveMinister/costBudgetDetails',
+        payload: {
+          memberId,
+          id: cb_id
+        }
+      }).then(() => {
+        const { executiveMinister } = this.props;
+        const { budgetInfo } = executiveMinister;
+        if (budgetInfo){
+          // this.setState({ revenueInfo : revenueInfo})
+          // for (let k in budgetInfo.costDetails){
+
+            // budgetInfo.costDetails.price = budgetInfo.costDetails[k].price;
+          //   let price = this.modifyJsonKey(budgetInfo.costDetails[k],"price",`price${Number(k + 1)}`);
+          //   budgetInfo.costDetails[k].price
+          //   console.log(price)
+          // }
+          budgetInfo.orderTime = [moment(budgetInfo.orderBeginTime),moment(budgetInfo.orderEndTime)];
+          budgetInfo.costDetails.map((item,index) => {
+            this.refs.formRef.setFieldsValue({
+              [`price${index+1}`]: item.price,
+              [`remark${index+1}`]: item.remark,
+              [`expectNum${index+1}`]: item.expectNum,
+              [`expectMoney${index+1}`]: item.expectMoney,
+              [`realNum${index+1}`]: item.realNum,
+              [`realMoeny${index+1}`]: item.realMoeny
+            })
+            var parent = document.getElementById(`show${Number(index+1)}`);
+            parent.getElementsByTagName('input')[0].value = item.id;
+          })
+          this.setState({id: budgetInfo.id})
+
+          this.refs.formRef.setFieldsValue(budgetInfo)
+        }
+      })
     }
+
+  }
+  
+  modifyJsonKey = (obj , oddkey , newkey ) => {
+    let val = obj[oddkey];
+    delete obj[oddkey];
+    obj[newkey];
   }
 
   onFinish = e => {
-    const { type , flag , costDetails } = this.state;
+    const { type , flag , costDetails , id } = this.state;
     const {contact, contactPhone, customName, orderNo, orderTime, personNum, expectCost, realCost, expectMoney, expectNum, price, realMoeny, realNum, remark} = e;
+
     const { dispatch } = this.props;
     // let costDetails = [];
     this.switchType(flag);
@@ -61,7 +111,7 @@ class AddCost extends React.Component{
       contactPhone,
       customName,
       orderNo,
-      id: 0,
+      id: id,
       orderBeginTime: moment(orderTime[0]).format('YYYY-MM-DD HH:mm:ss'),
       orderEndTime: moment(orderTime[1]).format('YYYY-MM-DD HH:mm:ss'),
       personNum,
@@ -69,23 +119,25 @@ class AddCost extends React.Component{
       realCost,
       costDetails: deduplication
     };
-
-    // dispatch({
-    //   type: 'executiveMinister/addOrUpdateCostBudget',
-    //   payload: data
-    // })
+    dispatch({
+      type: 'executiveMinister/addOrUpdateCostBudget',
+      payload: data
+    })
     // costDetails: [{
     //         expectMoney, price, realMoeny, realNum, expectNum, remark, id: 0, feeType: 1
     //       }]
-    console.log(data)
+    // console.log(data)
   }
   switchType = (type) => {
     let obj = document.getElementById(`show${type}`)
     let objInput = obj.getElementsByTagName('input');
-    let data = {feeType: type,id: 0};
+    let objTextarea = obj.getElementsByTagName('textarea');
+    let data = {feeType: type,remark: objTextarea[0].value};
     let i = 0;
     while (i < objInput.length){
       switch (i) {
+        case 0: data.id = objInput[i].value
+          break;
         case 1: data.price = objInput[i].value
           break;
         case 2: data.expectNum = objInput[i].value
@@ -101,6 +153,7 @@ class AddCost extends React.Component{
       }
       i++;
     }
+    console.log(data)
     this.state.costDetails.push(data);
   }
 
@@ -198,6 +251,9 @@ class AddCost extends React.Component{
                 {
                   type.map((item,index) => (
                     <div id={`show${index+1}`} style={{display: flag == index+1 ? "inline" : "none"}}>
+                      <div>
+                        <input type="hidden" name="id"/>
+                      </div>
                         <FormItem name={`price${index+1}`} label="单价" ref={(ref) => {console.log(ref)}}>
                           <Input/>
                         </FormItem>

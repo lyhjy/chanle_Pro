@@ -9,6 +9,7 @@ class EmployeePool extends React.Component{
   constructor(props){
     super(props);
     this.state = {
+      total: 0,
       columns: [{
         title: '编号',dataIndex: 'num',key: 'num',hideInSearch: true,align: 'center',
       },{
@@ -43,17 +44,22 @@ class EmployeePool extends React.Component{
 
   }
   initTableData = async (params,sorter,filter) => {
-    const {name} = params;
+    const { name , current , pageSize } = params;
     const {dispatch} = this.props;
     let result = {};
     await dispatch({
       type: 'generalDepartment/queryEmployeePoll',
-      payload: {staffName: name}
+      payload: {
+        pageNum: current,
+        pageSize,
+        staffName: name
+      }
     }).then(() => {
-      const {generalDepartment} = this.props;
+      const { generalDepartment } = this.props;
       const {employeePollList} = generalDepartment;
       if (employeePollList.list) {
         result.data = employeePollList.list;
+        this.setState({total: employeePollList.total});
       } else {
         result.data = [];
       }
@@ -78,6 +84,7 @@ class EmployeePool extends React.Component{
   }
 
   render(){
+    const { total } = this.state;
     return (
       <PageContainer content="用于对员工进行管理" extraContent={
         <Button type="primary" onClick={() => {history.push('/GeneralDepartment/employee-pool/add')}}>新建员工</Button>
@@ -88,6 +95,10 @@ class EmployeePool extends React.Component{
           actionRef={(ref) => (this.ref = ref)}
           search={{
             labelWidth: 120,
+          }}
+          pagination={{
+            pageSize: 10,
+            total: total
           }}
           request={( params ) => this.initTableData({...params })}
           columns={this.state.columns}

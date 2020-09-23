@@ -70,27 +70,7 @@ class BusinessOperations extends React.Component{
         }],
       costColumns: [
         {
-          title: '项目',dataIndex: 'costType',key: 'costType',align: 'center',render: (_,recode) => {
-            switch (Number(_)) {
-              case 1: return <span>人工费</span>;
-                break;
-              case 2: return <span>器材及产地费</span>;
-                break;
-              case 3: return <span>餐费</span>;
-                break;
-              case 4: return <span>住宿费</span>;
-                break;
-              case 5: return <span>车费</span>;
-                break;
-              case 6: return <span>其他1</span>
-                break;
-              case 7: return <span>其他2</span>
-                break;
-              case 8: return <span>其他3</span>
-              default:
-                return <spna>项目类型错误</spna>
-            }
-          }
+          title: '项目',dataIndex: 'costType',key: 'costType',align: 'center'
         },
         {
           title: '单价',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center'

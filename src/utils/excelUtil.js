@@ -31,7 +31,7 @@ function importExcel(file){
   fileReader.readAsBinaryString(files[0]);
 
 }
-function exportExcel(headers, data, fileName = '请假记录表.xlsx') {
+function exportExcel(headers, data, fileName = '业务员提成工资汇总表.xlsx') {
   const _headers = headers
     .map((item, i) => Object.assign({}, { key: item.key, title: item.title, position: String.fromCharCode(65 + i) + 1 }))
     .reduce((prev, next) => Object.assign({}, prev, { [next.position]: { key: next.key, v: next.title } }), {});

@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { PageHeaderWrapper, RouteContext , PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {connect} from "umi";
+import { connect } from "umi";
 import { queryInvoicing , getOderInfo , getInvoicingInfo , review } from "./service";
 import styles from "../../ActivityManage/business-config/style.less";
 import OrderInfoModel from './components/OrderInfoModel';

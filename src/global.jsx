@@ -101,4 +101,16 @@ if (pwa) {
   }
 }
 setAuthority('a');
+// const auto = window.location.search.split('memberId')[1].substr(1);
+// switch (auto) {
+//   case '1111111':
+//     setAuthority('a');
+//     break;
+//   case '2222222':
+//     break;
+//   case '3333333':
+//     setAuthority('c')
+//       break;
+// }
+
 

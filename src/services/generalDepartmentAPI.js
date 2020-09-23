@@ -2,7 +2,6 @@ import request from '@/utils/request';
 import url from '../../config/path';
 //员工库员工列表查询
 export async function queryEmployeePoll(params){
-  let getTimestamp = new Date().getTime();
   return request(`${url}/staff/query`, {
     method: 'GET',
     params: params,

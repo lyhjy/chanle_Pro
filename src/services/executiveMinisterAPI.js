@@ -112,3 +112,17 @@ export async function revenueReady(params) {
     params: params
   })
 }
+//整体业务汇总表
+export async function businessSummaryList(params) {
+  return request(`${url}/mission/list/businessSummaryList`,{
+    method: 'GET',
+    params: params
+  })
+}
+//填写成本重新编辑
+export async function costBudgetDetails(params) {
+  return request(`${url}/act/assign/costBudgetDetails`,{
+    method: 'GET',
+    params: params
+  })
+}

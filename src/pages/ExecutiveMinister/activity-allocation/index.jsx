@@ -57,7 +57,7 @@ class ActivityAllocation extends React.Component{
           <>
             {
               recode.auditStatus == 1 ? <a onClick={() => this.assignExecution(recode.id)}>分配执行</a> : recode.auditStatus == 0 ? <span style={{color: '#999'}}>等待分配</span> :
-                <a>重新编辑</a>
+                <a onClick={() => history.push({pathname: '/ExecutiveMinister/cost-budget/add',state: {id: recode.id}})}>重新编辑</a>
             }
           </>
         )
@@ -236,14 +236,21 @@ class ActivityAllocation extends React.Component{
     })
   }
 
-  initTableData = async (params,sorter,filter) =>{
-    const { name , current , pageSize , customName , orderNo } = params;
+  initTableData = async (params) =>{
+    const { current , pageSize , customName , orderNo , orderTime } = params;
     const { memberId } = this.state;
     const { dispatch } = this.props;
     let result = {};
     await dispatch({
       type: 'executiveMinister/expectCostList',
-      payload: { memberId }
+      payload: {
+        memberId,
+        orderNo,
+        customName,
+        orderTime,
+        pageNo: current,
+        pageSize,
+      }
     }).then(() => {
       const { executiveMinister } = this.props;
       const { expectList } = executiveMinister;
@@ -255,6 +262,9 @@ class ActivityAllocation extends React.Component{
           }
         }
         result.data = expectList.records;
+        this.setState({
+          total: expectList.total
+        })
       }else{
         result.data = expectList
       }
@@ -303,7 +313,7 @@ class ActivityAllocation extends React.Component{
 
   }
   render(){
-    const { costVisible , costList , activityVisible , employeesList , assignList , selectedRowKey , selectedLevel } = this.state;
+    const { costVisible , costList , activityVisible , employeesList , assignList , selectedRowKey , selectedLevel , total } = this.state;
     const rowSelection = {
       selectedRowKeys: selectedRowKey.length > 0 ? selectedRowKey : selectedLevel,
       onChange: (selectedRowKeys, selectedRows) => this.onChangeActivity(selectedRowKeys, selectedRows),
@@ -321,7 +331,8 @@ class ActivityAllocation extends React.Component{
           request={(params, sorter, filter) => this.initTableData({...params, sorter, filter})}
           columns={this.state.columns}
           pagination={{
-            current: 10
+            pageSize: 10,
+            total: total
           }}
         >
         </ProTable>

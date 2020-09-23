@@ -143,6 +143,18 @@ export default [
                 path: '/leadership/staff-profile',
                 component: './leadership/staff-profile'
               },
+              {
+                name: 'business-summary',
+                icon: '',
+                path: '/leadership/business-summary',
+                component: './leadership/business-summary'
+              },
+              {
+                name: 'salary-summary',
+                icon: '',
+                path: '/leadership/salary-summary',
+                component: './leadership/salary-summary'
+              }
             ]
           },
           {
@@ -169,6 +181,18 @@ export default [
                 path: '/ChargeLeadership/charge-staff-profile',
                 component: './ChargeLeadership/charge-staff-profile'
               },
+              {
+                name: 'business-summary',
+                icon: '',
+                path: '/ChargeLeadership/business-summary',
+                component: './ChargeLeadership/business-summary'
+              },
+              {
+                name: 'salary-summary',
+                icon: '',
+                path: '/ChargeLeadership/salary-summary',
+                component: './ChargeLeadership/salary-summary'
+              }
             ]
           },
           {
@@ -206,7 +230,20 @@ export default [
                 icon: '',
                 path: '/MarketingMinister/contract-review',
                 component: './MarketingMinister/contract-review',
-              }
+              },
+              {
+                name: 'business-summary',
+                icon: '',
+                path: '/MarketingMinister/business-summary',
+                component: './MarketingMinister/business-summary'
+              },
+              {
+                name: 'salary-summary',
+                icon: '',
+                path: '/MarketingMinister/salary-summary',
+                component: './MarketingMinister/salary-summary'
+              },
+
             ]
           },
           {
@@ -252,6 +289,18 @@ export default [
               {
                 path: '/ExecutiveMinister/distribution/modify',
                 component: './ExecutiveMinister/distribution/modify'
+              },
+              {
+                name: 'business-summary',
+                icon: '',
+                path: '/ExecutiveMinister/business-summary',
+                component: './ExecutiveMinister/business-summary',
+              },
+              {
+                name: 'salary-summary',
+                icon: '',
+                path: '/ExecutiveMinister/salary-summary',
+                component: './ExecutiveMinister/salary-summary',
               }
             ]
           },
@@ -279,6 +328,11 @@ export default [
                 icon: '',
                 path: '/GeneralDepartment/salesman-summary',
                 component: './GeneralDepartment/salesman-summary',
+              },{
+                name: 'salary-summary',
+                icon: '',
+                path: '/GeneralDepartment/salary-summary',
+                component: './GeneralDepartment/salary-summary',
               }
             ]
           },

@@ -86,27 +86,31 @@ class TakeOver extends React.Component{
             )
           }else if (operatorStatus == 1 && status == 1){
             return (
-              <Popconfirm
-                title={
-                  <Radio.Group onChange={(e) => this.radioChange(e)} defaultValue={this.state.dapId}>
-                    <Radio value={1}>
-                      假日部
-                    </Radio>
-                    <Radio value={2}>
-                      学校部
-                    </Radio>
-                  </Radio.Group>
+              <>
+                {
+                  record.unitId > 0 ? <span>已完成分派</span> :  <Popconfirm
+                    title={
+                      <Radio.Group onChange={(e) => this.radioChange(e)} defaultValue={this.state.dapId}>
+                        <Radio value={1}>
+                          假日部
+                        </Radio>
+                        <Radio value={2}>
+                          学校部
+                        </Radio>
+                      </Radio.Group>
 
+                    }
+                    icon={null}
+                    placement="topRight"
+                    cancelText="取消"
+                    okText="确定"
+                    style={{textAlign: 'center'}}
+                    onConfirm={() => this.submitDispatch({ id: record.id })}
+                  >
+                    <a>分派</a>
+                  </Popconfirm>
                 }
-                icon={null}
-                placement="topRight"
-                cancelText="取消"
-                okText="确定"
-                style={{textAlign: 'center'}}
-                onConfirm={() => this.submitDispatch({ id: record.id })}
-              >
-                <a>分派</a>
-              </Popconfirm>
+              </>
             )
           }else if (operatorStatus == 2){
             return (
@@ -116,6 +120,8 @@ class TakeOver extends React.Component{
             return (
               <a>已发起</a>
             )
+          }else if (record.unitId > 0){
+
           }
         }
       }],
@@ -142,7 +148,10 @@ class TakeOver extends React.Component{
       const { activity } = this.props;
       const { assignRes } = activity;
       if (assignRes.code === 200){
-        message.success("分派操作完成!")
+        message.success("分派操作完成!");
+        setTimeout(() => {
+          this.ref.reload();
+        },1000)
       }else {
         message.error("分派操作失败!")
       }
@@ -210,11 +219,13 @@ class TakeOver extends React.Component{
   }
 
   initTableData = async (params) => {
-    const { orderNo , contactPhone , contact } = params;
+    const { orderNo , contactPhone , contact , current , pageSize } = params;
     let result = {};
     try {
       await queryActAppointmentManage({
         memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
+        pageNo: current,
+        pageSize,
         orderNo: orderNo,
         contact: contact,
         contactPhone: contactPhone

@@ -4,8 +4,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {Button, message} from "antd";
 import ExcelUtil from '../../../utils/excelUtil';
-import {connect} from "umi";
-import FooterToolbar from "@ant-design/pro-layout/lib/FooterToolbar";
+import { connect } from "umi";
 class SalesmanSummary extends React.Component{
 
   constructor(props){
@@ -63,7 +62,7 @@ class SalesmanSummary extends React.Component{
         for (let i in gatherList.list){
           gatherList.list[i].orderTime = [gatherList.list[i].orderBeginTime,gatherList.list[i].orderEndTime];
         }
-        this.setState({total: gatherList.total,attendanceInfoList: gatherList.list});
+        this.setState({total: gatherList.total,attendanceInfoList: gatherList});
         result.data = gatherList.list;
       } else {
         result.data = [];
@@ -127,6 +126,7 @@ class SalesmanSummary extends React.Component{
     }
 
   }
+
   changeRows = rows => {
     if (rows.length > 0){
       this.setState({
@@ -175,7 +175,6 @@ class SalesmanSummary extends React.Component{
             </div>
           </div>
         }
-
 
       </PageContainer>
     )
