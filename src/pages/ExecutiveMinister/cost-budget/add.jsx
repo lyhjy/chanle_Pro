@@ -72,11 +72,11 @@ class AddCost extends React.Component{
           budgetInfo.costDetails.map((item,index) => {
             this.refs.formRef.setFieldsValue({
               [`price${index+1}`]: item.price,
-              [`remark${index+1}`]: item.remark,
+              [`remarks${index+1}`]: item.remark,
               [`expectNum${index+1}`]: item.expectNum,
               [`expectMoney${index+1}`]: item.expectMoney,
               [`realNum${index+1}`]: item.realNum,
-              [`realMoeny${index+1}`]: item.realMoeny
+              [`realMoney${index+1}`]: item.realMoney
             })
             var parent = document.getElementById(`show${Number(index+1)}`);
             parent.getElementsByTagName('input')[0].value = item.id;
@@ -132,7 +132,7 @@ class AddCost extends React.Component{
     let obj = document.getElementById(`show${type}`)
     let objInput = obj.getElementsByTagName('input');
     let objTextarea = obj.getElementsByTagName('textarea');
-    let data = {feeType: type,remark: objTextarea[0].value};
+    let data = {feeType: type,remarks: objTextarea[0].value};
     let i = 0;
     while (i < objInput.length){
       switch (i) {
@@ -146,9 +146,9 @@ class AddCost extends React.Component{
           break;
         case 4: data.realNum = objInput[i].value
           break;
-        case 5: data.realMoeny = objInput[i].value
+        case 5: data.realMoney = objInput[i].value
           break;
-        case 6: data.remark = objInput[i].value
+        case 6: data.remarks = objInput[i].value
           break;
       }
       i++;
@@ -266,10 +266,10 @@ class AddCost extends React.Component{
                         <FormItem name={`realNum${index+1}`} label="实际数量">
                           <Input/>
                         </FormItem>
-                        <FormItem name={`realMoeny${index+1}`} label="实际金额">
+                        <FormItem name={`realMoney${index+1}`} label="实际金额">
                           <Input/>
                         </FormItem>
-                        <FormItem name={`remark${index+1}`} label="备注" >
+                        <FormItem name={`remarks${index+1}`} label="备注" >
                           <Input.TextArea style={{height: 200}}/>
                         </FormItem>
                     </div>

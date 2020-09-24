@@ -144,7 +144,9 @@ class ActivityAllocation extends React.Component{
       const { delEmpStatus } = executiveMinister;
       if (delEmpStatus.code === 200){
         this.initEmployees(costId, memberId);
-      }else {
+      } else if (delEmpStatus.code === 201){
+        message.info(delEmpStatus.meg)
+      } else {
         message.error("操作失败!")
       }
     })
@@ -275,6 +277,7 @@ class ActivityAllocation extends React.Component{
   showCostDetail = id => {
     const { memberId } = this.state;
     const { dispatch } = this.props;
+
     dispatch({
       type: 'executiveMinister/checkFeeDetail',
       payload: {id: id, memberId }
@@ -307,8 +310,10 @@ class ActivityAllocation extends React.Component{
       type: 'executiveMinister/toLeader',
       payload: {ids: leaderIds}
     })
+    setTimeout(() => {
+      this.setState({activityVisible: false})
+    },500)
   }
-
   configCostDetail = () => {
 
   }
@@ -344,7 +349,7 @@ class ActivityAllocation extends React.Component{
           footer={[
             <div className={styles.tc}>
               <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>取消</Button>
-              <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={this.configCostDetail}>确定</Button>
+              <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={this.handleCancel}>确定</Button>
             </div>
           ]}
           centered={true}

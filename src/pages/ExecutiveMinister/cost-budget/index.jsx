@@ -198,7 +198,7 @@ class CostBudget extends React.Component {
             <div className={styles.tc}>
               <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.onCancel}>取消</Button>
               <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary"
-                      size="large">确定</Button>
+                      size="large" onClick={this.onCancel}>确定</Button>
             </div>
           ]}
         >
@@ -245,7 +245,7 @@ class CostBudget extends React.Component {
             <div className={styles.tc}>
               <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.onCancel}>取消</Button>
               <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary"
-                      size="large">确定</Button>
+                      size="large" onClick={this.onCancel}>确定</Button>
             </div>
           ]}
         >
@@ -276,7 +276,7 @@ class CostBudget extends React.Component {
             <div className={styles.tc}>
               <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.onCancel}>取消</Button>
               <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary"
-                      size="large">确定</Button>
+                      size="large" onClick={this.onCancel}>确定</Button>
             </div>
           ]}
         >
@@ -287,8 +287,10 @@ class CostBudget extends React.Component {
             >
               {
                 missionInfo.eatArray.map((item, index) => (
-                  <FormItem name="" label={`D${item}${item % 2 == 0 ? '晚餐' : '中餐'}`}>
-                    <Input disabled/>
+                  <FormItem name="" label={`D${index+1}${(index+1) % 2 == 0 ? '晚餐' : '中餐'}`}>
+                    {
+                      <Input defaultValue={item} disabled/>
+                    }
                   </FormItem>
                 ))
               }

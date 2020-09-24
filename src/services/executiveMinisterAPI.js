@@ -126,3 +126,10 @@ export async function costBudgetDetails(params) {
     params: params
   })
 }
+//整体业务汇总表导出excel
+export async function exportBusinessSummaryList(params) {
+  return request(`${url}/mission/list/exportBusinessSummaryList`,{
+    method: 'POST',
+    data: params
+  })
+}

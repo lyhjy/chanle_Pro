@@ -155,16 +155,19 @@ const BusinessCost = props => {
         request={( params ) => initTableData({ ...params })}
       >
       </ProTable>
-      <DetailOption
-        onCancel={() => {
-          handleUpdateModalVisible(false);
-          setStepFormValues({});
-        }}
-        updateModalVisible={updateModalVisible}
-        values={stepFormValues}
-        info={createCost}
-      >
-      </DetailOption>
+      {
+        updateModalVisible &&  <DetailOption
+          onCancel={() => {
+            handleUpdateModalVisible(false);
+            setStepFormValues({});
+          }}
+          updateModalVisible={updateModalVisible}
+          values={stepFormValues}
+          info={createCost}
+        >
+        </DetailOption>
+      }
+
     </PageContainer>
   )
 }

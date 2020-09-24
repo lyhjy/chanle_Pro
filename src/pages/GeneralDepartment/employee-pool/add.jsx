@@ -49,10 +49,16 @@ class AddEmployee extends React.Component{
 
   submitForm = async event => {
     event.memberId = 'f1e92f22a3b549ada2b3d45d14a3ff70'; //默认
-    event.sectorId = event.sector;
-    const { dispatch } = this.props;
-    const { staffId } = this.state;
 
+
+    const { dispatch } = this.props;
+    const { staffId , dropList } = this.state;
+    if (isNaN(event.sector)){
+      dropList.filter((res) => event.sector == res.name)
+    }else {
+      event.sectorId = event.sector
+    }
+    // event.sectorId = dropList.filter((res) => res.name == event.sector)[0].id;
     if (staffId > 0) {
       event.id = staffId;
       await dispatch({

@@ -3,7 +3,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import { connect , history } from "umi";
 import { Button, Divider, Popconfirm } from "antd";
-import ExcelUtil from "../../../utils/excelUtil";
+import axios from "axios";
+import url from "../../../../config/path"
 class BusinessSummary extends React.Component{
 
   constructor(props){
@@ -75,13 +76,28 @@ class BusinessSummary extends React.Component{
   }
 
   allExport = (param) => {
-    const { attendanceInfoList , columns} = this.state;
+    const { attendanceInfoList , columns , memberId } = this.state;
+    axios({
+      method: 'POST',
+      url: 'http://192.168.10.177:8082/mission/list/exportBusinessSummaryList',
+      responseType: 'blob',
+      data: {
+        memberId
+      }
+    })
+    // const { dispatch } = this.props;
+    // dispatch({
+    //   type: 'executiveMinister/exportBusinessSummaryList',
+    //   payload: {
+    //     memberId
+    //   }
+    // })
 
-    if (param.length > 0){
-      ExcelUtil.exportExcel(columns, param ,"整体业务汇总表.xlsx")
-    } else {
-      ExcelUtil.exportExcel(columns, attendanceInfoList ,"整体业务汇总表.xlsx")
-    }
+    // if (param.length > 0){
+    //   ExcelUtil.exportExcel(columns, param ,"整体业务汇总表.xlsx")
+    // } else {
+    //   ExcelUtil.exportExcel(columns, attendanceInfoList ,"整体业务汇总表.xlsx")
+    // }
   }
 
   changeRows = rows => {

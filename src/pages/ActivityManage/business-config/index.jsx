@@ -17,7 +17,11 @@ class BushinessConfig extends React.Component{
       }, {
         title: '订单简写', dataIndex: 'orderJx', key: 'orderJx', align: 'center'
       }, {
-        title: '提成比例', dataIndex: 'rate', key: 'rate', align: 'center'
+        title: '提成比例', dataIndex: 'rate', key: 'rate', align: 'center',render: (_,recode) => {
+          return (
+            <span>{`${_}%`}</span>
+          )
+        }
       }, {
         title: '领导审核', dataIndex: 'leadership', key: 'leadership', align: 'center', render: (_,record) => {
           return (<a onClick={() => this.viewReview(record.id)}>查看</a>)
@@ -30,7 +34,7 @@ class BushinessConfig extends React.Component{
         title: '操作', dataIndex: 'option', valueType: 'option', align: 'center', render: (_,record) => (
           <>
             {
-              record.discardStatus == 1 ? '' : record.discardStatus == 2 ? <>
+              record.status == 1 ? <>
                 <Popconfirm
                   title="是否进行删除"
                   placement="topRight"
@@ -40,10 +44,12 @@ class BushinessConfig extends React.Component{
                 >
                   <a>删除</a>
                 </Popconfirm>
-              </> : <> <span>待审核</span></>
+                <Divider type="vertical" />
+              </> : record.status == 2 ? <span style={{color: 'red'}}>已驳回</span> : <span>待审核</span>
             }
+
             <>
-              { record.discardStatus != 1 && <Divider type="vertical" /> }
+              { record.status != 1 && <Divider type="vertical" /> }
               <Link to={{pathname: '/ActivityManage/business-config/add',state: {id: record.id}}}>编辑</Link>
             </>
           </>

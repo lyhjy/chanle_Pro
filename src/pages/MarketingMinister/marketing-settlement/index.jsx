@@ -102,19 +102,16 @@ class MarketingSettlement extends React.Component{
           title: '单价',dataIndex: 'price',key: 'price',align: 'center'
         },
         {
-          title: '预计金额',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
+          title: '预计数量',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center'
         },
         {
-          title: '预计小计',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center'
+          title: '预计小计',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
         },
         {
           title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
         },
         {
-          title: '实际金额',dataIndex: 'realMoney',key: 'realMoney',align: 'center'
-        },
-        {
-          title: '实际小计',dataIndex: 'realNum',key: 'realNum',align: 'center'
+          title: '实际小计',dataIndex: 'realMoney',key: 'realMoney',align: 'center'
         },
         {
           title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'

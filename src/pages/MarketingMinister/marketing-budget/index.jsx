@@ -18,15 +18,15 @@ class MarketingDudget extends React.Component{
       columns: [{
         title: '订单号',dataIndex: 'orderNo',key: 'orderNo',tip: '订单号是唯一的',align: 'center',
       },{
-        title: '客户名称',dataIndex: 'customName',key: 'customName',align: 'center',
+        title: '客户名称',dataIndex: 'customName',key: 'customName',align: 'center',hideInSearch: true
       },{
         title: '联系人',dataIndex: 'contact',key: 'contact',align: 'center',
       },{
         title: '联系电话',dataIndex: 'contactPhone',key: 'contactPhone',align: 'center',
       },{
-        title: '出团日期',dataIndex: 'personNum',key: 'personNum',align: 'center',
+        title: '出团日期',dataIndex: 'orderTime',key: 'orderTime', valueType: 'dateTimeRange', hideInSearch: true,align: 'center'
       },{
-        title: '人数',dataIndex: 'personNum',key: 'personNum',align: 'center',
+        title: '人数',dataIndex: 'personNum',key: 'personNum',align: 'center',hideInSearch: true
       },{
         title: '费用明细',align: 'center',render: (_ , recode) => (
           <>
@@ -34,7 +34,7 @@ class MarketingDudget extends React.Component{
           </>
         )
       },{
-        title: '预计营收',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
+        title: '预计营收',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center',hideInSearch: true
       }, {
         title: '操作', dataIndex: 'option', valueType: 'option', align: 'center', render: (_, recode) => (
           <>
@@ -94,19 +94,10 @@ class MarketingDudget extends React.Component{
           title: '单价',dataIndex: 'price',key: 'price',align: 'center'
         },
         {
-          title: '预计金额',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
+          title: '预计数量',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center'
         },
         {
-          title: '预计小计',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center'
-        },
-        {
-          title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
-        },
-        {
-          title: '实际金额',dataIndex: 'realMoney',key: 'realMoney',align: 'center'
-        },
-        {
-          title: '实际小计',dataIndex: 'realNum',key: 'realNum',align: 'center'
+          title: '预计小计',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
         },
         {
           title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'

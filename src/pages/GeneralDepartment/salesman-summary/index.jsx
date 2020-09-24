@@ -58,12 +58,12 @@ class SalesmanSummary extends React.Component{
     }).then(() => {
       const { generalDepartment } = this.props;
       const { gatherList } = generalDepartment;
-      if (gatherList.list.length > 0){
-        for (let i in gatherList.list){
-          gatherList.list[i].orderTime = [gatherList.list[i].orderBeginTime,gatherList.list[i].orderEndTime];
+      if (gatherList.length > 0){
+        for (let i in gatherList){
+          gatherList[i].orderTime = [gatherList[i].orderBeginTime,gatherList[i].orderEndTime];
         }
         this.setState({total: gatherList.total,attendanceInfoList: gatherList});
-        result.data = gatherList.list;
+        result.data = gatherList;
       } else {
         result.data = [];
       }

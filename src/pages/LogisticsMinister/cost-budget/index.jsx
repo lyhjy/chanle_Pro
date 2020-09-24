@@ -4,13 +4,15 @@ import ProTable from '@ant-design/pro-table';
 import {Divider, Form, message, Modal, Popconfirm} from 'antd';
 import { connect } from 'umi';
 import ChargeOption from "./components/ChargeOption";
-import { queryBusinessList , costReview } from "./service";
+import { queryBusinessList , costReview , costDetailed } from "./service";
+
 
 const BusinessCost = props => {
   const { logisticsMinisterAction = {}, dispatch } = props;
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
+  const [createCost , handleCost] = useState([]);
   const [total, setTotal] = useState(0);
   const actionRef = useRef();
   const [row, setRow] = useState();
@@ -31,11 +33,9 @@ const BusinessCost = props => {
     },{
       title: '联系方式',dataIndex: 'contact_phone',key: 'contact_phone',align: 'center',
     },{
-      title: '费用明细',align: 'center',render: (_,recode) => {
-        return (
-          <a>查看</a>
-        )
-      }
+      title: '费用明细',align: 'center',render: (_, record) => (
+        <a onClick={() =>{handleUpdateModalVisible(true);setStepFormValues(record);view(record.order_no)}}>查看</a>
+      )
     },{
       title: '操作人',dataIndex: 'review_name',key: 'review_name',hideInSearch: true,align: 'center',
     },{
@@ -116,6 +116,23 @@ const BusinessCost = props => {
     }
   }
 
+  const view = async id => {
+    try {
+      await costDetailed({
+        orderNo: id,
+        memberId
+      }).then((res) => {
+        if (res.result.length > 0){
+          handleCost(res.result)
+        }else {
+          message.error("操作失败!")
+        }
+      })
+    }catch (e) {
+      message.error("操作异常!")
+    }
+  }
+
   return (
     <PageContainer content="用于对业务成本单进行管理">
       <ProTable
@@ -133,15 +150,19 @@ const BusinessCost = props => {
         columns={columns}
       >
       </ProTable>
-      <ChargeOption
-        onCancel={() => {
-          handleUpdateModalVisible(false);
-          setStepFormValues({});
-        }}
-        updateModalVisible={updateModalVisible}
-        values={stepFormValues}
-      >
-      </ChargeOption>
+      {
+        updateModalVisible && <ChargeOption
+          onCancel={() => {
+            handleUpdateModalVisible(false);
+            setStepFormValues({});
+          }}
+          updateModalVisible={updateModalVisible}
+          values={stepFormValues}
+          info={createCost}
+        >
+        </ChargeOption>
+      }
+
     </PageContainer>
   )
 }

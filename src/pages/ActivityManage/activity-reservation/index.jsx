@@ -89,8 +89,8 @@ class ActivityReservation extends React.Component{
         pageNo: current,
         pageSize,
         unit,
-        endTime: reserveTimeBegin,
-        beginTime: reserveTimeEnd
+        endTime: reserveTimeEnd,
+        beginTime: reserveTimeBegin
       }).then((res) => {
         result.data = res.result.records
       })

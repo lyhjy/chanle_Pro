@@ -12,3 +12,9 @@ export async function costReview(params) {
     data: params
   })
 }
+export async function costDetailed(params) {
+  return request(`${url}/operating/cost/costDetailed`,{
+    method: 'POST',
+    data: params
+  })
+}

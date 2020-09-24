@@ -18,7 +18,8 @@ import {
   salaryAssignDetail,
   revenueReady,
   businessSummaryList,
-  costBudgetDetails
+  costBudgetDetails,
+  exportBusinessSummaryList
 } from '@/services/executiveMinisterAPI';
 const executiveMinisterModel = {
   namespace: 'executiveMinister',
@@ -42,7 +43,8 @@ const executiveMinisterModel = {
 
     summaryList: [],
 
-    budgetInfo: {}
+    budgetInfo: {},
+    execl: ''
   },
   effects: {
     *actAllocation({ payload }, { call, put }) {
@@ -177,6 +179,13 @@ const executiveMinisterModel = {
         payload: response.result,
       });
     },
+    *exportBusinessSummaryList({ payload }, { call, put }){
+      const response = yield call(exportBusinessSummaryList, payload);
+      yield put({
+        type: 'exportExecl',
+        payload: response,
+      });
+    },
   },
   reducers: {
     queryAct (state, action) {
@@ -223,6 +232,9 @@ const executiveMinisterModel = {
     },
     budgetDes(state, action) {
       return { ...state, budgetInfo: action.payload || {} };
+    },
+    exportExecl(state, action) {
+      return { ...state, execl: action.payload || {} };
     },
   }
 }
