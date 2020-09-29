@@ -17,6 +17,7 @@ class CostBudget extends React.Component {
       strokeVisible: false,
       foodVisible: false,
       siteVisible: false,
+      operatorVisible: false,
       selectedRowKeys: [],
       employeesList: [],
       assignList: [],
@@ -24,6 +25,11 @@ class CostBudget extends React.Component {
       missionInfo: {},
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
       costId: '',
+      pageNo: 1,
+      pageSize: 5,
+      id: '',
+      operatorTotal: 0,
+      operatorList: [],
       level: '组员',
       columns: [{
         title: '订单号', dataIndex: 'orderNo', key: 'orderNo', align: 'center',
@@ -58,19 +64,41 @@ class CostBudget extends React.Component {
       }, {
         title: '备注', dataIndex: 'remarks', key: 'remarks', valueType: 'textarea', hideInSearch: true, align: 'center'
       }, {
-        title: '操作人', dataIndex: '', key: '', hideInSearch: true, align: 'center',
+        title: '操作人', dataIndex: 'userName', key: 'userName', hideInSearch: true, align: 'center',render: (_,recode) => {
+          return (<a onClick={() => this.viewOperator({id: recode.id,type: 104})}>{_}</a>)
+        }
       }, {
-        title: '操作时间', dataIndex: '', key: '', hideInSearch: true, align: 'center',
+        title: '操作时间', dataIndex: 'timeCreate', key: 'timeCreate', hideInSearch: true, align: 'center',
       }, {
-        title: '操作', dataIndex: '', key: '', hideInSearch: true, align: 'center', render: (_, recode) => (
+        title: '操作', hideInSearch: true, align: 'center', render: (_, recode) => (
           <>
             {
               recode.operatorStatus > 0 ?  <span>已填写</span> : <a onClick={() => history.push({pathname: '/ExecutiveMinister/cost-budget/add',state: {orderNo: recode.orderNo}})}>填写成本</a>
             }
-
           </>
         )
       }],
+      operatorColumns: [{
+        title: '操作人',dataIndex: 'linkMemberName',key: 'linkMemberName',align: 'center'
+      },{
+        title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',align: 'center'
+      },{
+        title: '操作状态',dataIndex: 'logStatus',key: 'logStatus',align: 'center',render: (_,recode) => {
+          switch (_) {
+            case 1: return <span>添加</span>
+              break;
+            case 2: return <span>修改</span>
+              break;
+            case 3: return <span>删除</span>
+              break;
+            case 4: return <span>查看</span>
+              break;
+            case 5: return <span>通过审核</span>
+              break;
+            case 6: return <span>驳回审核</span>
+          }
+        }
+      }]
     }
   }
 
@@ -90,7 +118,7 @@ class CostBudget extends React.Component {
     }
     await dispatch({
       type: 'activity/missionCheck',
-      payload: {id: id, memberId}
+      payload: {id: id, memberId,type: 104}
     }).then(() => {
       const {activity} = this.props;
       const {missionsList} = activity;
@@ -106,6 +134,38 @@ class CostBudget extends React.Component {
     this.setState({
       activityVisible: false,
       basicInfoVisible: false,
+    })
+  }
+
+  viewOperator = ({ id , type , no }) => {
+    const { dispatch } = this.props;
+    const { memberId , pageSize , pageNo } = this.state;
+    dispatch({
+      type: 'activity/operatorCheck',
+      payload: {
+        id,
+        type,
+        memberId,
+        pageNo: no ? no : pageNo,
+        pageSize
+      }
+    }).then(() => {
+      const { activity } = this.props;
+      const { operatorList } = activity;
+      if (operatorList.records.length > 0){
+        this.setState({
+          operatorList: operatorList.records,
+          operatorTotal: operatorList.total
+        })
+      }else {
+        this.setState({
+          operatorList: []
+        })
+      }
+    })
+    this.setState({
+      operatorVisible: true,
+      id: id
     })
   }
 
@@ -162,11 +222,17 @@ class CostBudget extends React.Component {
       strokeVisible: false,
       foodVisible: false,
       siteVisible: false,
+      operatorVisible: false
     })
   }
 
+  handleTableChange = pagination => {
+    const { id } = this.state;
+    this.viewOperator({ id, type: 105,no: pagination});
+  }
+
   render() {
-    const {basicInfoVisible, missionInfo} = this.state;
+    const {basicInfoVisible, missionInfo , operatorVisible } = this.state;
     const formLayout = {
       labelCol: {span: 4},
       wrapperCol: {span: 18}
@@ -296,6 +362,28 @@ class CostBudget extends React.Component {
               }
             </Form>
           }
+        </Modal>
+        <Modal title="操作历史"
+               style={{textAlign: 'center'}}
+               visible={operatorVisible}
+               width={900}
+               footer={[
+                 <div className={styles.tc}>
+                   <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.onCancel}>返回</Button>
+                   <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={this.onCancel}>确定</Button>
+                 </div>
+               ]}
+               centered={true}
+               onCancel={
+                 this.handleCancel
+               }
+        >
+          <Table columns={this.state.operatorColumns} dataSource={this.state.operatorList} pagination={{
+            total: this.state.operatorTotal,
+            pageSize: this.state.pageSize,
+            onChange: this.handleTableChange
+          }} >
+          </Table>
         </Modal>
       </PageContainer>
     )

@@ -9,15 +9,21 @@ class BushinessConfig extends React.Component{
     super(props);
     this.state = {
       leadershipVisible: false,
+      operatorVisible: false,
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
       costList: [],
+      operatorList: [],
       id: '',
+      total: 0,
+      operatorTotal: 0,
+      pageNo: 1,
+      pageSize: 5,
       columns: [{
         title: '业务类型', dataIndex: 'orderType', key: 'orderType', align: 'center'
       }, {
         title: '订单简写', dataIndex: 'orderJx', key: 'orderJx', align: 'center'
       }, {
-        title: '提成比例', dataIndex: 'rate', key: 'rate', align: 'center',render: (_,recode) => {
+        title: '提成比例(%)', dataIndex: 'rate', key: 'rate', align: 'center',render: (_,recode) => {
           return (
             <span>{`${_}%`}</span>
           )
@@ -27,9 +33,11 @@ class BushinessConfig extends React.Component{
           return (<a onClick={() => this.viewReview(record.id)}>查看</a>)
         },
       }, {
-        title: '操作人', dataIndex: 'operatorName', key: 'operatorName', align: 'center'
+        title: '操作人', dataIndex: 'userName', key: 'userName', align: 'center', render: (_,recode) => {
+          return (<a onClick={() => this.viewOperator({id: recode.id,type: 103})}>{_}</a>)
+        }
       }, {
-        title: '操作时间', dataIndex: '', key: '', align: 'center'
+        title: '操作时间', dataIndex: 'timeCreate', key: 'timeCreate', align: 'center'
       }, {
         title: '操作', dataIndex: 'option', valueType: 'option', align: 'center', render: (_,record) => (
           <>
@@ -65,8 +73,61 @@ class BushinessConfig extends React.Component{
             _ == 1 ? <a>已通过</a> : <span style={{color: 'red'}}>未通过</span>
           )
         }
+      }],
+      operatorColumns: [{
+        title: '操作人',dataIndex: 'linkMemberName',key: 'linkMemberName',align: 'center'
+      },{
+        title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',align: 'center'
+      },{
+        title: '操作状态',dataIndex: 'logStatus',key: 'logStatus',align: 'center',render: (_,recode) => {
+          switch (_) {
+            case 1: return <span>添加</span>
+              break;
+            case 2: return <span>修改</span>
+              break;
+            case 3: return <span>删除</span>
+              break;
+            case 4: return <span>查看</span>
+              break;
+            case 5: return <span>通过审核</span>
+              break;
+            case 6: return <span>驳回审核</span>
+          }
+        }
       }]
     }
+  }
+
+  viewOperator = ({ id , type , no }) => {
+    const { dispatch } = this.props;
+    const { memberId , pageSize , pageNo } = this.state;
+    dispatch({
+      type: 'activity/operatorCheck',
+      payload: {
+        id,
+        type,
+        memberId,
+        pageNo: no ? no : pageNo,
+        pageSize
+      }
+    }).then(() => {
+      const { activity } = this.props;
+      const { operatorList } = activity;
+      if (operatorList.records.length > 0){
+        this.setState({
+          operatorList: operatorList.records,
+          operatorTotal: operatorList.total
+        })
+      }else {
+        this.setState({
+          operatorList: []
+        })
+      }
+    })
+    this.setState({
+      operatorVisible: true,
+      // id: id
+    })
   }
 
   viewReview = id => {
@@ -97,16 +158,23 @@ class BushinessConfig extends React.Component{
   }
   initTableData = async (params) => {
     const { dispatch } = this.props;
+    const { memberId } = this.state;
+    const { current , pageSize } = params;
     let result = {};
     try {
       await dispatch({
         type: 'activity/orderTypeList',
-        payload: ''
+        payload: {
+          pageNo: current,
+          pageSize,
+          memberId
+        }
       }).then(() => {
         const { activity } = this.props;
         const { ordersTypeList } = activity;
         if (ordersTypeList.records.length > 0 ){
           result.data = ordersTypeList.records;
+          this.setState({total: ordersTypeList.total})
         }else {
           result.data = [];
         }
@@ -135,11 +203,16 @@ class BushinessConfig extends React.Component{
   }
   handleCancel = () =>{
     this.setState({
-      leadershipVisible: false
+      leadershipVisible: false,
+      operatorVisible: false,
     })
   }
+  handleTableChange = pagination => {
+    const { id } = this.state;
+    this.viewOperator({ id, type: 103,no: pagination});
+  }
   render(){
-    const { columns , leadershipVisible } = this.state;
+    const { columns , leadershipVisible , total , operatorVisible } = this.state;
     return(
       <PageContainer content="用于对业务提成进行管理" extraContent={
         <Button type="primary" onClick={this.addConfig}>新增配置</Button>
@@ -151,7 +224,8 @@ class BushinessConfig extends React.Component{
           columns={columns}
           actionRef={(ref) => (this.ref = ref)}
           pagination={{
-            pageSize: 10
+            pageSize: 10,
+            total: total
           }}
           request={(params, sorter, filter) => this.initTableData({ ...params })}
           // onLoad={this.initTableData()}
@@ -173,6 +247,28 @@ class BushinessConfig extends React.Component{
                }
         >
           <Table columns={this.state.modelColumns} dataSource={this.state.costList}>
+          </Table>
+        </Modal>
+        <Modal title="操作历史"
+               style={{textAlign: 'center'}}
+               visible={operatorVisible}
+               width={900}
+               footer={[
+                 <div className={styles.tc}>
+                   <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>返回</Button>
+                   <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={this.editConfig}>重新编辑</Button>
+                 </div>
+               ]}
+               centered={true}
+               onCancel={
+                 this.handleCancel
+               }
+        >
+          <Table columns={this.state.operatorColumns} dataSource={this.state.operatorList} pagination={{
+            total: this.state.operatorTotal,
+            pageSize: this.state.pageSize,
+            onChange: this.handleTableChange
+          }} >
           </Table>
         </Modal>
       </PageContainer>

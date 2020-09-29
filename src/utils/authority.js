@@ -13,7 +13,6 @@ export function getAuthority(str) {
   } catch (e) {
     authority = authorityString;
   }
-
   if (typeof authority === 'string') {
     return [authority];
   } // preview.pro.ant.design only do not use in your production.

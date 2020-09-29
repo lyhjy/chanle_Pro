@@ -8,7 +8,7 @@ import {
   Select,
   Button,
   Form,
-  DatePicker
+  DatePicker, Tooltip, notification
 } from 'antd';
 import { PageHeaderWrapper, RouteContext , PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
@@ -21,7 +21,7 @@ import InvoiceInfoModel from './components/InvoiceInfoModel';
 const { Option } = Select;
 const FormItem = Form.Item;
 
-const Invoicing = () => {
+const Invoicing = (props) => {
   const [] = useState();
   const [ createOrderModalVisible, handleOrderModalVisible] = useState(false);
   const [ createInvoiceModalVisible, handleInvoiceModalVisible] = useState(false);
@@ -30,8 +30,10 @@ const Invoicing = () => {
   const actionRef = useRef();
   const [row, setRow] = useState();
   const [total, setTotal] = useState(0);
+  const [textareaValue, setTextareaValue] = useState('');
   const [selectedRowsState, setSelectedRows] = useState([]);
-
+  const [operatorVisible , setOperatorVisible] = useState(false);
+  const [operatorList, setOperatorList] = useState([]);
   const initTableData = async params => {
     const { current, pageSize , orderNo } = params;
     let result = {};
@@ -70,9 +72,10 @@ const Invoicing = () => {
           </>
         )
         },{
-          title: '操作人',dataIndex: 'memberName',key: 'memberName',hideInSearch: true,align: 'center'
+          title: '操作人',dataIndex: 'userName',key: 'userName',hideInSearch: true,align: 'center',render: (_,recode) =>
+        <a >{_}</a>//onClick={viewOperator}
         },{
-          title: '操作时间',dataIndex: 'createTime',key: 'createTime',hideInSearch: true,align: 'center'
+          title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',hideInSearch: true,align: 'center'
         },{
           title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_,recode) => (
             <>
@@ -83,23 +86,29 @@ const Invoicing = () => {
                     placement="topRight"
                     cancelText="取消"
                     okText="确定"
-                    onConfirm={() => { const data = {id: recode.id,status: 1,memberId: '财务',remarks: ''}; modifyTableData(data)}}
+                    onConfirm={() => modifyTableData({ id: recode.id,status: 1,memberId: '财务'})}
                     // onCancel={}
                   >
                     <a>通过</a>
                   </Popconfirm>
                   <Divider type="vertical" />
                   <Popconfirm
-                    title="是否进行驳回"
+                    title={
+                      <>
+                        <label>驳回备注 <span style={{color: 'red'}}>(备注需必填)</span></label>
+                        <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={changeRemaks}/>
+                      </>
+                    }
                     placement="topRight"
                     cancelText="取消"
                     okText="确定"
-                    onConfirm={modifyTableData}
+                    style={{textAlign: 'center'}}
+                    onConfirm={() => modifyTableData({ id: recode.id,status: 2,memberId: '财务'})}
                     // onCancel={}
                   >
                     <a>驳回</a>
                   </Popconfirm>
-                </> : recode.status == 1 ? <span>已通过</span> : <span style={{color: 'red'}}>已驳回</span>
+                </> : recode.status == 1 ? <span>已通过</span> : <><Tooltip title="已驳回"><span style={{color: 'red'}}>已驳回</span></Tooltip></>
               }
 
           </>
@@ -107,6 +116,16 @@ const Invoicing = () => {
   ];
 
   const modifyTableData = async data => {
+    if (data.status == 2){
+      if (!textareaValue){
+        notification.warning({
+          message: '操作提示',
+          description: '驳回内容必须进行填写!!!',
+        })
+        return;
+      }
+    }
+    data.remarks = textareaValue
     try {
       await review(data).then((res) => {
         if (res.code === 200){
@@ -119,9 +138,11 @@ const Invoicing = () => {
       message.error("服务异常!")
     }
   };
-  const onCancel = () => {
 
+  const changeRemaks = e => {
+    setTextareaValue(e.target.value)
   }
+
   const viewOrder = async id => {
     handleOrderModalVisible(true);
     try {
@@ -141,6 +162,7 @@ const Invoicing = () => {
       await getInvoicingInfo({
         id: id
       }).then((res) => {
+        res.result.collectionType = res.result.collectionType == 1 ? "支付宝" : res.result.collectionType == 2 ? "微信" : "银行卡"
         setInvoiceInfo(res.result)
       })
     }catch (e) {
@@ -148,6 +170,24 @@ const Invoicing = () => {
     }
   }
 
+  const viewOperator = ({ id , type }) => {
+    const { dispatch } = props;
+    dispatch({
+      type: 'activity/operatorCheck',
+      payload: {
+        id,
+        type,
+        memberId: '财务'
+      }
+    }).then(() => {
+      const { activity } = props;
+      const { operatorList } = activity;
+      if (operatorList.records.length > 0){
+        setOperatorList(operatorList.records)
+      }
+    })
+    setOperatorVisible(false)
+  }
   return (
     <PageHeaderWrapper
       title="开票申请"
@@ -175,6 +215,7 @@ const Invoicing = () => {
   )
 
 }
-export default connect(({ loading }) => ({
+export default connect(({ loading , activity }) => ({
   submitting: loading.effects['invoicing/invoicingApplication'],
+  activity
 }))(Invoicing);

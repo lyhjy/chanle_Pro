@@ -16,19 +16,19 @@ const columns = [
     title: '项目名称',dataIndex: 'costType',key: 'costType',align: 'center',
   },
   {
-    title: '单价',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center'
+    title: '单价/元',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
   },
   {
     title: '预计数量',dataIndex: 'costQuantityExpected',key: 'costQuantityExpected',align: 'center'
   },
   {
-    title: '预计金额',dataIndex: 'costPriceExpected',key: 'costPriceExpected',align: 'center'
+    title: '预计金额/元',dataIndex: 'costPriceExpected',key: 'costPriceExpected',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
   },
   {
     title: '实际数量',dataIndex: 'costQuantityReal',key: 'costQuantityReal',align: 'center'
   },
   {
-    title: '实际金额',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center'
+    title: '实际金额/元',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
   },
   {
     title: '备注',dataIndex: 'costRemarks',key: 'costRemarks',align: 'center'

@@ -2,7 +2,7 @@ import moment from 'moment';
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Divider, message, Popconfirm, Modal, Form, Button , Input , DatePicker , Radio } from 'antd';
+import {Divider, message, Popconfirm, Modal, Form, Button, Input, DatePicker, Radio, Tooltip, notification} from 'antd';
 import { connect } from 'umi';
 import {queryActAppointmentManage, reportAuditing} from "../activity-reservation/service";
 import styles from "./style.less";
@@ -21,6 +21,7 @@ class TakeOver extends React.Component{
       visible: false,
       dapId: 1,
       total: 0,
+      textareaValue: '',
       columns: [{
         title: '订单号',dataIndex: 'orderNo',key: 'orderNo',align: 'center',tip: '订单号是唯一的',
       },{
@@ -73,7 +74,12 @@ class TakeOver extends React.Component{
                 </Popconfirm>
                 <Divider type="vertical" />
                 <Popconfirm
-                  title="是否进行驳回"
+                  title={
+                    <>
+                      <label>驳回备注 <span style={{color: 'red'}}>(备注需必填)</span></label>
+                      <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={this.changeRemaks}/>
+                    </>
+                  }
                   placement="topRight"
                   cancelText="取消"
                   okText="确定"
@@ -98,7 +104,6 @@ class TakeOver extends React.Component{
                           学校部
                         </Radio>
                       </Radio.Group>
-
                     }
                     icon={null}
                     placement="topRight"
@@ -114,7 +119,7 @@ class TakeOver extends React.Component{
             )
           }else if (operatorStatus == 2){
             return (
-              <span style={{color: 'red'}}>已驳回</span>
+              <><Tooltip title={record.rejectReason}><span style={{color: 'red'}}>已驳回</span></Tooltip></>
             )
           }else if (operatorStatus == 1 && status == 0){
             return (
@@ -134,6 +139,13 @@ class TakeOver extends React.Component{
       dapId: e.target.value
     })
   }
+
+  changeRemaks = (e) => {
+    this.setState({
+      textareaValue: e.target.value
+    })
+  }
+
   submitDispatch = ({ id }) => {
     const { dispatch } = this.props;
     const { dapId , memberId } = this.state;
@@ -192,9 +204,18 @@ class TakeOver extends React.Component{
     })
   }
 
-  modifyTableData = async ({ id , status , remarks }) => {
-    const { memberId } = this.state;
+  modifyTableData = async ({ id , status }) => {
+    const { memberId , textareaValue } = this.state;
     const { dispatch } = this.props;
+    if (status == 2){
+      if (!textareaValue){
+        notification.warning({
+          message: '操作提示',
+          description: '驳回内容必须进行填写!!!',
+        })
+        return;
+      }
+    }
     try {
       await dispatch({
         type: 'activity/missionAudit',
@@ -202,7 +223,7 @@ class TakeOver extends React.Component{
           memberId,
           id,
           status,
-          remarks
+          remarks: textareaValue
         }
       }).then(() => {
         const { activity } = this.props;
@@ -216,6 +237,7 @@ class TakeOver extends React.Component{
     }catch (e) {
       message.error("服务异常!")
     }
+
   }
 
   initTableData = async (params) => {

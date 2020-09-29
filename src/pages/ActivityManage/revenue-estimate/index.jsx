@@ -1,7 +1,7 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Button, Divider, message, Modal, Popconfirm, Table} from "antd";
+import {Button, Divider, message, Modal, notification, Popconfirm, Table, Tooltip , Input } from "antd";
 import { connect } from "umi";
 import styles from "../business-config/style.less";
 class RevenueEstimate extends React.Component{
@@ -11,6 +11,7 @@ class RevenueEstimate extends React.Component{
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
       costVisible: false,
       costList: [],
+      textareaValue: '',
       columns: [{
         title: '订单号',dataIndex: 'orderNo',key: 'orderNo',tip: '订单号是唯一的',align: 'center'
       },{
@@ -22,7 +23,7 @@ class RevenueEstimate extends React.Component{
       },{
         title: '出团日期',dataIndex: 'orderTime',key: 'orderTime', valueType: 'dateTimeRange', hideInSearch: true,align: 'center'
       },{
-        title: '人数',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center'
+        title: '人数/人',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}人`}</span>
       },{
         title: '费用明细',align: 'center',render : (_,recode) => {
           return (
@@ -30,7 +31,7 @@ class RevenueEstimate extends React.Component{
           )
         }}
       ,{
-        title: '预计营收',dataIndex: 'reserveMoney',key: 'reserveMoney',hideInSearch: true,align: 'center'
+        title: '预计营收',dataIndex: 'reserveMoney',key: 'reserveMoney',hideInSearch: true,align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
       },{
         title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_,recode) => {
           let code = recode.operatorStatus
@@ -48,14 +49,20 @@ class RevenueEstimate extends React.Component{
                 </Popconfirm>
                   <Divider type="vertical" />
                   <Popconfirm
-                    title="是否进行驳回"
+                    title={
+                      <>
+                        <label>驳回备注 <span style={{color: 'red'}}>(备注需必填)</span></label>
+                        <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={this.changeRemaks}/>
+                      </>
+                    }
                     placement="topRight"
                     cancelText="取消"
                     okText="确定"
+                    style={{textAlign: 'center'}}
                     onConfirm={() => this.modifyTableData({id: recode.id, status: 2})}
                   >
                     <a>驳回</a>
-                  </Popconfirm></> : code == 1 ? <span>已通过</span> : <span style={{color: 'red'}}>已驳回</span>
+                  </Popconfirm></> : code == 1 ? <span>已通过</span> : <><Tooltip title={recode.rejectReason}><span style={{color: 'red'}}>已驳回</span></Tooltip></>
               }
 
             </>
@@ -66,34 +73,31 @@ class RevenueEstimate extends React.Component{
         {
           title: '项目',dataIndex: 'type',key: 'type',align: 'center',render: (_,recode) => {
             switch (Number(_)) {
-              case 1: return <span>人工费</span>;
+              case 1: return <span>活动组织费</span>;
                 break;
-              case 2: return <span>器材及产地费</span>;
+              case 2: return <span>餐费</span>;
                 break;
-              case 3: return <span>餐费</span>;
+              case 3: return <span>住宿费</span>;
                 break;
-              case 4: return <span>住宿费</span>;
+              case 4: return <span>车费</span>;
                 break;
-              case 5: return <span>车费</span>;
+              case 5: return <span>其他1</span>;
                 break;
-              case 6: return <span>其他1</span>
+              case 6: return <span>其他2</span>
                 break;
-              case 7: return <span>其他2</span>
-                break;
-              case 8: return <span>其他3</span>
               default:
                 return <spna>项目类型错误</spna>
             }
           }
         },
         {
-          title: '单价',dataIndex: 'price',key: 'price',align: 'center'
+          title: '单价/元',dataIndex: 'price',key: 'price',align: 'center'
         },
         {
           title: '预计数量',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center'
         },
         {
-          title: '预计小计',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
+          title: '预计小计/元',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
         },
         {
           title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
@@ -137,6 +141,12 @@ class RevenueEstimate extends React.Component{
     return result;
   }
 
+  changeRemaks = (e) => {
+    this.setState({
+      textareaValue: e.target.value
+    })
+  }
+
   showCostDetail = id => {
     const { dispatch } = this.props;
     const { memberId } = this.state;
@@ -161,14 +171,24 @@ class RevenueEstimate extends React.Component{
   }
 
   modifyTableData = ({ id , status }) => {
-    const { memberId } = this.state;
+    const { memberId , textareaValue } = this.state;
     const { dispatch } = this.props;
+    if (status == 2){
+      if (!textareaValue){
+        notification.warning({
+          message: '操作提示',
+          description: '驳回内容必须进行填写!!!',
+        })
+        return;
+      }
+    }
     dispatch({
       type: 'activity/revenueStatementsReview',
       payload: {
         id,
         status,
-        memberId
+        memberId,
+        remarks: textareaValue
       }
     }).then(() => {
       const { activity } = this.props;

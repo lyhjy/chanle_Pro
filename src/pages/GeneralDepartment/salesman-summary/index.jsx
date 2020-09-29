@@ -2,9 +2,10 @@ import XLSX from 'xlsx';
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Button, message} from "antd";
+import {Button, message, Modal, Table} from "antd";
 import ExcelUtil from '../../../utils/excelUtil';
 import { connect } from "umi";
+import styles from "../../ActivityManage/business-config/style.less";
 class SalesmanSummary extends React.Component{
 
   constructor(props){
@@ -12,6 +13,7 @@ class SalesmanSummary extends React.Component{
     this.state = {
       total: 0,
       flag: false,
+      costVisible: false,
       columns: [{
         title: '订单类型',dataIndex: 'orderType',key: 'orderType',align: 'center'
       },{
@@ -27,15 +29,15 @@ class SalesmanSummary extends React.Component{
       },{
         title: '业务人次',dataIndex: 'personNum',key: 'personNum',align: 'center',hideInSearch: true
       },{
-        title: '业务营收',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true
+        title: '业务营收/元',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
       },{
         title: '回款日期',dataIndex: 'collectionDate',key: 'collectionDate',align: 'center',hideInSearch: true
       },{
-        title: '到账营收',dataIndex: 'finishMoney',key: 'finishMoney',align: 'center',hideInSearch: true
+        title: '到账营收/元',dataIndex: 'finishMoney',key: 'finishMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
       },{
-        title: '提成比例',dataIndex: 'rate',key: 'rate',align: 'center',hideInSearch: true
+        title: '提成比例(%)',dataIndex: 'rate',key: 'rate',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_*100}%`}</span>
       },{
-        title: '提成合计',dataIndex: 'amount',key: 'amount',align: 'center',hideInSearch: true
+        title: '提成合计/元',dataIndex: 'amount',key: 'amount',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
       }],
       attendanceInfoList: [],
       selectData: []
@@ -140,6 +142,9 @@ class SalesmanSummary extends React.Component{
     }
 
   }
+
+
+
   render (){
     const { selectData } = this.state;
     return (
@@ -175,7 +180,6 @@ class SalesmanSummary extends React.Component{
             </div>
           </div>
         }
-
       </PageContainer>
     )
   }

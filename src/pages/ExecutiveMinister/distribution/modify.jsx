@@ -95,75 +95,134 @@ class DistributionMidify extends React.Component{
       <div style={{backgroundColor: 'white'}}>
         <div style={{padding: 20}}>
           <Form
-            {...layoutForm}
-            onFinish={this.handleSubmit}
-            ref='resForm'
-            colon={false}
-          >
-            <Row gutter={24}>
-              <Col span={12}>
-                <FormItem name="orderNo" label="订单号" >
-                  <Input disabled/>
-                </FormItem>
-                <FormItem name="customName" label="客户名称">
-                  <Input disabled/>
-                </FormItem>
-                <FormItem name="name" label="姓名">
-                  <Input disabled/>
-                </FormItem>
-                <FormItem name="level" label="级别">
-                  <Select disabled>
-                    <Option value={0}>组员</Option>
-                    <Option value={1}>组长</Option>
-                  </Select>
-                </FormItem>
-                <FormItem name="dapName" label="所属部门">
-                  <Input disabled/>
-                </FormItem>
-                <FormItem name="workMoney" label="工资结构">
-                  <Space size={10}>
-                    {
-                      salaryAssInfo.workMoney &&  <Input style={{width: 330}} defaultValue={salaryAssInfo.workMoney}/>
-                    }
-                    <Input style={{width: 100}} value="1 天" disabled/>
-                  </Space>
-                </FormItem>
-                <FormItem name="days" label="实际天数">
-                   <Input placeholder="单位：天"/>
-                </FormItem>
-                <FormItem name="awardMoney" label="奖惩金额">
-                  <Space size={10}>
-                    <span style={{width: 80}}><PlusOutlined /></span>
-                    {
-                      salaryAssInfo.awardMoney && <Input style={{width: 330}} defaultValue={salaryAssInfo.awardMoney} placeholder="请输入奖励金额"/>
-                    }
-                  </Space>
-                </FormItem>
-                <FormItem name="punishMoney" label=" ">
-                  <Space size={10}>
-                    <span style={{width: 80}}> <MinusOutlined /></span>
-                    {
-                      salaryAssInfo.punishMoney && <Input style={{width: 330}} defaultValue={salaryAssInfo.punishMoney} placeholder="请输入惩罚金额"/>
-                    }
-                  </Space>
-                </FormItem>
-              </Col>
-              <Col span={12}>
-                <FormItem name="remarks" label="备注内容">
-                  <Input.TextArea style={{height: 350}} placeholder="请输入备注内容"/>
-                </FormItem>
-              </Col>
-            </Row>
-            <Row gutter={24}>
-              <Col span={24}>
-                <FormItem wrapperCol={{span: 24,offset: 12}}>
-                  <Space size={15}>
-                    <Button type="primary" htmlType="submit">确定</Button>
-                    <Button onClick={() => {history.go(-1)}}>取消</Button>
-                  </Space>
-                </FormItem>
-              </Col>
-            </Row>
+              {...layoutForm}
+              onFinish={this.handleSubmit}
+              ref='resForm'
+              colon={false}
+            >
+               {
+                 salaryAssInfo.id && <>
+                   <Row gutter={24}>
+                     <Col span={12}>
+                       <FormItem name="orderNo" label="订单号" >
+                         <Input disabled/>
+                       </FormItem>
+                       <FormItem name="customName" label="客户名称">
+                         <Input disabled/>
+                       </FormItem>
+                       <FormItem name="name" label="姓名">
+                         <Input disabled/>
+                       </FormItem>
+                       <FormItem name="level" label="级别">
+                         <Select disabled>
+                           <Option value={0}>组员</Option>
+                           <Option value={1}>组长</Option>
+                         </Select>
+                       </FormItem>
+                       <FormItem name="dapName" label="所属部门">
+                         <Input disabled/>
+                       </FormItem>
+                       <FormItem name="workMoney" label="工资结构">
+                         <Space size={10}>
+                           <Input style={{width: 330}} defaultValue={salaryAssInfo.workMoney}/>
+                           <Input style={{width: 100}} value="1 天" disabled/>
+                         </Space>
+                       </FormItem>
+
+                       <FormItem name="days" label="实际天数">
+                         <Input placeholder="单位：天"/>
+                       </FormItem>
+                       <FormItem name="awardMoney" label="奖惩金额">
+                         <Space size={10}>
+                           <span style={{width: 80}}><PlusOutlined /></span>
+                           <Input style={{width: 330}} defaultValue={salaryAssInfo.awardMoney} placeholder="请输入奖励金额"/>
+                         </Space>
+                       </FormItem>
+                       <FormItem name="punishMoney" label=" ">
+                         <Space size={10}>
+                           <span style={{width: 80}}> <MinusOutlined /></span>
+                           <Input style={{width: 330}} defaultValue={salaryAssInfo.punishMoney} placeholder="请输入惩罚金额"/>
+                         </Space>
+                       </FormItem>
+                     </Col>
+                     <Col span={12}>
+                       <FormItem name="remarks" label="备注内容">
+                         <Input.TextArea style={{height: 350}} placeholder="请输入备注内容"/>
+                       </FormItem>
+                     </Col>
+                   </Row>
+                   <Row gutter={24}>
+                     <Col span={24}>
+                       <FormItem wrapperCol={{span: 24,offset: 12}}>
+                         <Space size={15}>
+                           <Button type="primary" htmlType="submit">确定</Button>
+                           <Button onClick={() => {history.go(-1)}}>取消</Button>
+                         </Space>
+                       </FormItem>
+                     </Col>
+                   </Row>
+                 </> || <>
+                   <Row gutter={24}>
+                     <Col span={12}>
+                       <FormItem name="orderNo" label="订单号" >
+                         <Input disabled/>
+                       </FormItem>
+                       <FormItem name="customName" label="客户名称">
+                         <Input disabled/>
+                       </FormItem>
+                       <FormItem name="name" label="姓名">
+                         <Input disabled/>
+                       </FormItem>
+                       <FormItem name="level" label="级别">
+                         <Select disabled>
+                           <Option value={0}>组员</Option>
+                           <Option value={1}>组长</Option>
+                         </Select>
+                       </FormItem>
+                       <FormItem name="dapName" label="所属部门">
+                         <Input disabled/>
+                       </FormItem>
+                       <FormItem name="workMoney" label="工资结构">
+                         <Space size={10}>
+                           <Input style={{width: 330}} value={salaryAssInfo.workMoney}/>
+                           <Input style={{width: 100}} value="1 天" disabled/>
+                         </Space>
+                       </FormItem>
+
+                       <FormItem name="days" label="实际天数">
+                         <Input placeholder="单位：天"/>
+                       </FormItem>
+                       <FormItem name="awardMoney" label="奖惩金额">
+                         <Space size={10}>
+                           <span style={{width: 80}}><PlusOutlined /></span>
+                           <Input style={{width: 330}}/>
+                         </Space>
+                       </FormItem>
+                       <FormItem name="punishMoney" label=" ">
+                         <Space size={10}>
+                           <span style={{width: 80}}> <MinusOutlined /></span>
+                           <Input style={{width: 330}}/>
+                         </Space>
+                       </FormItem>
+                     </Col>
+                     <Col span={12}>
+                       <FormItem name="remarks" label="备注内容">
+                         <Input.TextArea style={{height: 350}} placeholder="请输入备注内容"/>
+                       </FormItem>
+                     </Col>
+                   </Row>
+                   <Row gutter={24}>
+                     <Col span={24}>
+                       <FormItem wrapperCol={{span: 24,offset: 12}}>
+                         <Space size={15}>
+                           <Button type="primary" htmlType="submit">确定</Button>
+                           <Button onClick={() => {history.go(-1)}}>取消</Button>
+                         </Space>
+                       </FormItem>
+                     </Col>
+                   </Row>
+                 </>
+               }
           </Form>
         </div>
       </div>

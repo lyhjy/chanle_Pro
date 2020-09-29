@@ -18,7 +18,7 @@ class AddCost extends React.Component{
       flag: 1,
       id: 0,
       costDetails: [],
-      type: [{title: '人工费',value: 1},{title: '器材及产地费',value: 2},{title: '餐费',value: 3},{title: '住宿费',value: 4},{title: '车费',value: 5},{title: '其他1',value: 6},{title: '其他2',value: 7},{title: '其他3',value: 8}]
+      type: [{title: '人工费',value: 1},{title: '器材及产地费',value: 2},{title: '餐费',value: 3},{title: '住宿费',value: 4},{title: '车费',value: 5},{title: '其他1',value: 6},{title: '其他2',value: 7},{title: '其他3',value: 8},{title: '税费 (10%)',value: 9}]
     }
   }
   componentDidMount(){

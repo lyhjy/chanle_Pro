@@ -1,7 +1,7 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import { Divider, message, Popconfirm } from "antd";
+import {Divider, message, notification, Popconfirm, Tooltip, Input } from "antd";
 import { connect } from "umi";
 
 class StaffProfile extends React.Component{
@@ -10,6 +10,7 @@ class StaffProfile extends React.Component{
     this.state = {
       total: '',
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff710',
+      textareaValue: '',
       columns: [{
         title: '订单号',dataIndex: 'orderNo',key: 'orderNo',align: 'center',
       },{
@@ -19,11 +20,11 @@ class StaffProfile extends React.Component{
       },{
         title: '组员名称',dataIndex: 'dapName',key: 'dapName',align: 'center',hideInSearch: true
       },{
-        title: '工资结构',dataIndex: 'workMoney',key: 'workMoney',align: 'center',hideInSearch: true
+        title: '工资结构/元',dataIndex: 'workMoney',key: 'workMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
       },{
-        title: '奖惩金额',dataIndex: 'apMoney',key: 'apMoney',align: 'center',hideInSearch: true
+        title: '奖惩金额/元',dataIndex: 'apMoney',key: 'apMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
       },{
-        title: '工资总额',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true
+        title: '工资总额/元',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
       },{
         title: '领导审核',align: 'center',render: (_,recode) => (
           <a>查看</a>
@@ -43,15 +44,21 @@ class StaffProfile extends React.Component{
               </Popconfirm>
               <Divider type="vertical" />
               <Popconfirm
-                title="是否进行驳回"
+                title={
+                  <>
+                    <label>驳回备注 <span style={{color: 'red'}}>(备注需必填)</span></label>
+                    <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={this.changeRemaks}/>
+                  </>
+                }
                 placement="topRight"
                 cancelText="取消"
                 okText="确定"
+                style={{textAlign: 'center'}}
                 onConfirm={() => this.modifyTableData({id: recode.id,status: 2})}
               >
                 <a>驳回</a>
               </Popconfirm>
-            </> : recode.operatorStatus == 1 ? <span>已通过</span> : <span style={{color: 'red'}}>已驳回</span>}
+            </> : recode.operatorStatus == 1 ? <span>已通过</span> : <><Tooltip title={recode.rejectReason}><span style={{color: 'red'}}>已驳回</span></Tooltip></>}
 
           </>
         )
@@ -93,18 +100,31 @@ class StaffProfile extends React.Component{
     }
     return result;
   }
-
+  changeRemaks = (e) => {
+    this.setState({
+      textareaValue: e.target.value
+    })
+  }
   modifyTableData = async (params) => {
     const { dispatch } = this.props;
-    const { memberId } = this.state;
+    const { memberId , textareaValue} = this.state;
     const { status , id , remarks } = params;
+    if (status == 2){
+      if (!textareaValue){
+        notification.warning({
+          message: '操作提示',
+          description: '驳回内容必须进行填写!!!',
+        })
+        return;
+      }
+    }
     try {
       await dispatch({
         type: 'leadership/employeeSalaryCheck',
         payload: {
           id,
           status,
-          remarks,
+          remarks: textareaValue,
           memberId
         }
       }).then(() => {

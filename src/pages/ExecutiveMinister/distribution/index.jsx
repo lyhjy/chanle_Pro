@@ -31,11 +31,11 @@ class Distrbution extends React.Component{
       },{
         title: '实际天数', dataIndex: 'days', key: 'days', hideInSearch: true, align: 'center',
       },{
-        title: '工资结构', dataIndex: 'workMoney', key: 'workMoney', hideInSearch: true, align: 'center',
+        title: '工资结构/元', dataIndex: 'workMoney', key: 'workMoney', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
       },{
-        title: '奖惩金额', dataIndex: 'apMoney', key: 'apMoney', hideInSearch: true, align: 'center',
+        title: '奖惩金额/元', dataIndex: 'apMoney', key: 'apMoney', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
       },{
-        title: '工资总额',dataIndex: 'realMoney',key: 'realMoney',hideInSearch: true,align: 'center',
+        title: '工资总额/元',dataIndex: 'realMoney',key: 'realMoney',hideInSearch: true,align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
       },{
         title: '备注', dataIndex: 'remarks', key: 'remarks', hideInSearch: true, align: 'center',
       },{
@@ -96,6 +96,7 @@ class Distrbution extends React.Component{
       if (wagesList.records.length > 0){
         for (let k in wagesList.records){
           wagesList.records[k].realMoney = ((wagesList.records[k].days * wagesList.records[k].workMoney) + wagesList.records[k].apMoney);
+          wagesList.records[k].workMoney = wagesList.records[k].workMoney ? wagesList.records[k].workMoney : 0;
         }
         result.data = wagesList.records;
       }else{

@@ -8,6 +8,7 @@ class AddEmployee extends React.Component{
   constructor(props){
     super(props);
     this.state = {
+      memberId: '综合部',
       dropList: [],
       detailInfo: {},
       staffId: '',
@@ -48,9 +49,8 @@ class AddEmployee extends React.Component{
   }
 
   submitForm = async event => {
-    event.memberId = 'f1e92f22a3b549ada2b3d45d14a3ff70'; //默认
-
-
+    const { memberId } = this.state;
+    event.memberId = memberId; //默认
     const { dispatch } = this.props;
     const { staffId , dropList } = this.state;
     if (isNaN(event.sector)){

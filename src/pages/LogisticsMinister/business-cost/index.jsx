@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Divider, Form, message, Modal, Popconfirm} from 'antd';
+import {Divider, Form, message, Modal, Popconfirm, Input, notification, Tooltip} from 'antd';
 import { connect } from 'umi';
 import { queryTable , viewCost , checkStatus } from "./service";
 import DetailOption from "./components/DetailOption";
@@ -11,6 +11,7 @@ const BusinessCost = props => {
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const [createCost , handleCost] = useState({});
+  const [textareaValue, setTextareaValue] = useState('');
   const actionRef = useRef();
   const [row, setRow] = useState();
   const [selectedRowsState, setSelectedRows] = useState([]);
@@ -46,17 +47,15 @@ const BusinessCost = props => {
     },{
       title: '结束时间',dataIndex: 'orderEndTime',key: 'orderEndTime',hideInSearch: true,valueType: 'dateTime',align: 'center',
     },{
-      title: '人数',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',
+      title: '人数/人',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}人`}</span>
     },{
       title: '费用明细',align: 'center', hideInSearch: true,render: (_, record) => (
         <a onClick={() =>{handleUpdateModalVisible(true);setStepFormValues(record);view(record.id)}}>查看</a>
       )
     },{
-      title: '备注',dataIndex: 'rejectReason',key: 'rejectReason',valueType: 'textarea',hideInSearch: true,align: 'center',
+      title: '操作人',dataIndex: 'userName',key: 'userName',hideInSearch: true,align: 'center',
     },{
-      title: '操作人',dataIndex: 'operatorName',key: 'operatorName',hideInSearch: true,align: 'center',
-    },{
-      title: '操作时间',dataIndex: 'operatorTime',key: 'operatorTime',hideInSearch: true,valueType: 'dateTime',align: 'center',
+      title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',hideInSearch: true,valueType: 'dateTime',align: 'center',
     },{
       title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_, record) => (
         <>
@@ -72,15 +71,21 @@ const BusinessCost = props => {
             </Popconfirm>
               <Divider type="vertical" />
               <Popconfirm
-                title="是否进行驳回"
+                title={
+                  <>
+                    <label>驳回备注 <span style={{color: 'red'}}>(备注需必填)</span></label>
+                    <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={changeRemaks}/>
+                  </>
+                }
                 placement="topRight"
                 cancelText="取消"
                 okText="确定"
+                style={{textAlign: 'center'}}
                 onConfirm={() => modifyTableData(record.id,2)}
                 // onCancel={}
               >
                 <a>驳回</a>
-              </Popconfirm></> : record.auditStatus == 1 ? <span>已通过</span> : <span style={{color: 'red'}}>已驳回</span>
+              </Popconfirm></> : record.auditStatus == 1 ? <span>已通过</span> : <><Tooltip title="已驳回"><span style={{color: 'red'}}>已驳回</span></Tooltip></>
           }
         </>
       )
@@ -112,11 +117,21 @@ const BusinessCost = props => {
   }
 
   const modifyTableData = async (id,status) => {
+    if (status == 2){
+      if (!textareaValue){
+        notification.warning({
+          message: '操作提示',
+          description: '驳回内容必须进行填写!!!',
+        })
+        return;
+      }
+    }
     try {
       await checkStatus({
         id: id,
         status: status,
         memberId,
+        remarks: textareaValue
       }).then((res) => {
         if (res.code === 200){
           actionRef.current.reload();
@@ -128,6 +143,11 @@ const BusinessCost = props => {
       message.error('服务异常!')
     }
   }
+
+  const changeRemaks = e => {
+    setTextareaValue(e.target.value)
+  }
+
   const view = async id => {
     try {
       await viewCost({

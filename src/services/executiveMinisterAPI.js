@@ -58,7 +58,7 @@ export async function toLeader(params) {
 }
 //移除员工
 export async function removeEmployee(params) {
-  return request('/chanle/employee/assign/remove',{
+  return request(`${url}/employee/assign/remove`,{
     method: 'POST',
     params: params
   })
@@ -133,3 +133,5 @@ export async function exportBusinessSummaryList(params) {
     data: params
   })
 }
+
+

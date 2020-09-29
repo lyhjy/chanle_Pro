@@ -62,9 +62,6 @@ const InvoiceInfoModel = props => {
             </FormItem>
           </Col>
           <Col span={12}>
-            <FormItem name="unitPhone" label="单位电话">
-              <Input disabled={true}/>
-            </FormItem>
             <FormItem name="unitAddress" label="单位地址">
               <Input disabled={true}/>
             </FormItem>

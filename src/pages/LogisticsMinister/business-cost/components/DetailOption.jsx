@@ -15,40 +15,37 @@ const columns = [
   {
     title: '项目名称',dataIndex: 'feeType',key: 'feeType',align: 'center',render: (_,recode) => {
       switch (Number(_)) {
-        case 1: return <span>人工费</span>;
+        case 1: return <span>活动组织费</span>;
           break;
-        case 2: return <span>器材及产地费</span>;
+        case 2: return <span>餐费</span>;
           break;
-        case 3: return <span>餐费</span>;
+        case 3: return <span>住宿费</span>;
           break;
-        case 4: return <span>住宿费</span>;
+        case 4: return <span>车费</span>;
           break;
-        case 5: return <span>车费</span>;
+        case 5: return <span>其他1</span>;
           break;
-        case 6: return <span>其他1</span>
+        case 6: return <span>其他2</span>
           break;
-        case 7: return <span>其他2</span>
-          break;
-        case 8: return <span>其他3</span>
         default:
           return <spna>项目类型错误</spna>
       }
     }
   },
   {
-    title: '单价',dataIndex: 'price',key: 'price',align: 'center'
+    title: '单价/元', dataIndex: 'price', key: 'price', align: 'center', render: (_, recode) => <span>{`${_}元`}</span>
   },
   {
     title: '预计数量',dataIndex: 'expectNum',key: 'expectNum',align: 'center'
   },
   {
-    title: '预计金额',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center'
+    title: '预计金额/元',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
   },
   {
     title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
   },
   {
-    title: '实际金额',dataIndex: 'realMoney',key: 'realMoney',align: 'center'
+    title: '实际金额/元',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
   },
   {
     title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
@@ -95,7 +92,7 @@ const ChargeOption = props => {
   }
   return (
     <Modal
-      width={640}
+      width={740}
       bodyStyle={{
         padding: '32px 40px 48px',
       }}

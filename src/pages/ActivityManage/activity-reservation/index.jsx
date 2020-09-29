@@ -3,7 +3,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {message, Popconfirm} from 'antd'
 import { queryFactAppointmentManage , reportAuditing } from './service'
-import { Divider } from "antd";
+// import styles from './style.less'
+import { Divider , Input , notification , Tooltip } from "antd";
 
 class ActivityReservation extends React.Component{
   constructor(props){
@@ -11,6 +12,7 @@ class ActivityReservation extends React.Component{
     this.state = {
       pageSize: 10,
       pageNo: 1,
+      textareaValue: '',
       columns: [{
         title: '订单号',dataIndex: 'orderNo',key: 'orderNo',tip: '订单号是唯一的',hideInSearch: true,align: 'center'
       },{
@@ -24,7 +26,7 @@ class ActivityReservation extends React.Component{
       },{
         title: '单位',dataIndex: 'unit',key: 'unit',align: 'center',
       },{
-        title: '人数',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',
+        title: '人数/人',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}人`}</span>
       },{
         title: '联系人',dataIndex: 'contact',key: 'contact',hideInSearch: true,align: 'center',
       },{
@@ -57,17 +59,22 @@ class ActivityReservation extends React.Component{
                   </Popconfirm>
                   <Divider type="vertical"/>
                   <Popconfirm
-                    title="是否进行驳回"
+                    title={
+                      <>
+                        <label>驳回备注 <span style={{color: 'red'}}>(备注需必填)</span></label>
+                        <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={this.changeRemaks}/>
+                      </>
+                    }
                     placement="topRight"
                     cancelText="取消"
                     okText="确定"
+                    style={{textAlign: 'center'}}
                     onConfirm={() => this.modifyTableData(id,2,memberId)}
-
                     // onCancel={}
                   >
                     <a>驳回</a>
                   </Popconfirm>
-                </> : status == 1 ? <span>已通过</span> : <span style={{color: 'red'}}>已驳回</span>
+                </> : status == 1 ? <span>已通过</span> : <><Tooltip title={record.rejectReason}><span style={{color: 'red'}}>已驳回</span></Tooltip></>
               }
             </>
           )
@@ -100,17 +107,32 @@ class ActivityReservation extends React.Component{
     return result;
   }
 
+  changeRemaks = (e) => {
+    this.setState({
+      textareaValue: e.target.value
+    })
+  }
+
   modifyTableData = async (id,status) => {
-    const { pageSize , pageNo } = this.state;
+    const { pageSize , pageNo , textareaValue } = this.state;
+    if (status == 2){
+      if (!textareaValue){
+        notification.warning({
+          message: '操作提示',
+          description: '驳回内容必须进行填写!!!',
+        })
+        return;
+      }
+    }
     try {
       await reportAuditing({
         id: id,
         status: status,
-        memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78'
+        memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
+        remarks: textareaValue
       }).then((res) => {
         if (res.code === 200){
           this.ref.reload();
-          // this.initTableData({pageNo,pageSize});
         }
       })
     }catch (e) {

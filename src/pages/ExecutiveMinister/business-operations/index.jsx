@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Button, Divider, message, Modal, Popconfirm, Table} from "antd";
+import {Button, Divider, message, Modal, notification, Popconfirm, Table, Tooltip , Input } from "antd";
 import { queryBusinessList , costReview , costDetailed } from './service';
 import styles from "../../ActivityManage/business-config/style.less";
 class BusinessOperations extends React.Component{
@@ -12,6 +12,7 @@ class BusinessOperations extends React.Component{
       memberId: '执行部长',
       total: 0,
       costVisible: false,
+      textareaValue: '',
       costList: [],
       columns: [
         {
@@ -19,9 +20,14 @@ class BusinessOperations extends React.Component{
         },{
           title: '订单号',dataIndex: 'order_no',key: 'order_no',align: 'center',
         },{
-          title: '出团日期',dataIndex: 'orderTime',key: 'orderTime',hideInSearch: true,align: 'center',
-        },{
-          title: '人数',dataIndex: 'person_num',key: 'person_num',hideInSearch: true,align: 'center',
+          title: '出团日期',dataIndex: 'orderTime',key: 'orderTime',valueType: 'dateTimeRange',hideInSearch: true,align: 'center',
+        }, {
+          title: '人数/人',
+          dataIndex: 'person_num',
+          key: 'person_num',
+          hideInSearch: true,
+          align: 'center',
+          render: (_,recode) => <span>{`${_}人`}</span>
         },{
           title: '联系人',dataIndex: 'contact',key: 'contact',align: 'center',
         },{
@@ -33,9 +39,9 @@ class BusinessOperations extends React.Component{
             </>
           )
         },{
-          title: '操作人',dataIndex: 'review_name',key: 'review_name',hideInSearch: true,align: 'center',
+          title: '操作人',dataIndex: 'userName',key: 'userName',hideInSearch: true,align: 'center',
         },{
-          title: '操作时间',dataIndex: 'review_time',key: 'review_time',valueType: 'dateTime',hideInSearch: true,align: 'center',
+          title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',valueType: 'dateTime',hideInSearch: true,align: 'center',
         },{
           title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_,recode) => (
             <>
@@ -53,16 +59,22 @@ class BusinessOperations extends React.Component{
                   </Popconfirm>
                   <Divider type="vertical" />
                   <Popconfirm
-                    title="是否进行驳回"
+                    title={
+                      <>
+                        <label>驳回备注 <span style={{color: 'red'}}>(备注需必填)</span></label>
+                        <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={this.changeRemaks}/>
+                      </>
+                    }
                     placement="topRight"
                     cancelText="取消"
                     okText="确定"
+                    style={{textAlign: 'center'}}
                     onConfirm={() => this.modifyTableData({orderNo: recode.order_no,reviewStatus: 2})}
                     // onCancel={}
                   >
                     <a>驳回</a>
                   </Popconfirm>
-                </> : recode.review_status == 1 ? <span>已通过</span> : <span style={{color: 'red'}}>已驳回</span>
+                </> : recode.review_status == 1 ? <span>已通过</span> : <><Tooltip title={recode.reviewOrigin}><span style={{color: 'red'}}>已驳回</span></Tooltip></>
               }
 
             </>
@@ -73,19 +85,19 @@ class BusinessOperations extends React.Component{
           title: '项目',dataIndex: 'costType',key: 'costType',align: 'center'
         },
         {
-          title: '单价',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center'
+          title: '单价/元',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center',render: (_,recode) => <span>{`${_}元`}</span>
         },
         {
           title: '预计数量',dataIndex: 'costQuantityExpected',key: 'costQuantityExpected',align: 'center'
         },
         {
-          title: '预计小计',dataIndex: 'costPriceExpected',key: 'costPriceExpected',align: 'center'
+          title: '预计小计/元',dataIndex: 'costPriceExpected',key: 'costPriceExpected',align: 'center',render: (_,recode) => <span>{`${_}元`}</span>
         },
         {
           title: '实际数量',dataIndex: 'costQuantityReal',key: 'costQuantityReal',align: 'center'
         },
         {
-          title: '实际小计',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center'
+          title: '实际小计/元',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center',render: (_,recode) => <span>{`${_}元`}</span>
         },
         {
           title: '备注',dataIndex: 'costRemarks',key: 'costRemarks',align: 'center'
@@ -116,13 +128,30 @@ class BusinessOperations extends React.Component{
     })
   }
 
+  changeRemaks = (e) => {
+    this.setState({
+      textareaValue: e.target.value
+    })
+  }
+
+
   modifyTableData = ({ orderNo , reviewStatus }) => {
-    const { memberId } = this.state;
+    const { memberId , textareaValue } = this.state;
+    if (reviewStatus == 2){
+      if (!textareaValue){
+        notification.warning({
+          message: '操作提示',
+          description: '驳回内容必须进行填写!!!',
+        })
+        return;
+      }
+    }
     try {
       costReview({
         memberId,
         orderNo,
-        reviewStatus
+        reviewStatus,
+        reviewOrigin: textareaValue
       }).then((res) => {
         if (res.code === 200){
           this.ref.reload();
@@ -149,6 +178,9 @@ class BusinessOperations extends React.Component{
         contact
       }).then((res) => {
         if (res.result.records.length > 0){
+          for (let i in res.result.records){
+            res.result.records[i].orderTime = [res.result.records[i].order_begin_time,res.result.records[i].order_end_time];
+          }
           result.data = res.result.records;
           this.setState({total: res.result.total})
         } else {

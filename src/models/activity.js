@@ -14,7 +14,8 @@ import {
   costCheck,
   getFeedbackId,
   missionAudit,
-  missionAssign
+  missionAssign,
+  operatorCheck
 } from '@/services/activityAPI';
 
 const activityModel = {
@@ -35,6 +36,8 @@ const activityModel = {
 
     missionAcdRes: {},
     assignRes: {},
+
+    operatorList: []
   },
   effects: {
     *missionList({ payload }, { call, put }) {
@@ -51,8 +54,8 @@ const activityModel = {
         payload: response,
       });
     },
-    *orderTypeList(_, { call, put }) {
-      const response = yield call(orderTypeList);
+    *orderTypeList({ payload }, { call, put }) {
+      const response = yield call(orderTypeList,payload);
       yield put({
         type: 'getOrderType',
         payload: response.result,
@@ -130,6 +133,13 @@ const activityModel = {
         payload: response,
       });
     },
+    *operatorCheck({ payload }, { call, put }) {
+      const response = yield call(operatorCheck,payload);
+      yield put({
+        type: 'operator',
+        payload: response.result,
+      });
+    },
   },
   reducers: {
     getMission (state, action) {
@@ -167,6 +177,9 @@ const activityModel = {
     },
     assign(state, action) {
       return { ...state, assignRes: action.payload };
+    },
+    operator(state, action) {
+      return { ...state, operatorList: action.payload };
     },
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Button, Divider, message, Modal, Popconfirm, Table} from "antd";
+import {Button, Divider, message, Modal, notification, Popconfirm, Table, Tooltip , Input } from "antd";
 import styles from "../../ActivityManage/business-config/style.less";
 import { connect } from "umi";
 
@@ -12,20 +12,21 @@ class ContractReview extends React.Component{
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff71',
       leadershipVisible: false,
       costList: [],
+      textareaValue: '',
       columns: [{
         title: '业务类型',dataIndex: 'orderType',key: 'orderType',align: 'center',
       },{
         title: '订单简写',dataIndex: 'orderJx',key: 'orderJx',align: 'center',
       },{
-        title: '提成比例',dataIndex: 'rate',key: 'rate',align: 'center',
+        title: '提成比例(%)',dataIndex: 'rate',key: 'rate',align: 'center',render: (_, recode) => <span>{`${ _ * 100}%`}</span>
       },{
         title: '审核状态',dataIndex: 'status',key: 'status',hideInSearch: true,align: 'center',render: (_,record) => {
           return (<a onClick={() => this.viewReview(record.id)}>查看</a>)
         },
       },{
-        title: '操作人',dataIndex: '',key: '',align: 'center',
+        title: '操作人',dataIndex: 'userName',key: 'userName',align: 'center',
       },{
-        title: '操作时间',dataIndex: '',key: '',align: 'center',
+        title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',align: 'center',
       },{
         title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_, record) => (
           <>
@@ -42,16 +43,22 @@ class ContractReview extends React.Component{
                 </Popconfirm>
                 <Divider type="vertical" />
                 <Popconfirm
-                  title="是否进行驳回"
+                  title={
+                    <>
+                      <label>驳回备注 <span style={{color: 'red'}}>(备注需必填)</span></label>
+                      <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={this.changeRemaks}/>
+                    </>
+                  }
                   placement="topRight"
                   cancelText="取消"
                   okText="确定"
+                  style={{textAlign: 'center'}}
                   onConfirm={() => this.modifyTableData(record.id,2)}
                   // onCancel={}
                 >
                   <a>驳回</a>
                 </Popconfirm>
-              </> : record.operatorStatus == 1 ? <span>已通过</span> : <span style={{color: 'red'}}>已驳回</span>
+              </> : record.operatorStatus == 1 ? <span>已通过</span> : <><Tooltip title="已驳回"><span style={{color: 'red'}}>已驳回</span></Tooltip></>
             }
 
           </>
@@ -90,9 +97,24 @@ class ContractReview extends React.Component{
     })
   }
 
+  changeRemaks = (e) => {
+    this.setState({
+      textareaValue: e.target.value
+    })
+  }
+
   modifyTableData = async (id,type) => {
     const { dispatch } = this.props;
-    const { memberId } = this.state;
+    const { memberId , textareaValue } = this.state;
+    if (type == 2){
+      if (!textareaValue){
+        notification.warning({
+          message: '操作提示',
+          description: '驳回内容必须进行填写!!!',
+        })
+        return;
+      }
+    }
     try {
       await dispatch({
         type: 'executiveMinister/businessCheck',

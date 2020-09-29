@@ -1,7 +1,7 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Divider, message, Popconfirm} from "antd";
+import {Divider, message, notification, Popconfirm, Tooltip , Input } from "antd";
 import {connect} from "umi";
 
 class BusinessCommission extends React.Component{
@@ -13,6 +13,7 @@ class BusinessCommission extends React.Component{
       total: '',
       memberId: '分管领导',
       id: '',
+      textareaValue: '',
       columns: [{
         title: '合同单号',dataIndex: 'contractId',key: 'contractId',align: 'center',
       },{
@@ -27,14 +28,14 @@ class BusinessCommission extends React.Component{
         },{
           title: '备注',dataIndex: 'remarks',key: 'remarks',hideInSearch: true,align: 'center',
         },{
-          title: '操作人',dataIndex: '',key: '',hideInSearch: true,align: 'center',
+          title: '操作人',dataIndex: 'reviewName',key: 'reviewName',hideInSearch: true,align: 'center',
         },{
-          title: '操作时间',dataIndex: 'updateTime',key: 'updateTime',hideInSearch: true,align: 'center',
+          title: '操作时间',dataIndex: 'reviewTime',key: 'reviewTime',hideInSearch: true,align: 'center',
         }, {
           title: '操作', dataIndex: 'option', valueType: 'option', align: 'center', render: (_, record) => (
             <>
               {
-                record.reviewStatus == 1 ? <span>已通过</span> : record.reviewStatus == 2 ? <span style={{color: 'red'}}>已驳回</span> : <>
+                record.reviewStatus == 1 ? <span>已通过</span> : record.reviewStatus == 2 ? <><Tooltip title="已驳回"><span style={{color: 'red'}}>已驳回</span></Tooltip></> : <>
                   <Popconfirm
                     title="是否进行通过"
                     placement="topRight"
@@ -46,10 +47,16 @@ class BusinessCommission extends React.Component{
                   </Popconfirm>
                   <Divider type="vertical" />
                   <Popconfirm
-                    title="是否进行驳回"
+                    title={
+                      <>
+                        <label>驳回备注 <span style={{color: 'red'}}>(备注需必填)</span></label>
+                        <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={this.changeRemaks}/>
+                      </>
+                    }
                     placement="topRight"
                     cancelText="取消"
                     okText="确定"
+                    style={{textAlign: 'center'}}
                     onConfirm={() => this.modifyTableData(record.id,2)}
                     // onCancel={}
                   >
@@ -66,8 +73,16 @@ class BusinessCommission extends React.Component{
 
   modifyTableData = async (id,type) => {
     const { dispatch } = this.props;
-    const { pageNo , pageSize , memberId } = this.state;
-    const hide = message.loading("正在操作中...");
+    const { pageNo , pageSize , memberId , textareaValue } = this.state;
+    if (type == 2){
+      if (!textareaValue){
+        notification.warning({
+          message: '操作提示',
+          description: '驳回内容必须进行填写!!!',
+        })
+        return;
+      }
+    }
     try {
       await dispatch({
         type: 'generalDepartment/contractReview',
@@ -75,12 +90,12 @@ class BusinessCommission extends React.Component{
           memberId,
           id: id,
           type: type,
+          remarks: textareaValue,
         }
       }).then(() => {
         const { generalDepartment } = this.props;
         const { reviewStatus } = generalDepartment;
         if (reviewStatus.code === 200){
-          hide();
           this.ref.reload();
         }
       })
@@ -120,6 +135,12 @@ class BusinessCommission extends React.Component{
       message.error('加载失败,请重试！！！');
     }
     return result;
+  }
+
+  changeRemaks = (e) => {
+    this.setState({
+      textareaValue: e.target.value
+    })
   }
 
   render() {

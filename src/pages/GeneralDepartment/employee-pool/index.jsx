@@ -21,7 +21,7 @@ class EmployeePool extends React.Component{
       },{
         title: '操作人',dataIndex: 'userName',key: 'userName',hideInSearch: true,align: 'center',
       },{
-        title: '操作时间',dataIndex: 'updateTime',key: 'updateTime',hideInSearch: true,align: 'center',
+        title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',hideInSearch: true,align: 'center',
       },{
         title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_,recode) => (<>
           <Link to={{pathname: '/GeneralDepartment/employee-pool/add',state: {staffId: recode.id}}}>编辑</Link>

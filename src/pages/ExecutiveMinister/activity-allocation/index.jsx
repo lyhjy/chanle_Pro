@@ -5,8 +5,11 @@ import ProTable from '@ant-design/pro-table';
 import {Button, Modal, Radio, Table , Popconfirm , Form , Input , DatePicker , Select , message } from 'antd';
 import { connect , history } from 'umi';
 const { RangePicker } = DatePicker;
-const { Option } = Select;
+
 import styles from "../../ActivityManage/business-config/style.less";
+import moment from "moment";
+const { Option } = Select;
+const FormItem = Form.Item;
 class ActivityAllocation extends React.Component{
   constructor(props){
     super(props);
@@ -14,39 +17,53 @@ class ActivityAllocation extends React.Component{
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
       costVisible: false,
       activityVisible: false,
+      basicInfoVisible: false,
+      strokeVisible: false,
+      foodVisible: false,
+      operatorVisible: false,
+      missionInfo: {},
       costList: [],
       employeesList: [],
       assignList: [],
       selectedRowKey: [],
       selectedLevel: [],
+      operatorList: [],
+      pageNo: 1,
+      pageSize: 5,
+      operatorTotal: 0,
+      id: '',
       columns: [{
-        title: '客户名称', dataIndex: 'customName', key: 'customName', align: 'center',
-      }, {
         title: '订单号', dataIndex: 'orderNo', key: 'orderNo', align: 'center',
       }, {
-        title: '出团日期', dataIndex: 'orderTime', key: 'orderTime', valueType: 'dateTimeRange', align: 'center',
-      }, {
-        title: '人数', dataIndex: 'personNum', key: 'personNum', hideInSearch: true,align: 'center',
-      }, {
+        title: '基本信息', align: 'center', render: (_, recode) => <a onClick={() => {
+          this.basicInfo(recode.cmlId,1)
+        }}>查看</a>
+      },{
         title: '联系人', dataIndex: 'contact', key: 'contact', hideInSearch: true, align: 'center',
       }, {
-        title: '联系方式', dataIndex: 'contactPhone', key: 'contactPhone', hideInSearch: true, align: 'center',
+        title: '联系电话', dataIndex: 'contactPhone', key: 'contactPhone', hideInSearch: true, align: 'center',
+      },{
+        title: '行程住宿安排',align: 'center',render: (_,recode) => <a onClick={() => this.basicInfo(recode.cmlId,2)}>查看</a>
+      },{
+        title: '餐饮安排',align: 'center',render: (_,recode) => <a onClick={() => this.basicInfo(recode.cmlId,3)}>查看</a>
+      },{
+        title: '场地使用',dataIndex: 'groundInfo',key: 'groundInfo',align: 'center',
+      },{
+        title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',
       }, {
-        title: '预计成本', dataIndex: 'expectCost', key: 'expectCost', hideInSearch: true, align: 'center',
-      }, {
-        title: '实际成本', dataIndex: 'realCost', key: 'realCost', hideInSearch: true, align: 'center',
-      }, {
-        title: '费用明细', dataIndex: '', key: '', hideInSearch: true, align: 'center', render: (_, recode) => (
+        title: '成本预算', hideInSearch: true, align: 'center', render: (_, recode) => (
           <>
-            <a onClick={() => {this.showCostDetail(recode.id)}}>查看</a>
+            <a onClick={() => {this.showCostDetail(recode.ccbId)}}>查看</a>
           </>
         )
-      }, {
-        title: '操作人', dataIndex: 'operatorName', key: 'operatorName', hideInSearch: true, align: 'center',
-      }, {
-        title: '操作时间', dataIndex: 'operatorTime', key: 'operatorTime', valueType: 'dateTime', hideInSearch: true,align: 'center'
       },{
-        title: '审核状态', dataIndex: 'auditStatus', key: 'auditStatus',hideInSearch: true, align: 'center',valueEnum: {
+        title: '操作人', dataIndex: 'userName', key: 'userName', hideInSearch: true, align: 'center',render: (_,recode) => {
+          return (<a onClick={() => this.viewOperator({id: recode.cmlId,type: 105})}>{_}</a>)
+        }
+      }, {
+        title: '操作时间', dataIndex: 'timeCreate', key: 'timeCreate', valueType: 'dateTime', hideInSearch: true,align: 'center'
+      },{
+        title: '成本审核', dataIndex: 'auditStatus', key: 'auditStatus',hideInSearch: true, align: 'center',valueEnum: {
           0: { text: '等待审核', status: 'Default'},
           1: { text: '通过', status: 'Processing'},
           2: { text: '未通过', status: 'Error' },
@@ -56,8 +73,8 @@ class ActivityAllocation extends React.Component{
         title: '操作', hideInSearch: true, align: 'center', render: (_, recode) => (
           <>
             {
-              recode.auditStatus == 1 ? <a onClick={() => this.assignExecution(recode.id)}>分配执行</a> : recode.auditStatus == 0 ? <span style={{color: '#999'}}>等待分配</span> :
-                <a onClick={() => history.push({pathname: '/ExecutiveMinister/cost-budget/add',state: {id: recode.id}})}>重新编辑</a>
+              recode.auditStatus == 1 ? <a onClick={() => this.assignExecution(recode.ccbId)}>分配执行</a> : recode.auditStatus == 0 ? <span style={{color: '#999'}}>等待分配</span> :
+                <a onClick={() => history.push({pathname: '/ExecutiveMinister/cost-budget/add',state: {id: recode.ccbId}})}>重新编辑</a>
             }
           </>
         )
@@ -81,28 +98,30 @@ class ActivityAllocation extends React.Component{
               case 7: return <span>其他2</span>
                 break;
               case 8: return <span>其他3</span>
+                break;
+              case 9: return <span>税费 (10%)</span>
               default:
                 return <spna>项目类型错误</spna>
             }
           }
         },
         {
-          title: '单价',dataIndex: 'price',key: 'price',align: 'center'
+          title: '单价/元',dataIndex: 'price',key: 'price',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
         },
         {
-          title: '预计数量',dataIndex: '',key: '',align: 'center'
+          title: '预计数量',dataIndex: 'expectNum',key: 'expectNum',align: 'center'
         },
         {
-          title: '预计小计',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center'
+          title: '预计金额/元',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
         },
         {
           title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
         },
         {
-          title: '实际小计',dataIndex: 'realMoney',key: 'realMoney',align: 'center'
+          title: '实际金额/元',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
         },
         {
-          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
+          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',
         }],
         activityColumns: [{
           title: '姓名', dataIndex: 'name', key: 'name', align: 'center'
@@ -130,22 +149,43 @@ class ActivityAllocation extends React.Component{
               </Popconfirm>
             </>
           )
-        }]
+        }],
+      operatorColumns: [{
+        title: '操作人',dataIndex: 'linkMemberName',key: 'linkMemberName',align: 'center'
+      },{
+        title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',align: 'center'
+      },{
+        title: '操作状态',dataIndex: 'logStatus',key: 'logStatus',align: 'center',render: (_,recode) => {
+          switch (_) {
+            case 1: return <span>添加</span>
+              break;
+            case 2: return <span>修改</span>
+              break;
+            case 3: return <span>删除</span>
+              break;
+            case 4: return <span>查看</span>
+              break;
+            case 5: return <span>通过审核</span>
+              break;
+            case 6: return <span>驳回审核</span>
+          }
+        }
+      }]
     }
   }
   del = ({ id }) => {
-    const { costId , memberId } = this.state;
+    const { costId , memberId , } = this.state;
     const { dispatch } = this.props;
     dispatch({
       type: 'executiveMinister/removeEmployee',
-      payload: { id }
+      payload: { id , memberId , costId }
     }).then(() =>{
       const { executiveMinister } = this.props;
       const { delEmpStatus } = executiveMinister;
       if (delEmpStatus.code === 200){
         this.initEmployees(costId, memberId);
       } else if (delEmpStatus.code === 201){
-        message.info(delEmpStatus.meg)
+        message.info(delEmpStatus.msg)
       } else {
         message.error("操作失败!")
       }
@@ -161,14 +201,46 @@ class ActivityAllocation extends React.Component{
     })
   }
 
+  viewOperator = ({ id , type , no }) => {
+    const { dispatch } = this.props;
+    const { memberId , pageSize , pageNo } = this.state;
+    dispatch({
+      type: 'activity/operatorCheck',
+      payload: {
+        id,
+        type,
+        memberId,
+        pageNo: no ? no : pageNo,
+        pageSize
+      }
+    }).then(() => {
+      const { activity } = this.props;
+      const { operatorList } = activity;
+      if (operatorList.records.length > 0){
+        this.setState({
+          operatorList: operatorList.records,
+          operatorTotal: operatorList.total
+        })
+      }else {
+        this.setState({
+          operatorList: []
+        })
+      }
+    })
+    this.setState({
+      operatorVisible: true,
+      id: id
+    })
+  }
+
   initEmployees = (id, memberId) => {
     const {dispatch} = this.props;
     dispatch({
       type: 'executiveMinister/assignOrderList',
       payload: {id: id, memberId: memberId}
     }).then(() => {
-      const {executiveMinister} = this.props;
-      const {assignList} = executiveMinister;
+      const { executiveMinister } = this.props;
+      const { assignList } = executiveMinister;
       if (assignList.result.length > 0) {
         let arr = [];
         for (let i in assignList.result){
@@ -178,7 +250,11 @@ class ActivityAllocation extends React.Component{
         }
         this.setState({
           assignList: assignList.result,
-          selectedLevel: arr
+          selectedRowKey: arr
+        })
+      }else {
+        this.setState({
+          assignList: []
         })
       }
     })
@@ -201,9 +277,15 @@ class ActivityAllocation extends React.Component{
   }
 
   onChangeActivity = (selectedRowKeys, selectedRows) => {
-    const { assignList, selectedRowKey} = this.state;
-    for (let k in assignList) {
+    const { assignList, selectedRowKey } = this.state;
+    for (var k in assignList) {
       if (selectedRows.length > 0) {
+        if (selectedRows[0].id != assignList[k].id){
+          //   assignList[k].level = 0;
+          //   return;
+          //   console.log(selectedRows[0].id,assignList[k].id)
+          assignList[k].level = 0;
+        }
         for (let j in selectedRows) {
           if (selectedRows[j].id === assignList[k].id) {
             assignList[k].level = 1;
@@ -228,7 +310,7 @@ class ActivityAllocation extends React.Component{
     const {dispatch} = this.props;
     dispatch({
       type: 'executiveMinister/addEmployees',
-      payload: {staffId: e, costId: costId}
+      payload: {staffId: e, costId: costId,memberId}
     }).then(() => {
       const {executiveMinister} = this.props;
       const {addEmpStatus} = executiveMinister;
@@ -275,18 +357,19 @@ class ActivityAllocation extends React.Component{
   }
 
   showCostDetail = id => {
-    const { memberId } = this.state;
+    const { memberId , costList } = this.state;
     const { dispatch } = this.props;
 
     dispatch({
       type: 'executiveMinister/checkFeeDetail',
-      payload: {id: id, memberId }
+      payload: {id: id, memberId , costList }
     }).then(() => {
       const { executiveMinister } = this.props;
       const { feeList } = executiveMinister;
-      if (feeList.result.length > 0) {
+      const { result } = feeList;
+      if (result.costDetails.length > 0) {
         this.setState({
-          costList: feeList.result
+          costList: result.costDetails
         })
       }
     })
@@ -300,15 +383,19 @@ class ActivityAllocation extends React.Component{
     this.setState({
       costVisible: false,
       activityVisible: false,
+      basicInfoVisible: false,
+      strokeVisible: false,
+      foodVisible: false,
+      operatorVisible: false,
     })
   }
 
   editConfig = () => {
-    const { leaderIds } = this.state;
+    const { leaderIds , memberId } = this.state;
     const { dispatch } = this.props;
     dispatch({
       type: 'executiveMinister/toLeader',
-      payload: {ids: leaderIds}
+      payload: {ids: leaderIds, memberId }
     })
     setTimeout(() => {
       this.setState({activityVisible: false})
@@ -317,13 +404,53 @@ class ActivityAllocation extends React.Component{
   configCostDetail = () => {
 
   }
+
+  basicInfo = async (id, target) => {
+    const {dispatch} = this.props;
+    const {memberId} = this.state;
+    switch (target) {
+      case 1:
+        this.setState({basicInfoVisible: true});
+        break;
+      case 2:
+        this.setState({strokeVisible: true});
+        break;
+      case 3:
+        this.setState({foodVisible: true});
+        break;
+    }
+    await dispatch({
+      type: 'activity/missionCheck',
+      payload: {id: id, memberId,type: 105}
+    }).then(() => {
+      const {activity} = this.props;
+      const {missionsList} = activity;
+      if (JSON.stringify(missionsList.result) != "{}") {
+        this.setState({
+          missionInfo: missionsList.result
+        })
+      }
+    })
+  }
+
+  handleTableChange = pagination => {
+    const { id } = this.state;
+    this.viewOperator({ id, type: 105,no: pagination});
+  }
+
   render(){
-    const { costVisible , costList , activityVisible , employeesList , assignList , selectedRowKey , selectedLevel , total } = this.state;
+    const { costVisible , costList , activityVisible , employeesList , assignList , selectedRowKey , selectedLevel , total , missionInfo , operatorVisible } = this.state;
     const rowSelection = {
-      selectedRowKeys: selectedRowKey.length > 0 ? selectedRowKey : selectedLevel,
+      selectedRowKeys: selectedRowKey,
+      selections: true,
       onChange: (selectedRowKeys, selectedRows) => this.onChangeActivity(selectedRowKeys, selectedRows),
       // getCheckboxProps: record => (console.log(selectedRowKeys)),
     }
+    const formLayout = {
+      labelCol: {span: 4},
+      wrapperCol: {span: 18}
+    }
+    const dateFormat = 'YYYY-MM-DD hh:mm:ss';
     return (
       <PageContainer content="用于对成本预算进行管理">
         <ProTable
@@ -341,6 +468,117 @@ class ActivityAllocation extends React.Component{
           }}
         >
         </ProTable>
+        <Modal
+          style={{textAlign: 'center'}}
+          width={600}
+          destroyOnClose
+          title="基本信息"
+          visible={this.state.basicInfoVisible}
+          onCancel={this.handleCancel}
+          footer={[
+            <div className={styles.tc}>
+              <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>取消</Button>
+              <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary"
+                      size="large" onClick={this.handleCancel}>确定</Button>
+            </div>
+          ]}
+        >
+          {
+            JSON.stringify(missionInfo) != "{}" &&
+            <Form
+              {...formLayout}
+              initialValues={missionInfo}
+            >
+              <FormItem name="customName" label="客户名称">
+                <Input disabled/>
+              </FormItem>
+              <FormItem name="" label="订单日期">
+                <RangePicker showTime
+                             defaultValue={[missionInfo ? moment(missionInfo.orderBeginTime, dateFormat): '', missionInfo ? moment(missionInfo.orderEndTime, dateFormat) : '']}
+                             disabled/>
+              </FormItem>
+              <FormItem name="personNum" label="人数">
+                <Input disabled/>
+              </FormItem>
+              <FormItem name="address" label="接团地点">
+                <Input disabled/>
+              </FormItem>
+              <FormItem name="teamLeader" label="带队教练">
+                <Input disabled/>
+              </FormItem>
+              <FormItem name="carInfo" label="车辆信息">
+                <Input disabled/>
+              </FormItem>
+              <FormItem name="strungInfo" label="横幅信息">
+                <Input disabled/>
+              </FormItem>
+            </Form>
+          }
+        </Modal>
+        <Modal
+          style={{textAlign: 'center'}}
+          width={600}
+          destroyOnClose
+          title="行程住宿安排"
+          visible={this.state.strokeVisible}
+          onCancel={this.handleCancel}
+          footer={[
+            <div className={styles.tc}>
+              <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>取消</Button>
+              <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary"
+                      size="large" onClick={this.handleCancel}>确定</Button>
+            </div>
+          ]}
+        >
+          {
+            JSON.stringify(missionInfo) != "{}" && <Form
+              {...formLayout}
+              initialValues={missionInfo}
+            >
+              <FormItem name="dailySchedule" label="行程安排">
+                <Input.TextArea style={{height: 200}} disabled/>
+              </FormItem>
+              <FormItem name="stayEat" label="住宿安排">
+                <Input.TextArea style={{height: 200}} disabled/>
+              </FormItem>
+            </Form>
+
+          }
+
+        </Modal>
+        <Modal
+          style={{textAlign: 'center'}}
+          width={600}
+          destroyOnClose
+          title="餐饮安排"
+          visible={this.state.foodVisible}
+          onCancel={this.handleCancel}
+          footer={[
+            <div className={styles.tc}>
+              <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>取消</Button>
+              <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary"
+                      size="large" onClick={this.handleCancel}>确定</Button>
+            </div>
+          ]}
+        >
+          {
+            missionInfo.eatArray && <Form
+              {...formLayout}
+              initialValues={missionInfo}
+            >
+              {
+                missionInfo.eatArray.map((item, index) => (
+                  <FormItem name="" label={`D${index+1}${(index+1) % 2 == 0 ? '晚餐' : '中餐'}`}>
+                    {
+                      <Input defaultValue={item} disabled/>
+                    }
+                  </FormItem>
+                ))
+              }
+            </Form>
+          }
+        </Modal>
+
         <Modal
           title="费用明细"
           style={{textAlign: 'center'}}
@@ -403,11 +641,33 @@ class ActivityAllocation extends React.Component{
             </Table>
           </div>
         </Modal>
+        <Modal title="操作历史"
+               style={{textAlign: 'center'}}
+               visible={operatorVisible}
+               width={900}
+               footer={[
+                 <div className={styles.tc}>
+                   <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>返回</Button>
+                   <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={this.handleCancel}>确定</Button>
+                 </div>
+               ]}
+               centered={true}
+               onCancel={
+                 this.handleCancel
+               }
+        >
+          <Table columns={this.state.operatorColumns} dataSource={this.state.operatorList} pagination={{
+            total: this.state.operatorTotal,
+            pageSize: this.state.pageSize,
+            onChange: this.handleTableChange
+          }} >
+          </Table>
+        </Modal>
       </PageContainer>
     )
   }
 }
 
-export default connect(({ executiveMinister }) => ({
-  executiveMinister
+export default connect(({ executiveMinister,activity }) => ({
+  executiveMinister,activity
 }))(ActivityAllocation);

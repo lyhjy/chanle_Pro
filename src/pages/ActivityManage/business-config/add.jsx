@@ -35,6 +35,7 @@ class BusinessConfig extends React.Component{
       const { activity } = this.props;
       const { comDetailInfo } = activity;
       if (JSON.stringify(comDetailInfo) != "{}"){
+        comDetailInfo.rate = comDetailInfo.rate * 100;
         this.refs.com.setFieldsValue(comDetailInfo)
         this.setState({info: comDetailInfo});
       }
@@ -46,12 +47,13 @@ class BusinessConfig extends React.Component{
     const { dispatch } = this.props;
     const { orderType , orderJx , rate } = params;
     const { id , operatorId } = this.state;
+    let num = Number(rate) / 100;
     dispatch({
       type: 'activity/addOrUpdateOrderType',
       payload: {
         orderType,
         orderJx,
-        rate,
+        rate: num,
         id,
         operatorId
       }
@@ -103,7 +105,7 @@ class BusinessConfig extends React.Component{
               <Input/>
             </FormItem>
             <FormItem
-              label="提成比例"
+              label="提成比例(%)"
               name="rate"
               rules={[
                 {

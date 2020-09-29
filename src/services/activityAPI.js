@@ -84,3 +84,9 @@ export async function missionAssign(params) {
     params: params
   })
 }
+export async function operatorCheck(params) {
+  return request(`${url}/show/review/operatorCheck`,{
+    method: 'GET',
+    params: params
+  })
+}

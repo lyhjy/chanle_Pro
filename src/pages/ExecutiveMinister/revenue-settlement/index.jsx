@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Button, Divider, Form, message, Modal, Popconfirm, Radio, Row, Table , Input } from "antd";
+import {Button, Divider, Form, message, Modal, Popconfirm, Radio, Row, Table, Input, Tooltip, notification} from "antd";
 import styles from "../../ActivityManage/business-config/style.less";
 import { connect } from "umi";
 const FormItem = Form.Item;
@@ -11,11 +11,12 @@ class RevenueSettlement extends React.Component{
   constructor(props) {
     super(props)
     this.state = {
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff79',
+      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
       costVisible: false,
       costList: [],
       feedbackVisible: false,
       info: {},
+      textareaValue: '',
       columns: [{
         title: '订单号',dataIndex: 'orderNo',key: 'orderNo',tip: '订单号是唯一的',align: 'center',
       },{
@@ -26,8 +27,13 @@ class RevenueSettlement extends React.Component{
         title: '联系电话',dataIndex: 'contactPhone',key: 'contactPhone',align: 'center'
       },{
         title: '出团日期',dataIndex: 'orderTime',key: 'orderTime', valueType: 'dateTimeRange',align: 'center'
-      },{
-        title: '人数',dataIndex: 'personNum',key: 'personNum',align: 'center',hideInSearch: true
+      }, {
+        title: '人数/人',
+        dataIndex: 'personNum',
+        key: 'personNum',
+        align: 'center',
+        hideInSearch: true,
+        render: (_, recode) => <span>{`${_}人`}</span>
       },{
         title: '费用明细',align: 'center',render: (_ , recode) => (
           <>
@@ -35,13 +41,13 @@ class RevenueSettlement extends React.Component{
           </>
         )
       },{
-        title: '预计营收',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center',hideInSearch: true
+        title: '预计营收',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
       },{
-        title: '实际营收',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true
+        title: '实际营收',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
       },{
         title: '反馈单',align: 'center',hideInSearch: true,render :(_,recode) => {
           return (
-            <a onClick={() => {this.viewFeedback({id: recode.id})}}>查看</a>
+            <a onClick={() => {this.viewFeedback({id: recode.feedBackId})}}>查看</a>
           )
         }
       },{
@@ -61,14 +67,20 @@ class RevenueSettlement extends React.Component{
                 </Popconfirm>
                   <Divider type="vertical" />
                   <Popconfirm
-                    title="是否进行驳回"
+                    title={
+                      <>
+                        <label>驳回备注 <span style={{color: 'red'}}>(备注需必填)</span></label>
+                        <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={this.changeRemaks}/>
+                      </>
+                    }
                     placement="topRight"
                     cancelText="取消"
                     okText="确定"
+                    style={{textAlign: 'center'}}
                     onConfirm={() => this.modifyTableData({id: record.id, status: 2})}
                   >
                     <a>驳回</a>
-                  </Popconfirm></> : code == 1 ? <span>已通过</span> : <span style={{color: 'red'}}>已驳回</span>
+                  </Popconfirm></> : code == 1 ? <span>已通过</span> : <><Tooltip title={record.rejectReason}><span style={{color: 'red'}}>已驳回</span></Tooltip></>
               }
 
             </>
@@ -79,40 +91,37 @@ class RevenueSettlement extends React.Component{
         {
           title: '项目',dataIndex: 'type',key: 'type',align: 'center',render: (_,recode) => {
             switch (Number(_)) {
-              case 1: return <span>人工费</span>;
+              case 1: return <span>活动组织费</span>;
                 break;
-              case 2: return <span>器材及产地费</span>;
+              case 2: return <span>餐费</span>;
                 break;
-              case 3: return <span>餐费</span>;
+              case 3: return <span>住宿费</span>;
                 break;
-              case 4: return <span>住宿费</span>;
+              case 4: return <span>车费</span>;
                 break;
-              case 5: return <span>车费</span>;
+              case 5: return <span>其他1</span>;
                 break;
-              case 6: return <span>其他1</span>
+              case 6: return <span>其他2</span>
                 break;
-              case 7: return <span>其他2</span>
-                break;
-              case 8: return <span>其他3</span>
               default:
                 return <spna>项目类型错误</spna>
             }
           }
         },
         {
-          title: '单价',dataIndex: 'price',key: 'price',align: 'center'
+          title: '单价/元',dataIndex: 'price',key: 'price',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
         },
         {
           title: '预计数量',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center'
         },
         {
-          title: '预计小计',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
+          title: '预计小计/元',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
         },
         {
           title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
         },
         {
-          title: '实际小计',dataIndex: 'realMoney',key: 'realMoney',align: 'center'
+          title: '实际小计/元',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
         },
         {
           title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
@@ -156,6 +165,12 @@ class RevenueSettlement extends React.Component{
     return result;
   }
 
+  changeRemaks = (e) => {
+    this.setState({
+      textareaValue: e.target.value
+    })
+  }
+
   showCostDetail = async id => {
     const { dispatch } = this.props;
     const { memberId } = this.state;
@@ -180,14 +195,24 @@ class RevenueSettlement extends React.Component{
   }
 
   modifyTableData = ({ id , status }) => {
-    const { memberId } = this.state;
+    const { memberId , textareaValue } = this.state;
     const { dispatch } = this.props;
+    if (status == 2){
+      if (!textareaValue){
+        notification.warning({
+          message: '操作提示',
+          description: '驳回内容必须进行填写!!!',
+        })
+        return;
+      }
+    }
     dispatch({
       type: 'activity/revenueStatementsReview',
       payload: {
         id,
         status,
-        memberId
+        memberId,
+        remarks: textareaValue
       }
     }).then(() => {
       const { activity } = this.props;

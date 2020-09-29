@@ -67,3 +67,17 @@ export async function gather(params) {
     params: params
   })
 }
+export async function crewCollect(params) {
+  return request(`${url}/mission/list/crew`,{
+    method: 'GET',
+    params: params
+  })
+}
+
+export async function detailCollect(params) {
+  return request(`${url}/mission/list/crew/detail`,{
+    method: 'GET',
+    params: params
+  })
+}
+
