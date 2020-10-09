@@ -23,11 +23,11 @@ class StaffProfile extends React.Component{
       },{
         title: '组员名称',dataIndex: 'dapName',key: 'dapName',align: 'center',hideInSearch: true
       },{
-        title: '工资结构/元',dataIndex: 'workMoney',key: 'workMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
+        title: '工资结构(元)',dataIndex: 'workMoney',key: 'workMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
       },{
-        title: '奖惩金额/元',dataIndex: 'apMoney',key: 'apMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
+        title: '奖惩金额(元)',dataIndex: 'apMoney',key: 'apMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
       },{
-        title: '工资总额/元',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
+        title: '工资总额(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
       },{
         title: '领导审核',align: 'center',render: (_,record) => {
           return (<a onClick={() => this.viewReview(record.id)}>查看</a>)
@@ -65,6 +65,17 @@ class StaffProfile extends React.Component{
 
           </>
         )
+      }],
+      modelColumns: [{
+        title: '职位',dataIndex: 'levelName',key: 'levelName',align: 'center'
+      },{
+        title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
+      },{
+        title: '状态',dataIndex: 'operatorStatus',key: 'operatorStatus',align: 'center',render: (_,record) => {
+          return (
+            _ == 1 ? <a>已通过</a> : <span style={{color: 'red'}}>未通过</span>
+          )
+        }
       }]
     }
   }
@@ -115,7 +126,7 @@ class StaffProfile extends React.Component{
     const { memberId } = this.state;
     dispatch({
       type: 'activity/costCheck',
-      payload: { id: id , memberId , type: 7 }
+      payload: { id: id , memberId , type: 8 }
     }).then(() => {
       const { activity } = this.props;
       const { costList } = activity;

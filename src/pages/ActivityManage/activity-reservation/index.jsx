@@ -26,7 +26,7 @@ class ActivityReservation extends React.Component{
       },{
         title: '单位',dataIndex: 'unit',key: 'unit',align: 'center',
       },{
-        title: '人数/人',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}人`}</span>
+        title: '人数',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}`}</span>
       },{
         title: '联系人',dataIndex: 'contact',key: 'contact',hideInSearch: true,align: 'center',
       },{

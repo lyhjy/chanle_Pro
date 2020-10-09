@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {Button, Divider, message, Modal, notification, Popconfirm, Table, Tooltip , Input } from "antd";
 import { connect } from "umi";
-import styles from "../business-config/style.less";
+import styles from "../../MarketingMinister/marketing-budget/style.less";
 class RevenueEstimate extends React.Component{
   constructor(props){
     super(props);
@@ -23,7 +23,7 @@ class RevenueEstimate extends React.Component{
       },{
         title: '出团日期',dataIndex: 'orderTime',key: 'orderTime', valueType: 'dateTimeRange', hideInSearch: true,align: 'center'
       },{
-        title: '人数/人',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}人`}</span>
+        title: '人数',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}`}</span>
       },{
         title: '费用明细',align: 'center',render : (_,recode) => {
           return (
@@ -31,7 +31,7 @@ class RevenueEstimate extends React.Component{
           )
         }}
       ,{
-        title: '预计营收',dataIndex: 'reserveMoney',key: 'reserveMoney',hideInSearch: true,align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+        title: '预计营收',dataIndex: 'reserveMoney',key: 'reserveMoney',hideInSearch: true,align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       },{
         title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_,recode) => {
           let code = recode.operatorStatus
@@ -91,16 +91,16 @@ class RevenueEstimate extends React.Component{
           }
         },
         {
-          title: '单价/元',dataIndex: 'price',key: 'price',align: 'center'
+          title: '单价(元)',dataIndex: 'price',key: 'price',align: 'center'
         },
         {
           title: '预计数量',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center'
         },
         {
-          title: '预计小计/元',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
+          title: '预计小计(元)',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
         },
         {
-          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
+          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
         }
       ]
     }

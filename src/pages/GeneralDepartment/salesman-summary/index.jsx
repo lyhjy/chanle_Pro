@@ -29,15 +29,15 @@ class SalesmanSummary extends React.Component{
       },{
         title: '业务人次',dataIndex: 'personNum',key: 'personNum',align: 'center',hideInSearch: true
       },{
-        title: '业务营收/元',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
+        title: '业务营收(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
       },{
         title: '回款日期',dataIndex: 'collectionDate',key: 'collectionDate',align: 'center',hideInSearch: true
       },{
-        title: '到账营收/元',dataIndex: 'finishMoney',key: 'finishMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
+        title: '到账营收(元)',dataIndex: 'finishMoney',key: 'finishMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
       },{
         title: '提成比例(%)',dataIndex: 'rate',key: 'rate',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_*100}%`}</span>
       },{
-        title: '提成合计/元',dataIndex: 'amount',key: 'amount',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
+        title: '提成合计(元)',dataIndex: 'amount',key: 'amount',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
       }],
       attendanceInfoList: [],
       selectData: []

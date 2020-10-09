@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {Form, Modal, Radio, Select, Table, Row, Col, Input, Button} from "antd";
-import styles from "../../../ActivityManage/business-config/style.less";
+import styles from "../../../MarketingMinister/marketing-budget/style.less"
 const FormItem = Form.Item;
 const { Option } = Select;
 const formLayout = {
@@ -16,22 +16,22 @@ const columns = [
     title: '项目名称',dataIndex: 'costType',key: 'costType',align: 'center',
   },
   {
-    title: '单价/元',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+    title: '单价(元)',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
   },
   {
     title: '预计数量',dataIndex: 'costQuantityExpected',key: 'costQuantityExpected',align: 'center'
   },
   {
-    title: '预计金额/元',dataIndex: 'costPriceExpected',key: 'costPriceExpected',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+    title: '预计金额(元)',dataIndex: 'costPriceExpected',key: 'costPriceExpected',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
   },
   {
     title: '实际数量',dataIndex: 'costQuantityReal',key: 'costQuantityReal',align: 'center'
   },
   {
-    title: '实际金额/元',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+    title: '实际金额(元)',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
   },
   {
-    title: '备注',dataIndex: 'costRemarks',key: 'costRemarks',align: 'center'
+    title: '备注',dataIndex: 'costRemarks',key: 'costRemarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
   }
 ]
 const ChargeOption = props => {
@@ -76,7 +76,7 @@ const ChargeOption = props => {
   }
   return (
     <Modal
-      width={740}
+      width={800}
       bodyStyle={{
         padding: '32px 40px 48px',
       }}

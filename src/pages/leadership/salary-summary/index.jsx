@@ -24,7 +24,7 @@ class SalarySummary extends React.Component{
       },{
         title: '业务人次', dataIndex: 'personNum', key: 'personNum', align: 'center', hideInSearch: true,
       },{
-        title: '业务营收', dataIndex: 'realMoney', key: 'realMoney', align: 'center', hideInSearch: true,
+        title: '业务营收(元)', dataIndex: 'realMoney', key: 'realMoney', align: 'center', hideInSearch: true,
       },{
         title: '带队组长', dataIndex: 'name', key: 'name', align: 'center', hideInSearch: true
       },{
@@ -61,9 +61,9 @@ class SalarySummary extends React.Component{
       },{
         title: '实际天数',dataIndex: 'days',key: 'days',align: 'center',
       },{
-        title: '奖惩金额',dataIndex: 'awardPunishMoney',key: 'awardPunishMoney',align: 'center',
+        title: '奖惩金额(元)',dataIndex: 'awardPunishMoney',key: 'awardPunishMoney',align: 'center',
       },{
-        title: '工资合计',dataIndex: 'totalWages',key: 'totalWages',align: 'center',
+        title: '工资合计(元)',dataIndex: 'totalWages',key: 'totalWages',align: 'center',
       }],
       attendanceInfoList: [],
       selectData: []

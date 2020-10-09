@@ -28,17 +28,17 @@ class BusinessSummary extends React.Component{
       }, {
         title: '业务时间', dataIndex: 'businessHours', key: 'businessHours', valueType: 'dateRange', align: 'center',
       }, {
-        title: '预计业务营收/元', dataIndex: 'reserveMoney', key: 'reserveMoney', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+        title: '预计业务营收(元)', dataIndex: 'reserveMoney', key: 'reserveMoney', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       }, {
-        title: '实际业务营收/元', dataIndex: 'realMoney', key: 'realMoney', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+        title: '实际业务营收(元)', dataIndex: 'realMoney', key: 'realMoney', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       }, {
-        title: '预计业务成本/元', dataIndex: 'expectCost', key: 'expectCost', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+        title: '预计业务成本(元)', dataIndex: 'expectCost', key: 'expectCost', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       }, {
-        title: '实际业务成本/元', dataIndex: 'realCost', key: 'realCost', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+        title: '实际业务成本(元)', dataIndex: 'realCost', key: 'realCost', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       }, {
-        title: '预计业务毛利(%)', dataIndex: 'rsRate', key: 'rsRate', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+        title: '预计业务毛利(%)', dataIndex: 'rsRate', key: 'rsRate', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       }, {
-        title: '实际业务毛利(%)', dataIndex: 'costRate', key: 'costRate', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+        title: '实际业务毛利(%)', dataIndex: 'costRate', key: 'costRate', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       }],
     }
   }

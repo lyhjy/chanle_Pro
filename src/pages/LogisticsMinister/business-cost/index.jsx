@@ -47,7 +47,7 @@ const BusinessCost = props => {
     },{
       title: '结束时间',dataIndex: 'orderEndTime',key: 'orderEndTime',hideInSearch: true,valueType: 'dateTime',align: 'center',
     },{
-      title: '人数/人',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}人`}</span>
+      title: '人数',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}`}</span>
     },{
       title: '费用明细',align: 'center', hideInSearch: true,render: (_, record) => (
         <a onClick={() =>{handleUpdateModalVisible(true);setStepFormValues(record);view(record.id)}}>查看</a>

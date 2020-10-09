@@ -28,7 +28,7 @@ const BusinessCost = props => {
     },{
       title: '出团日期',dataIndex: 'orderTime',key: 'orderTime',valueType: 'dateTimeRange',hideInSearch: true,align: 'center',
     },{
-      title: '人数/人',dataIndex: 'person_num',key: 'person_num',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}人`}</span>
+      title: '人数',dataIndex: 'person_num',key: 'person_num',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}`}</span>
     },{
       title: '联系人',dataIndex: 'contact',key: 'contact',align: 'center',
     },{

@@ -84,7 +84,7 @@ class CostBudget extends React.Component {
         title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',align: 'center'
       },{
         title: '操作状态',dataIndex: 'logStatus',key: 'logStatus',align: 'center',render: (_,recode) => {
-          switch (_) {
+          switch (Number(_)) {
             case 1: return <span>添加</span>
               break;
             case 2: return <span>修改</span>
@@ -96,6 +96,20 @@ class CostBudget extends React.Component {
             case 5: return <span>通过审核</span>
               break;
             case 6: return <span>驳回审核</span>
+              break;
+            case 7: return <span>查看详情</span>
+              break;
+            case 8: return <span>添加组员</span>
+              break;
+            case 9: return <span>移除组员</span>
+              break;
+            case 10: return <span>设置组长</span>
+              break;
+            case 11: return <span>移除组长</span>
+              break;
+            default:
+              return <span></span>
+              break;
           }
         }
       }]

@@ -3,6 +3,7 @@ import React from 'react';
 import { useIntl } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { setAuthority } from '@/utils/authority';
+import cookie from 'react-cookies';
 const { pwa } = defaultSettings; // if pwa is true
 console.log(pwa)
 if (pwa) {
@@ -17,7 +18,6 @@ if (pwa) {
 
   window.addEventListener('sw.updated', event => {
     const e = event;
-
     const reloadSW = async () => {
       // Check if there is sw whose state is waiting in ServiceWorkerRegistration
       // https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration
@@ -100,17 +100,37 @@ if (pwa) {
     });
   }
 }
+console.log(cookie.load("memberId"))
 setAuthority('a');
-// const auto = window.location.search.split('memberId')[1].substr(1);
-// switch (auto) {
-//   case '1111111':
-//     setAuthority('a');
-//     break;
-//   case '2222222':
-//     break;
-//   case '3333333':
-//     setAuthority('c')
-//       break;
-// }
+const auto = window.location.search.split('level')[1].substr(1);
+switch (auto) {
+  case '1':
+    setAuthority('a');
+    break;
+  case '2':
+    setAuthority('b')
+    break;
+  case '3':
+    setAuthority('c')
+      break;
+  case '4':
+    setAuthority('d')
+      break;
+  case '5':
+    setAuthority('e')
+      break;
+  case '6':
+    setAuthority('f')
+      break;
+  case '7':
+    setAuthority('g')
+      break;
+  case '8':
+    setAuthority('h')
+      break;
+  case '9':
+    setAuthority('j')
+       break;
+}
 
 

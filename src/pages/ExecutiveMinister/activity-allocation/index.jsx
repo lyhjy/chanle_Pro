@@ -6,7 +6,7 @@ import {Button, Modal, Radio, Table , Popconfirm , Form , Input , DatePicker , S
 import { connect , history } from 'umi';
 const { RangePicker } = DatePicker;
 
-import styles from "../../ActivityManage/business-config/style.less";
+import styles from "../../MarketingMinister/marketing-budget/style.less";
 import moment from "moment";
 const { Option } = Select;
 const FormItem = Form.Item;
@@ -106,22 +106,22 @@ class ActivityAllocation extends React.Component{
           }
         },
         {
-          title: '单价/元',dataIndex: 'price',key: 'price',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+          title: '单价(元)',dataIndex: 'price',key: 'price',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
         },
         {
           title: '预计数量',dataIndex: 'expectNum',key: 'expectNum',align: 'center'
         },
         {
-          title: '预计金额/元',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+          title: '预计金额(元)',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
         },
         {
           title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
         },
         {
-          title: '实际金额/元',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+          title: '实际金额(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
         },
         {
-          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',
+          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
         }],
         activityColumns: [{
           title: '姓名', dataIndex: 'name', key: 'name', align: 'center'
@@ -156,7 +156,7 @@ class ActivityAllocation extends React.Component{
         title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',align: 'center'
       },{
         title: '操作状态',dataIndex: 'logStatus',key: 'logStatus',align: 'center',render: (_,recode) => {
-          switch (_) {
+          switch (Number(_)) {
             case 1: return <span>添加</span>
               break;
             case 2: return <span>修改</span>
@@ -168,6 +168,20 @@ class ActivityAllocation extends React.Component{
             case 5: return <span>通过审核</span>
               break;
             case 6: return <span>驳回审核</span>
+              break;
+            case 7: return <span>查看详情</span>
+              break;
+            case 8: return <span>添加组员</span>
+              break;
+            case 9: return <span>移除组员</span>
+              break;
+            case 10: return <span>设置组长</span>
+              break;
+            case 11: return <span>移除组长</span>
+              break;
+            default:
+              return <span></span>
+              break;
           }
         }
       }]

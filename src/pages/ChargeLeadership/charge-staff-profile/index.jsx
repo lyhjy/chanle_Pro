@@ -1,8 +1,9 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Divider, message, notification, Popconfirm, Tooltip, Input } from "antd";
+import {Divider, message, notification, Popconfirm, Tooltip, Input, Button, Table, Modal} from "antd";
 import { connect } from "umi";
+import styles from "../../ActivityManage/business-config/style.less";
 
 class StaffProfile extends React.Component{
   constructor(props){
@@ -11,6 +12,8 @@ class StaffProfile extends React.Component{
       total: '',
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff710',
       textareaValue: '',
+      costList: [],
+      leadershipVisible: false,
       columns: [{
         title: '订单号',dataIndex: 'orderNo',key: 'orderNo',align: 'center',
       },{
@@ -20,15 +23,15 @@ class StaffProfile extends React.Component{
       },{
         title: '组员名称',dataIndex: 'dapName',key: 'dapName',align: 'center',hideInSearch: true
       },{
-        title: '工资结构/元',dataIndex: 'workMoney',key: 'workMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
+        title: '工资结构(元)',dataIndex: 'workMoney',key: 'workMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
       },{
-        title: '奖惩金额/元',dataIndex: 'apMoney',key: 'apMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
+        title: '奖惩金额(元)',dataIndex: 'apMoney',key: 'apMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
       },{
-        title: '工资总额/元',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}元`}</span>
+        title: '工资总额(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
       },{
-        title: '领导审核',align: 'center',render: (_,recode) => (
-          <a>查看</a>
-        )
+        title: '领导审核',align: 'center',render: (_,record) => {
+          return (<a onClick={() => this.viewReview(record.id)}>查看</a>)
+        },
       },{
         title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_,recode) => (
           <>
@@ -62,8 +65,38 @@ class StaffProfile extends React.Component{
 
           </>
         )
+      }],
+      modelColumns: [{
+        title: '职位',dataIndex: 'levelName',key: 'levelName',align: 'center'
+      },{
+        title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
+      },{
+        title: '状态',dataIndex: 'operatorStatus',key: 'operatorStatus',align: 'center',render: (_,record) => {
+          return (
+            _ == 1 ? <a>已通过</a> : <span style={{color: 'red'}}>未通过</span>
+          )
+        }
       }]
     }
+  }
+
+  viewReview = id => {
+    const { dispatch } = this.props;
+    const { memberId } = this.state;
+    dispatch({
+      type: 'activity/costCheck',
+      payload: { id: id , memberId , type: 8 }
+    }).then(() => {
+      const { activity } = this.props;
+      const { costList } = activity;
+      if (costList.result.length > 0){
+        this.setState({costList: costList.result})
+      }
+    })
+    this.setState({
+      leadershipVisible: true,
+      id: id,
+    })
   }
 
   initTableData = async (params) => {
@@ -140,7 +173,15 @@ class StaffProfile extends React.Component{
       message.error('操作异常!');
     }
   }
+
+  handleCancel = () => {
+    this.setState({
+      leadershipVisible: false
+    })
+  }
+
   render() {
+    const { leadershipVisible } = this.state;
     return (
       <PageContainer content="用于对员工工资进行管理">
         <ProTable
@@ -158,10 +199,28 @@ class StaffProfile extends React.Component{
           columns={this.state.columns}
         >
         </ProTable>
+        <Modal title="领导审核情况"
+               style={{textAlign: 'center'}}
+               visible={leadershipVisible}
+               width={900}
+               footer={[
+                 <div className={styles.tc}>
+                   <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>返回</Button>
+                   <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={this.handleCancel}>确定</Button>
+                 </div>
+               ]}
+               centered={true}
+               onCancel={
+                 this.handleCancel
+               }
+        >
+          <Table columns={this.state.modelColumns} dataSource={this.state.costList}>
+          </Table>
+        </Modal>
       </PageContainer>
     )
   }
 }
-export default connect(({ leadership }) => ({
-  leadership
+export default connect(({ leadership,activity }) => ({
+  leadership,activity
 }))(StaffProfile);

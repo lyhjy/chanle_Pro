@@ -58,7 +58,7 @@ class ContractReview extends React.Component{
                 >
                   <a>驳回</a>
                 </Popconfirm>
-              </> : record.operatorStatus == 1 ? <span>已通过</span> : <><Tooltip title="已驳回"><span style={{color: 'red'}}>已驳回</span></Tooltip></>
+              </> : record.operatorStatus == 1 ? <span>已通过</span> : <><Tooltip title={record.rejectReason}><span style={{color: 'red'}}>已驳回</span></Tooltip></>
             }
 
           </>

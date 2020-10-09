@@ -1,6 +1,6 @@
 import React, { useState , useEffect } from 'react';
 import {Button, Form, Modal, Radio, Select, Table} from "antd";
-import styles from "../../../ActivityManage/business-config/style.less";
+import styles from "../../../MarketingMinister/marketing-budget/style.less"
 const FormItem = Form.Item;
 const { Option } = Select;
 const formLayout = {
@@ -33,22 +33,22 @@ const columns = [
     }
   },
   {
-    title: '单价/元', dataIndex: 'price', key: 'price', align: 'center', render: (_, recode) => <span>{`${_}元`}</span>
+    title: '单价(元)', dataIndex: 'price', key: 'price', align: 'center', render: (_, recode) => <span>{`${_}`}</span>
   },
   {
     title: '预计数量',dataIndex: 'expectNum',key: 'expectNum',align: 'center'
   },
   {
-    title: '预计金额/元',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+    title: '预计金额(元)',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
   },
   {
     title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
   },
   {
-    title: '实际金额/元',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}元`}</span>
+    title: '实际金额(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
   },
   {
-    title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
+    title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
   }
 ]
 
@@ -92,7 +92,7 @@ const ChargeOption = props => {
   }
   return (
     <Modal
-      width={740}
+      width={800}
       bodyStyle={{
         padding: '32px 40px 48px',
       }}

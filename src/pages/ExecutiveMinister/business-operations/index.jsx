@@ -22,12 +22,12 @@ class BusinessOperations extends React.Component{
         },{
           title: '出团日期',dataIndex: 'orderTime',key: 'orderTime',valueType: 'dateTimeRange',hideInSearch: true,align: 'center',
         }, {
-          title: '人数/人',
+          title: '人数',
           dataIndex: 'person_num',
           key: 'person_num',
           hideInSearch: true,
           align: 'center',
-          render: (_,recode) => <span>{`${_}人`}</span>
+          render: (_,recode) => <span>{`${_}`}</span>
         },{
           title: '联系人',dataIndex: 'contact',key: 'contact',align: 'center',
         },{
@@ -85,19 +85,19 @@ class BusinessOperations extends React.Component{
           title: '项目',dataIndex: 'costType',key: 'costType',align: 'center'
         },
         {
-          title: '单价/元',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center',render: (_,recode) => <span>{`${_}元`}</span>
+          title: '单价(元)',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center',render: (_,recode) => <span>{`${_/100}`}</span>
         },
         {
           title: '预计数量',dataIndex: 'costQuantityExpected',key: 'costQuantityExpected',align: 'center'
         },
         {
-          title: '预计小计/元',dataIndex: 'costPriceExpected',key: 'costPriceExpected',align: 'center',render: (_,recode) => <span>{`${_}元`}</span>
+          title: '预计小计(元)',dataIndex: 'costPriceExpected',key: 'costPriceExpected',align: 'center',render: (_,recode) => <span>{`${_/100}`}</span>
         },
         {
           title: '实际数量',dataIndex: 'costQuantityReal',key: 'costQuantityReal',align: 'center'
         },
         {
-          title: '实际小计/元',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center',render: (_,recode) => <span>{`${_}元`}</span>
+          title: '实际小计(元)',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center',render: (_,recode) => <span>{`${_/100}`}</span>
         },
         {
           title: '备注',dataIndex: 'costRemarks',key: 'costRemarks',align: 'center'
