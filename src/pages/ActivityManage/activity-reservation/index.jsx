@@ -12,6 +12,7 @@ class ActivityReservation extends React.Component{
     this.state = {
       pageSize: 10,
       pageNo: 1,
+      total: 0,
       textareaValue: '',
       columns: [{
         title: '订单号',dataIndex: 'orderNo',key: 'orderNo',tip: '订单号是唯一的',hideInSearch: true,align: 'center'
@@ -99,7 +100,15 @@ class ActivityReservation extends React.Component{
         endTime: reserveTimeEnd,
         beginTime: reserveTimeBegin
       }).then((res) => {
-        result.data = res.result.records
+        this.setState({
+          total: res.result.total
+        })
+        if (res.result.records.length > 0){
+          result.data = res.result.records
+        } else {
+          result.data = [];
+        }
+
       })
     }catch (e) {
       message.error('加载失败,请重试！！！');
@@ -140,7 +149,7 @@ class ActivityReservation extends React.Component{
     }
   }
   render() {
-    const { columns } = this.state;
+    const { columns , total } = this.state;
     return (
       <PageContainer content="用于对活动预约进行管理">
         <ProTable
@@ -152,10 +161,11 @@ class ActivityReservation extends React.Component{
           actionRef={(ref) => (this.ref = ref)}
           request={( params ) => this.initTableData({ ...params })}
           pagination={{
-            pageSize: 10
+            pageSize: 10,
+            total
           }}
           columns={columns}
-          defaultData={[1]}
+          // defaultData={[1]}
         >
         </ProTable>
       </PageContainer>

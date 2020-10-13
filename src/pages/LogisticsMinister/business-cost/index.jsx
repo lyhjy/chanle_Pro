@@ -11,6 +11,7 @@ const BusinessCost = props => {
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const [createCost , handleCost] = useState({});
+  const [total, setTotal] = useState(0);
   const [textareaValue, setTextareaValue] = useState('');
   const actionRef = useRef();
   const [row, setRow] = useState();
@@ -104,6 +105,7 @@ const BusinessCost = props => {
         contact,
         contactPhone
       }).then((res) => {
+        setTotal(res.result.total);
         if (res.result.records.length > 0 ){
           result.data = res.result.records;
         } else {
@@ -171,7 +173,12 @@ const BusinessCost = props => {
         search={{
           labelWidth: 120,
         }}
+
         columns={columns}
+        pagination={{
+          pageSize: 10,
+          total
+        }}
         request={( params ) => initTableData({ ...params })}
       >
       </ProTable>

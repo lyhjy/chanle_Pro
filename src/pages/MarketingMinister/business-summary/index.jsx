@@ -75,7 +75,22 @@ class BusinessSummary extends React.Component{
   }
 
   allExport = (param) => {
-    const { attendanceInfoList , columns} = this.state;
+    const { attendanceInfoList , columns } = this.state;
+    // axios({
+    //   method: 'POST',
+    //   url: 'http://192.168.10.177:8082/mission/list/exportBusinessSummaryList',
+    //   responseType: 'blob',
+    //   data: {
+    //     memberId
+    //   }
+    // })
+    // const { dispatch } = this.props;
+    // dispatch({
+    //   type: 'executiveMinister/exportBusinessSummaryList',
+    //   payload: {
+    //     memberId
+    //   }
+    // })
 
     if (param.length > 0){
       ExcelUtil.exportExcel(columns, param ,"整体业务汇总表.xlsx")
@@ -105,7 +120,7 @@ class BusinessSummary extends React.Component{
       }>
         <ProTable
           headerTitle="查询表格"
-          rowKey="key"
+          rowKey="orderNo"
           search={{
             labelWidth: 120,
           }}
@@ -132,5 +147,6 @@ class BusinessSummary extends React.Component{
       </PageContainer>
     )
   }
+
 }
 export default connect(({executiveMinister}) => ({executiveMinister}))(BusinessSummary);

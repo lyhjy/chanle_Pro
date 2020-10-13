@@ -1,25 +1,31 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Divider, message, notification, Popconfirm, Tooltip , Input } from "antd";
+import {Divider, message, notification, Popconfirm, Tooltip, Input, Modal, Button, Table} from "antd";
 import { connect } from "umi";
+import styles from "../../MarketingMinister/marketing-budget/style.less";
 
 class ContractInitiation extends React.Component{
+
   constructor(props){
     super(props);
     this.state = {
       pageNo: 1,
       pageSize: 10,
+      total: '',
       memberId: '综合部',
       id: '',
       textareaValue: '',
+      operatorList: [],
+      operatorTotal: 0,
+      operatorVisible: false,
       columns: [{
         title: '合同单号',dataIndex: 'contractId',key: 'contractId',align: 'center',
       },{
         title: '客户名称',dataIndex: 'customName',key: 'customName',hideInSearch: true,align: 'center',
       }, {
-        title: '合同下载', dataIndex: 'contract', key: 'contract',hideInSearch: true, align: 'center', render: () => (
-          <a>下载查看</a>
+        title: '合同下载', dataIndex: 'annexUrl', key: 'annexUrl',hideInSearch: true, align: 'center', render: (_,recode) => (
+          <a href={`http://img.shanyangkj.com/img/test/%E4%B8%8B%E8%BD%BD%E6%B5%8B%E8%AF%95.xls`}>下载查看</a>
         )
       }
         ,{
@@ -27,10 +33,13 @@ class ContractInitiation extends React.Component{
         },{
           title: '备注',dataIndex: 'remarks',key: 'remarks',hideInSearch: true,align: 'center',
         },{
-          title: '操作人',dataIndex: 'reviewName',key: 'reviewName',hideInSearch: true,align: 'center',
-        },{
+          title: '操作人',dataIndex: 'reviewName',key: 'reviewName',hideInSearch: true,align: 'center',render: (_, record) => {
+            return (<a onClick={() => this.viewOperator({contractId: record.id})}>{_}</a>)
+          }
+        }
+        ,{
           title: '操作时间',dataIndex: 'reviewTime',key: 'reviewTime',hideInSearch: true,align: 'center',
-        }, {
+        },{
           title: '操作', dataIndex: 'option', valueType: 'option', align: 'center', render: (_, record) => (
             <>
               {
@@ -66,13 +75,30 @@ class ContractInitiation extends React.Component{
 
             </>
           )
-        }]
+        }],
+      operatorColumns: [{
+        title: '操作人',dataIndex: 'memberName',key: 'memberName',align: 'center'
+      },{
+        title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',align: 'center'
+      },{
+        title: '操作状态',dataIndex: 'reviewStatus',key: 'reviewStatus',align: 'center',render: (_,recode) => {
+          switch (Number(_)) {
+            case 1: return <span>已通过</span>
+              break;
+            case 2: return <span>驳回</span>
+              break;
+            default:
+              return <span></span>
+              break;
+          }
+        }
+      }]
     }
   }
 
   modifyTableData = async (id,type) => {
     const { dispatch } = this.props;
-    const { pageNo , pageSize , memberId , textareaValue } = this.state;
+    const { memberId , textareaValue } = this.state;
     if (type == 2){
       if (!textareaValue){
         notification.warning({
@@ -92,21 +118,53 @@ class ContractInitiation extends React.Component{
           remarks: textareaValue
         }
       }).then(() => {
-          const { generalDepartment } = this.props;
-          const { reviewStatus } = generalDepartment;
-          if (reviewStatus.code === 200){
-            this.initTableData({
-              pageNo,
-              pageSize,
-              memberId,
-              id: ''
-            });
-            this.ref.reload();
-          }
+        const { generalDepartment } = this.props;
+        const { reviewStatus } = generalDepartment;
+        if (reviewStatus.code === 200){
+          // this.initTableData({
+          //   pageNo,
+          //   pageSize,
+          //   memberId,
+          //   id: ''
+          // });
+          this.ref.reload();
+        }else {
+          message.error(reviewStatus.msg)
+        }
       })
     }catch (e) {
       message.error("操作异常!")
     }
+  }
+
+  viewOperator = ({ contractId , no }) => {
+    const { dispatch } = this.props;
+    const { memberId , pageSize , pageNo } = this.state;
+    dispatch({
+      type: 'generalDepartment/schedule',
+      payload: {
+        contractId,
+        memberId,
+        pageNo: no ? no : pageNo,
+        pageSize
+      }
+    }).then(() => {
+      const { generalDepartment } = this.props;
+      const { scheduleList } = generalDepartment;
+      if (scheduleList.result.length > 0){
+        this.setState({
+          operatorList: scheduleList.result
+        })
+      }else {
+        this.setState({
+          operatorList: []
+        })
+      }
+    })
+    this.setState({
+      operatorVisible: true,
+      id: contractId
+    })
   }
 
   changeRemaks = (e) => {
@@ -135,6 +193,9 @@ class ContractInitiation extends React.Component{
         const { contractList } = generalDepartment;
         if (contractList.records.length > 0 ) {
           result.data = contractList.records;
+          this.setState({
+            total: contractList.total
+          })
         }else {
           result.data = []
         }
@@ -145,7 +206,19 @@ class ContractInitiation extends React.Component{
     return result;
   }
 
+  handleTableChange = pagination => {
+    const { id } = this.state;
+    this.viewOperator({ id , no: pagination});
+  }
+
+  handleCancel = () => {
+    this.setState({
+      operatorVisible: false
+    })
+  }
+
   render() {
+    const { total , operatorVisible } = this.state;
     return (
       <PageContainer content="用于对合同发起进行管理">
         <ProTable
@@ -156,12 +229,35 @@ class ContractInitiation extends React.Component{
           }}
           actionRef={(ref) => (this.ref = ref)}
           pagination={{
-            pageSize: 10
+            pageSize: 10,
+            total: total
           }}
           request={(params, sorter, filter) => this.initTableData({ ...params })}
           columns={this.state.columns}
         >
         </ProTable>
+        <Modal title="操作历史"
+               style={{textAlign: 'center'}}
+               visible={operatorVisible}
+               width={900}
+               footer={[
+                 <div className={styles.tc}>
+                   <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>返回</Button>
+                   <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={this.handleCancel}>确定</Button>
+                 </div>
+               ]}
+               centered={true}
+               onCancel={
+                 this.handleCancel
+               }
+        >
+          <Table columns={this.state.operatorColumns} dataSource={this.state.operatorList} pagination={{
+            total: this.state.operatorTotal,
+            pageSize: this.state.pageSize,
+            onChange: this.handleTableChange
+          }} >
+          </Table>
+        </Modal>
       </PageContainer>
     )
   }

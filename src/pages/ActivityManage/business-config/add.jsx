@@ -2,7 +2,6 @@ import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import {connect, history} from 'umi';
 import { Form , message , Button , Input , Space } from 'antd';
-import ProTable from '@ant-design/pro-table';
 const FormItem = Form.Item;
 class BusinessConfig extends React.Component{
   constructor(props){

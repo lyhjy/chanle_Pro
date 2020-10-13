@@ -10,6 +10,7 @@ class RevenueEstimate extends React.Component{
     this.state = {
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
       costVisible: false,
+      total: 0,
       costList: [],
       textareaValue: '',
       columns: [{
@@ -127,6 +128,9 @@ class RevenueEstimate extends React.Component{
         const { activity } = this.props;
         const { reviewList } = activity;
         if (reviewList.records.length > 0) {
+          this.setState({
+            total: reviewList.total
+          })
           for (let i in reviewList.records){
             reviewList.records[i].orderTime = [reviewList.records[i].orderBeginTime,reviewList.records[i].orderEndTime];
           }
@@ -208,7 +212,7 @@ class RevenueEstimate extends React.Component{
   }
 
   render(){
-    const { columns , costVisible , costList } = this.state;
+    const { columns , costVisible , costList , total } = this.state;
     return (
       <PageContainer content="用于对成本预算单进行管理">
         <ProTable
@@ -220,7 +224,8 @@ class RevenueEstimate extends React.Component{
           actionRef={(ref) => (this.ref = ref)}
           request={( params ) => this.initTableData({ ...params })}
           pagination={{
-            pageSize: 10
+            pageSize: 10,
+            total
           }}
           columns={columns}
         >

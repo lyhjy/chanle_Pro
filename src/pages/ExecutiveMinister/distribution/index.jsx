@@ -11,6 +11,7 @@ class Distrbution extends React.Component{
     this.state = {
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
       reviewVisible: false,
+      total: 0,
       costList: [],
       columns: [{
         title: '订单号', dataIndex: 'orderNo', key: 'orderNo', align: 'center',
@@ -94,13 +95,16 @@ class Distrbution extends React.Component{
       const { executiveMinister } = this.props;
       const { wagesList } = executiveMinister;
       if (wagesList.records.length > 0){
+        this.setState({
+          total: wagesList.total
+        })
         for (let k in wagesList.records){
           wagesList.records[k].realMoney = ((wagesList.records[k].days * wagesList.records[k].workMoney) + wagesList.records[k].apMoney);
           wagesList.records[k].workMoney = wagesList.records[k].workMoney ? wagesList.records[k].workMoney : 0;
         }
         result.data = wagesList.records;
       }else{
-        result.data = wagesList
+        result.data = []
       }
     })
     return result
@@ -129,7 +133,7 @@ class Distrbution extends React.Component{
   }
 
   render(){
-    const { reviewVisible } = this.state;
+    const { reviewVisible , total } = this.state;
     return (
       <PageContainer content="用于对组员工资进行管理">
         <ProTable
@@ -140,7 +144,8 @@ class Distrbution extends React.Component{
           }}
           request={(params, sorter, filter) => this.initTableData({ ...params})}
           pagination={{
-            pageSize: 10
+            pageSize: 10,
+            total
           }}
           columns={this.state.columns}
         >

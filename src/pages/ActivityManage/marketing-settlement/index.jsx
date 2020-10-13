@@ -12,6 +12,7 @@ class MarketingSettlement extends React.Component{
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
       costVisible: false,
       costList: [],
+      total: 0,
       feedbackVisible: false,
       info: {},
       textareaValue: '',
@@ -149,6 +150,7 @@ class MarketingSettlement extends React.Component{
         const { activity } = this.props;
         const { reviewList } = activity;
         if (reviewList.records.length > 0) {
+          this.setState({total: reviewList.total})
           for (let i in reviewList.records){
             reviewList.records[i].orderTime = [reviewList.records[i].orderBeginTime,reviewList.records[i].orderEndTime];
           }
@@ -252,7 +254,7 @@ class MarketingSettlement extends React.Component{
   }
 
   render(){
-    const { columns , costVisible , costList , info , feedbackVisible } = this.state;
+    const { columns , costVisible , costList , info , feedbackVisible , total } = this.state;
     const formLayout = {
       labelCol: {span: 4},
       wrapperCol: {span: 18}
@@ -268,7 +270,8 @@ class MarketingSettlement extends React.Component{
           actionRef={(ref) => (this.ref = ref)}
           request={( params ) => this.initTableData({ ...params })}
           pagination={{
-            pageSize: 10
+            pageSize: 10,
+            total
           }}
           columns={columns}
         >

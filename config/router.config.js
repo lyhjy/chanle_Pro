@@ -27,7 +27,7 @@ export default [
             path: '/finance',
             name: 'finance',
             icon: 'dashboard',
-            authority: ['a'],
+            authority: ['j','a'],
             routes: [
               {
                 name: 'invoicing-application',
@@ -61,7 +61,7 @@ export default [
             path: '/LogisticsMinister',
             name: 'logistics-minister',
             icon: 'dashboard',
-            authority: ['a'],
+            authority: ['h','a'],
             routes: [
               {
                 name: 'business-cost',
@@ -81,7 +81,7 @@ export default [
             path: '/ActivityManage',
             name: 'activity-manage',
             icon: 'dashboard',
-            authority: ['a'],
+            authority: ['e','a'],
             routes: [
               {
                 name: 'activity-reservation',
@@ -116,6 +116,16 @@ export default [
                 icon: '',
                 path: '/ActivityManage/marketing-settlement',
                 component: './ActivityManage/marketing-settlement'
+              },
+              {
+                name: 'activity-type',
+                icon: '',
+                path: '/ActivityManage/activity-type',
+                component: './ActivityManage/activity-type'
+              },
+              {
+                path: '/ActivityManage/activity-type/add',
+                component: './ActivityManage/activity-type/add'
               }
             ]
           },
@@ -199,7 +209,7 @@ export default [
             path: '/MarketingMinister',
             name: 'marketing-minister',
             icon: 'dashboard',
-            authority: ['a'],
+            authority: ['d','a'],
             routes: [
               {
                 name: 'marketing-budget',
@@ -250,7 +260,7 @@ export default [
             path: '/ExecutiveMinister',
             name: 'executive-minister',
             icon: 'dashboard',
-            authority: ['a'],
+            authority: ['c','a'],
             routes: [
               {
                 name: 'activity-allocation',
@@ -308,7 +318,7 @@ export default [
             path: '/GeneralDepartment',
             name: 'general-department',
             icon: 'dashboard',
-            authority: ['a'],
+            authority: ['b','a'],
             routes: [
               {
                 name: 'contract-initiation',

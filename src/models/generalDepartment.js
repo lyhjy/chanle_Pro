@@ -27,6 +27,8 @@ const generalDepartmentModel = {
     gatherList: [],
     crewList: [],
     detailList: [],
+
+    scheduleList: []
   },
   effects: {
     *queryEmployeePoll({ payload }, { call, put }) {
@@ -98,7 +100,14 @@ const generalDepartmentModel = {
         type: 'detailCol',
         payload: response,
       });
-    }
+    },
+    *schedule({ payload }, { call, put }) {
+      const response = yield call(schedule, payload);
+      yield put({
+        type: 'scheduleRed',
+        payload: response,
+      });
+    },
   },
   reducers: {
     queryEP (state, action) {
@@ -127,6 +136,9 @@ const generalDepartmentModel = {
     },
     detailCol(state, action) {
       return { ...state, detailList: action.payload };
+    },
+    scheduleRed(state, action) {
+      return { ...state, scheduleList: action.payload };
     },
   }
 }

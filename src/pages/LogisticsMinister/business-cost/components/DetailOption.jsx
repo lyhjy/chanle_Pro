@@ -33,19 +33,19 @@ const columns = [
     }
   },
   {
-    title: '单价(元)', dataIndex: 'price', key: 'price', align: 'center', render: (_, recode) => <span>{`${_}`}</span>
+    title: '单价(元)', dataIndex: 'price', key: 'price', align: 'center', render: (_, recode) => <span>{`${_?_:0}`}</span>
   },
   {
     title: '预计数量',dataIndex: 'expectNum',key: 'expectNum',align: 'center'
   },
   {
-    title: '预计金额(元)',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
+    title: '预计金额(元)',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_?_:0}`}</span>
   },
   {
     title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
   },
   {
-    title: '实际金额(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
+    title: '实际金额(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_?_:0}`}</span>
   },
   {
     title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>

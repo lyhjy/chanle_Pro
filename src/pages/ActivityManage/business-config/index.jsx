@@ -55,7 +55,6 @@ class BushinessConfig extends React.Component{
                 <Divider type="vertical" />
               </> : record.status == 2 ? <span style={{color: 'red'}}>已驳回</span> : <span>待审核</span>
             }
-
             <>
               { record.status != 1 && <Divider type="vertical" /> }
               <Link to={{pathname: '/ActivityManage/business-config/add',state: {id: record.id}}}>编辑</Link>
@@ -140,7 +139,7 @@ class BushinessConfig extends React.Component{
     })
     this.setState({
       operatorVisible: true,
-      // id: id
+      id: id
     })
   }
 

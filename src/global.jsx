@@ -4,8 +4,8 @@ import { useIntl } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { setAuthority } from '@/utils/authority';
 import cookie from 'react-cookies';
+
 const { pwa } = defaultSettings; // if pwa is true
-console.log(pwa)
 if (pwa) {
   // Notify user if offline now
   window.addEventListener('sw.offline', () => {
@@ -100,37 +100,39 @@ if (pwa) {
     });
   }
 }
-console.log(cookie.load("memberId"))
 setAuthority('a');
-const auto = window.location.search.split('level')[1].substr(1);
-switch (auto) {
-  case '1':
-    setAuthority('a');
-    break;
-  case '2':
-    setAuthority('b')
-    break;
-  case '3':
-    setAuthority('c')
+if (window.location.search){
+  const auto = window.location.search.split('level')[1].substr(1);
+  switch (auto) {
+    case '1':
+      setAuthority('a');
       break;
-  case '4':
-    setAuthority('d')
+    case '2':
+      setAuthority('b')
       break;
-  case '5':
-    setAuthority('e')
+    case '3':
+      setAuthority('c')
       break;
-  case '6':
-    setAuthority('f')
+    case '4':
+      setAuthority('d')
       break;
-  case '7':
-    setAuthority('g')
+    case '5':
+      setAuthority('e')
       break;
-  case '8':
-    setAuthority('h')
+    // case '6':
+    //   setAuthority('f')
+    //   break;
+    // case '7':
+    //   setAuthority('g')
+    //   break;
+    case '8':
+      setAuthority('h')
       break;
-  case '9':
-    setAuthority('j')
-       break;
+    case '9':
+      setAuthority('j')
+      break;
+  }
 }
-
+global.memberId = cookie.load("memberId");
+console.log(memberId);
 

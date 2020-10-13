@@ -1,10 +1,12 @@
 import React from 'react';
+import XLSX from 'xlsx';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import { connect , history } from "umi";
 import { Button, Divider, Popconfirm } from "antd";
 import axios from "axios";
-import url from "../../../../config/path"
+import url from "../../../../config/path";
+import ExcelUtil from '../../../utils/excelUtil';
 class BusinessSummary extends React.Component{
 
   constructor(props){
@@ -76,15 +78,15 @@ class BusinessSummary extends React.Component{
   }
 
   allExport = (param) => {
-    const { attendanceInfoList , columns , memberId } = this.state;
-    axios({
-      method: 'POST',
-      url: 'http://192.168.10.177:8082/mission/list/exportBusinessSummaryList',
-      responseType: 'blob',
-      data: {
-        memberId
-      }
-    })
+    const { attendanceInfoList , columns } = this.state;
+    // axios({
+    //   method: 'POST',
+    //   url: 'http://192.168.10.177:8082/mission/list/exportBusinessSummaryList',
+    //   responseType: 'blob',
+    //   data: {
+    //     memberId
+    //   }
+    // })
     // const { dispatch } = this.props;
     // dispatch({
     //   type: 'executiveMinister/exportBusinessSummaryList',
@@ -93,11 +95,11 @@ class BusinessSummary extends React.Component{
     //   }
     // })
 
-    // if (param.length > 0){
-    //   ExcelUtil.exportExcel(columns, param ,"整体业务汇总表.xlsx")
-    // } else {
-    //   ExcelUtil.exportExcel(columns, attendanceInfoList ,"整体业务汇总表.xlsx")
-    // }
+    if (param.length > 0){
+      ExcelUtil.exportExcel(columns, param ,"整体业务汇总表.xlsx")
+    } else {
+      ExcelUtil.exportExcel(columns, attendanceInfoList ,"整体业务汇总表.xlsx")
+    }
   }
 
   changeRows = rows => {
@@ -121,7 +123,7 @@ class BusinessSummary extends React.Component{
       }>
         <ProTable
           headerTitle="查询表格"
-          rowKey="key"
+          rowKey="orderNo"
           search={{
             labelWidth: 120,
           }}
@@ -148,5 +150,6 @@ class BusinessSummary extends React.Component{
       </PageContainer>
     )
   }
+
 }
 export default connect(({executiveMinister}) => ({executiveMinister}))(BusinessSummary);
