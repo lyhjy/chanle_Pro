@@ -6,7 +6,7 @@ import routesConfig from './router.config';
 
 const { REACT_APP_ENV } = process.env;
 export default defineConfig({
-  // hash: true,
+  hash: true,
   history: {
     type: 'hash'
   },

@@ -20,3 +20,10 @@ export async function checkStatus(params) {
   })
 }
 
+export async function operatorCheck(params) {
+  return request(`${url}/show/review/operatorCheck`,{
+    method: 'GET',
+    params: params
+  })
+}
+

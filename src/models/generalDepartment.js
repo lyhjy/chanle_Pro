@@ -11,7 +11,9 @@ import {
   schedule,
   gather,
   crewCollect,
-  detailCollect
+  detailCollect,
+  queryGroup,
+  getMenu
 } from '@/services/generalDepartmentAPI';
 
 const generalDepartmentModel = {
@@ -28,7 +30,9 @@ const generalDepartmentModel = {
     crewList: [],
     detailList: [],
 
-    scheduleList: []
+    scheduleList: [],
+    groupList: [],
+    menuList: []
   },
   effects: {
     *queryEmployeePoll({ payload }, { call, put }) {
@@ -108,6 +112,20 @@ const generalDepartmentModel = {
         payload: response,
       });
     },
+    *queryGroup({ payload }, { call, put }) {
+      const response = yield call(queryGroup, payload);
+      yield put({
+        type: 'Quegroup',
+        payload: response,
+      });
+    },
+    *getMenu({ payload }, { call, put }) {
+      const response = yield call(getMenu, payload);
+      yield put({
+        type: 'menu',
+        payload: response,
+      });
+    },
   },
   reducers: {
     queryEP (state, action) {
@@ -139,6 +157,12 @@ const generalDepartmentModel = {
     },
     scheduleRed(state, action) {
       return { ...state, scheduleList: action.payload };
+    },
+    Quegroup(state, action) {
+      return { ...state, groupList: action.payload };
+    },
+    menu(state, action) {
+      return { ...state, menuList: action.payload };
     },
   }
 }

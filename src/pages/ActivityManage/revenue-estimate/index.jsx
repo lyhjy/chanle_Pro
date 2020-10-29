@@ -22,7 +22,7 @@ class RevenueEstimate extends React.Component{
       },{
         title: '联系电话',dataIndex: 'contactPhone',key: 'contactPhone',align: 'center'
       },{
-        title: '出团日期',dataIndex: 'orderTime',key: 'orderTime', valueType: 'dateTimeRange', hideInSearch: true,align: 'center'
+        title: '出团日期',dataIndex: 'orderTime',key: 'orderTime', valueType: 'dateTimeRange',align: 'center'
       },{
         title: '人数',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}`}</span>
       },{
@@ -32,7 +32,7 @@ class RevenueEstimate extends React.Component{
           )
         }}
       ,{
-        title: '预计营收',dataIndex: 'reserveMoney',key: 'reserveMoney',hideInSearch: true,align: 'center',render: (_, recode) => <span>{`${_}`}</span>
+        title: '预计营收(元)',dataIndex: 'reserveMoney',key: 'reserveMoney',hideInSearch: true,align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       },{
         title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_,recode) => {
           let code = recode.operatorStatus
@@ -108,7 +108,7 @@ class RevenueEstimate extends React.Component{
   }
 
   initTableData = async (params) => {
-    const { contact , contactPhone , orderNo , type , current , pageSize } = params;
+    const { contact , contactPhone , orderNo , type , current , pageSize , orderTime } = params;
     const { memberId } = this.state;
     const { dispatch } = this.props;
     let result = {};
@@ -122,7 +122,9 @@ class RevenueEstimate extends React.Component{
           contactPhone,
           orderNo,
           memberId,
-          type: 1
+          type: 1,
+          orderBeginTime: orderTime && orderTime[0],
+          orderEndTime: orderTime && orderTime[1]
         }
       }).then(() => {
         const { activity } = this.props;

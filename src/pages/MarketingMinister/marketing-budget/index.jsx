@@ -24,7 +24,7 @@ class MarketingDudget extends React.Component{
       },{
         title: '联系电话',dataIndex: 'contactPhone',key: 'contactPhone',align: 'center',
       },{
-        title: '出团日期',dataIndex: 'orderTime',key: 'orderTime', valueType: 'dateTimeRange', hideInSearch: true,align: 'center'
+        title: '出团日期',dataIndex: 'orderTime',key: 'orderTime', valueType: 'dateTimeRange',align: 'center'
       }, {
         title: '人数',
         dataIndex: 'personNum',
@@ -115,7 +115,7 @@ class MarketingDudget extends React.Component{
   }
 
   initTableData = async (params) => {
-    const { contact , contactPhone , orderNo , type , current , pageSize } = params;
+    const { contact , contactPhone , orderNo , type , current , pageSize , orderTime} = params;
     const { memberId } = this.state;
     const { dispatch } = this.props;
     let result = {};
@@ -129,7 +129,9 @@ class MarketingDudget extends React.Component{
           contactPhone,
           orderNo,
           memberId,
-          type: 1
+          type: 1,
+          orderBeginTime: orderTime && orderTime[0],
+          orderEndTime: orderTime && orderTime[1]
         }
       }).then(() => {
         const { activity } = this.props;

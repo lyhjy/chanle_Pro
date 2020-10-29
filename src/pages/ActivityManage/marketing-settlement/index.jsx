@@ -130,7 +130,7 @@ class MarketingSettlement extends React.Component{
   }
 
   initTableData = async (params) => {
-    const { contact , contactPhone , orderNo , type , current , pageSize } = params;
+    const { contact , contactPhone , orderNo , type , current , pageSize , orderTime } = params;
     const { memberId } = this.state;
     const { dispatch } = this.props;
     let result = {};
@@ -144,6 +144,8 @@ class MarketingSettlement extends React.Component{
           contactPhone,
           orderNo,
           memberId,
+          orderBeginTime: orderTime && orderTime[0],
+          orderEndTime: orderTime && orderTime[1],
           type: 2
         }
       }).then(() => {

@@ -3,12 +3,15 @@ import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {Divider, Form, message, Modal, Popconfirm, Input, notification, Tooltip} from 'antd';
 import { connect } from 'umi';
-import { queryTable , viewCost , checkStatus } from "./service";
+import { queryTable , viewCost , checkStatus , operatorCheck } from "./service";
 import DetailOption from "./components/DetailOption";
+import OperaHistoryModel from "../../finance/invoicing/components/OperaHistoryModel";
+
 const BusinessCost = props => {
   const { logisticsMinisterAction = {}, dispatch } = props;
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
+  const [ createOperaHistoryModalVisible, handleOperaHistoryVisible ] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const [createCost , handleCost] = useState({});
   const [total, setTotal] = useState(0);
@@ -16,13 +19,16 @@ const BusinessCost = props => {
   const actionRef = useRef();
   const [row, setRow] = useState();
   const [selectedRowsState, setSelectedRows] = useState([]);
-  const memberId = "f1e92f22a3b549ada2b3d45d14a3ff79";
+  const [operatorList, setOperatorList] = useState([]);
+  const [operatorTotal, setOperatorTotal ] = useState(0)
+  const [costInfo,setCostInfo] = useState({});
+  const memberId = "后勤部长";
   const getData = () => {
     dispatch({
       type: 'logisticsMinister/selectBusinessCost',
     })
   }
-
+  // const
   const columns = [
     {
       title: '订单号',
@@ -50,13 +56,13 @@ const BusinessCost = props => {
     },{
       title: '人数',dataIndex: 'personNum',key: 'personNum',hideInSearch: true,align: 'center',render: (_,recode) => <span>{`${_}`}</span>
     },{
-      title: '费用明细',align: 'center', hideInSearch: true,render: (_, record) => (
-        <a onClick={() =>{handleUpdateModalVisible(true);setStepFormValues(record);view(record.id)}}>查看</a>
+      title: '成本预算',align: 'center', hideInSearch: true,render: (_, record) => (
+        <a onClick={() =>{handleUpdateModalVisible(true);setStepFormValues(record);view(record)}}>查看</a>
       )
     },{
-      title: '操作人',dataIndex: 'userName',key: 'userName',hideInSearch: true,align: 'center',
+      title: '操作人',dataIndex: 'operatorName',key: 'operatorName',hideInSearch: true,align: 'center',render: (_,recode) => <a onClick={() =>viewOperator({id: recode.id,type: 104})}>{_}</a>
     },{
-      title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',hideInSearch: true,valueType: 'dateTime',align: 'center',
+      title: '操作时间',dataIndex: 'operatorTime',key: 'operatorTime',hideInSearch: true,valueType: 'dateTime',align: 'center',
     },{
       title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_, record) => (
         <>
@@ -103,7 +109,8 @@ const BusinessCost = props => {
         orderNo,
         pageNum: current,
         contact,
-        contactPhone
+        contactPhone,
+        memberId
       }).then((res) => {
         setTotal(res.result.total);
         if (res.result.records.length > 0 ){
@@ -150,18 +157,41 @@ const BusinessCost = props => {
     setTextareaValue(e.target.value)
   }
 
-  const view = async id => {
+  const view = async params => {
+    const { id , expectCost , realCost } = params;
     try {
       await viewCost({
-        id: id
+        id,
+        memberId
       }).then((res) => {
         if (res.result.length > 0){
-          handleCost(res.result)
+          handleCost(res.result);
+          setCostInfo({expectCost,realCost});
         }
       })
     }catch (e) {
       message.error("加载失败,请重试！！！")
     }
+  }
+
+  const viewOperator = ({ id , type }) => {
+    try {
+      operatorCheck({
+        id,
+        type,
+        memberId
+      }).then((res) => {
+        if (res.result.records.length > 0){
+          setOperatorTotal(res.result.total)
+          setOperatorList(res.result.records)
+        } else {
+          setOperatorList([]);
+        }
+      })
+    }catch (e) {
+      message.error("服务异常,请重试!")
+    }
+    handleOperaHistoryVisible(true)
   }
 
   return (
@@ -191,10 +221,11 @@ const BusinessCost = props => {
           updateModalVisible={updateModalVisible}
           values={stepFormValues}
           info={createCost}
+          costInfo={costInfo}
         >
         </DetailOption>
       }
-
+      <OperaHistoryModel onCancel={() => handleOperaHistoryVisible(false)} modalVisible={createOperaHistoryModalVisible} info={operatorList} total={operatorTotal}></OperaHistoryModel>
     </PageContainer>
   )
 }

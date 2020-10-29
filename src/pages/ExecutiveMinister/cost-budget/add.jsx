@@ -1,7 +1,6 @@
 import moment from 'moment';
 import React, {useState} from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import ProTable from '@ant-design/pro-table';
 import { Button , Radio, Form , Row , Col , Input , Space , DatePicker , message } from 'antd';
 import styles from '../activity-allocation/style.less';
 import {connect} from "umi";
@@ -17,6 +16,8 @@ class AddCost extends React.Component{
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
       flag: 1,
       id: 0,
+      expectCostTotal: 0,
+
       costDetails: [],
       type: [{title: '人工费',value: 1},{title: '器材及产地费',value: 2},{title: '餐费',value: 3},{title: '住宿费',value: 4},{title: '车费',value: 5},{title: '其他1',value: 6},{title: '其他2',value: 7},{title: '其他3',value: 8},{title: '税费 (10%)',value: 9}]
     }
@@ -59,6 +60,7 @@ class AddCost extends React.Component{
       }).then(() => {
         const { executiveMinister } = this.props;
         const { budgetInfo } = executiveMinister;
+
         if (budgetInfo){
           // this.setState({ revenueInfo : revenueInfo})
           // for (let k in budgetInfo.costDetails){
@@ -97,7 +99,7 @@ class AddCost extends React.Component{
   }
 
   onFinish = e => {
-    const { type , flag , costDetails , id } = this.state;
+    const { type , flag , costDetails , id , memberId } = this.state;
     const {contact, contactPhone, customName, orderNo, orderTime, personNum, expectCost, realCost, expectMoney, expectNum, price, realMoeny, realNum, remark} = e;
 
     const { dispatch } = this.props;
@@ -117,7 +119,8 @@ class AddCost extends React.Component{
       personNum,
       expectCost,
       realCost,
-      costDetails: deduplication
+      costDetails: deduplication,
+      memberId,
     };
     dispatch({
       type: 'executiveMinister/addOrUpdateCostBudget',
@@ -126,7 +129,7 @@ class AddCost extends React.Component{
     // costDetails: [{
     //         expectMoney, price, realMoeny, realNum, expectNum, remark, id: 0, feeType: 1
     //       }]
-    // console.log(data)
+    console.log(data)
   }
   switchType = (type) => {
     let obj = document.getElementById(`show${type}`)
@@ -189,6 +192,62 @@ class AddCost extends React.Component{
     // console.log(news);
     // this.state.costDetails.push(data)
   }
+
+  setStatePriceKey = (e, index) => {
+    const { expectCostTotal } = this.state;
+    const e_num = this.refs.formRef.getFieldValue(`expectNum${index+1}`);
+    const r_num = this.refs.formRef.getFieldValue(`realNum${index+1}`);
+    if (e_num > 0 ) {
+      let e_total = (e.target.value * e_num);
+      let increase = expectCostTotal ? ( expectCostTotal + e_total ): e_total;
+      this.refs.formRef.setFieldsValue({
+        [`expectMoney${index+1}`]: e_total,
+        expectCost: increase
+      })
+      this.setState({expectCostTotal: increase})
+    }else {
+
+    }
+    if (r_num) {
+      this.refs.formRef.setFieldsValue({
+        [`realMoney${index+1}`]: e.target.value * r_num
+      })
+    }
+
+  }
+
+  setStateExpectNumKey = (e, index) => {
+    const { expectCostTotal } = this.state;
+    const num = this.refs.formRef.getFieldValue(`price${index+1}`);
+    if (num > 0 ) {
+      let e_total = (e.target.value * num);
+      let increase = expectCostTotal ? ( expectCostTotal + e_total ) : e_total;
+      this.refs.formRef.setFieldsValue({
+        [`expectMoney${index+1}`]: e_total,
+        expectCost: increase
+      })
+      this.setState({expectCostTotal: increase})
+    }
+  }
+
+  setStateRealNumKey = (e, index) => {
+    const num = this.refs.formRef.getFieldValue(`price${index+1}`);
+    if (num > 0 ) {
+      this.refs.formRef.setFieldsValue({
+        [`realMoney${index+1}`]: e.target.value * num
+      })
+    }
+  }
+
+  // setStateExpectMoneyKey = (e, index) => {
+  //   const { expectCostTotal } = this.state;
+  //   const price = this.refs.formRef.getFieldValue(`expectMoney${index}`);
+  //   console.log(price)
+  //   // console.log(expectCostTotal)
+  //   this.refs.formRef.setFieldsValue({
+  //     expectCost: expectCostTotal
+  //   })
+  // }
 
   render(){
     const { flag , type } = this.state;
@@ -254,22 +313,30 @@ class AddCost extends React.Component{
                       <div>
                         <input type="hidden" name="id"/>
                       </div>
-                        <FormItem name={`price${index+1}`} label="单价" ref={(ref) => {console.log(ref)}}>
+                        <FormItem name={`price${index+1}`} label="单价" ref={(ref) => {console.log(ref)}}
+                          onChange={(e) => this.setStatePriceKey(e,index)}
+                        >
                           <Input/>
                         </FormItem>
-                        <FormItem name={`expectNum${index+1}`} label="预计数量">
+                        <FormItem name={`expectNum${index+1}`} label="预计数量"
+                          onChange={(e) => this.setStateExpectNumKey(e,index)}
+                        >
                           <Input/>
                         </FormItem>
-                        <FormItem name={`expectMoney${index+1}`} label="预计金额">
-                          <Input/>
+                        <FormItem name={`expectMoney${index+1}`} label="预计金额"
+                          onChange={(e) => this.setStateExpectMoneyKey(e,index)}
+                        >
+                          <Input disabled/>
                         </FormItem>
-                        <FormItem name={`realNum${index+1}`} label="实际数量">
-                          <Input/>
+                        <FormItem name={`realNum${index+1}`} label="实际数量"
+                          onChange={(e) => this.setStateRealNumKey(e,index)}
+                        >
+                          <Input />
                         </FormItem>
                         <FormItem name={`realMoney${index+1}`} label="实际金额">
-                          <Input/>
+                          <Input disabled/>
                         </FormItem>
-                        <FormItem name={`remarks${index+1}`} label="备注" >
+                        <FormItem name={`remarks${index+1}`} label="备注">
                           <Input.TextArea style={{height: 200}}/>
                         </FormItem>
                     </div>

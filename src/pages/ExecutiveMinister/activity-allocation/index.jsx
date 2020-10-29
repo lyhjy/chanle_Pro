@@ -1,11 +1,23 @@
 // 执行部长-成本预算
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import ProTable from '@ant-design/pro-table';
-import {Button, Modal, Radio, Table , Popconfirm , Form , Input , DatePicker , Select , message } from 'antd';
+import ProTable,{ TableDropdown } from '@ant-design/pro-table';
+import {
+  Button,
+  Modal,
+  Radio,
+  Table,
+  Popconfirm,
+  Form,
+  Input,
+  DatePicker,
+  Select,
+  message,
+  Divider,
+  notification
+} from 'antd';
 import { connect , history } from 'umi';
 const { RangePicker } = DatePicker;
-
 import styles from "../../MarketingMinister/marketing-budget/style.less";
 import moment from "moment";
 const { Option } = Select;
@@ -28,56 +40,92 @@ class ActivityAllocation extends React.Component{
       selectedRowKey: [],
       selectedLevel: [],
       operatorList: [],
+      textareaValue: '',
       pageNo: 1,
       pageSize: 5,
       operatorTotal: 0,
       id: '',
       columns: [{
-        title: '订单号', dataIndex: 'orderNo', key: 'orderNo', align: 'center',
+        title: '订单号', dataIndex: 'orderNo', key: 'orderNo',width: 100, align: 'center',
       }, {
-        title: '基本信息', align: 'center', render: (_, recode) => <a onClick={() => {
+        title: '基本信息', align: 'center', width: 100,render: (_, recode) => <a onClick={() => {
           this.basicInfo(recode.cmlId,1)
         }}>查看</a>
       },{
-        title: '联系人', dataIndex: 'contact', key: 'contact', hideInSearch: true, align: 'center',
+        title: '联系人', dataIndex: 'contact', key: 'contact',width: 100, align: 'center',
       }, {
-        title: '联系电话', dataIndex: 'contactPhone', key: 'contactPhone', hideInSearch: true, align: 'center',
+        title: '联系电话', dataIndex: 'contactPhone', key: 'contactPhone',width: 100, align: 'center',
       },{
-        title: '行程住宿安排',align: 'center',render: (_,recode) => <a onClick={() => this.basicInfo(recode.cmlId,2)}>查看</a>
+        title: '行程住宿安排',width: 100,align: 'center',render: (_,recode) => <a onClick={() => this.basicInfo(recode.cmlId,2)}>查看</a>
       },{
-        title: '餐饮安排',align: 'center',render: (_,recode) => <a onClick={() => this.basicInfo(recode.cmlId,3)}>查看</a>
+        title: '餐饮安排',width: 100,align: 'center',render: (_,recode) => <a onClick={() => this.basicInfo(recode.cmlId,3)}>查看</a>
       },{
-        title: '场地使用',dataIndex: 'groundInfo',key: 'groundInfo',align: 'center',
+        title: '组长名称',dataIndex: 'headManName',key: 'headManName',width: 100,align: 'center',hideInSearch: true,
       },{
-        title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',
+        title: '组长电话',dataIndex: 'headManPhone',key: 'headManPhone',width: 100,align: 'center',hideInSearch: true,
+      },{
+        title: '场地使用',dataIndex: 'groundInfo',ellipsis: true,hideInSearch: true,width: 150,align: 'center',
+      },{
+        title: '备注',dataIndex: 'remarks',ellipsis: true,hideInSearch: true,width: 150,align: 'center',
       }, {
-        title: '成本预算', hideInSearch: true, align: 'center', render: (_, recode) => (
+        title: '成本预算', hideInSearch: true, width: 100,align: 'center', render: (_, recode) => (
           <>
             <a onClick={() => {this.showCostDetail(recode.ccbId)}}>查看</a>
           </>
         )
       },{
-        title: '操作人', dataIndex: 'userName', key: 'userName', hideInSearch: true, align: 'center',render: (_,recode) => {
+        title: '操作人', dataIndex: 'userName', key: 'userName', hideInSearch: true, width: 100,align: 'center',render: (_,recode) => {
           return (<a onClick={() => this.viewOperator({id: recode.cmlId,type: 105})}>{_}</a>)
         }
       }, {
-        title: '操作时间', dataIndex: 'timeCreate', key: 'timeCreate', valueType: 'dateTime', hideInSearch: true,align: 'center'
+        title: '操作时间', dataIndex: 'timeCreate', key: 'timeCreate', valueType: 'dateTime',width: 100,hideInSearch: true,align: 'center'
       },{
-        title: '成本审核', dataIndex: 'auditStatus', key: 'auditStatus',hideInSearch: true, align: 'center',valueEnum: {
+        title: '成本审核', dataIndex: 'auditStatus', key: 'auditStatus',hideInSearch: true,width: 100,align: 'center',valueEnum: {
           0: { text: '等待审核', status: 'Default'},
           1: { text: '通过', status: 'Processing'},
           2: { text: '未通过', status: 'Error' },
         }
       }
       ,{
-        title: '操作', hideInSearch: true, align: 'center', render: (_, recode) => (
+        title: '操作',key: 'option',valueType: 'option',hideInSearch: true,fixed: 'right',width: 180,align: 'center',render: (text, row, _, action) => [
           <>
             {
-              recode.auditStatus == 1 ? <a onClick={() => this.assignExecution(recode.ccbId)}>分配执行</a> : recode.auditStatus == 0 ? <span style={{color: '#999'}}>等待分配</span> :
-                <a onClick={() => history.push({pathname: '/ExecutiveMinister/cost-budget/add',state: {id: recode.ccbId}})}>重新编辑</a>
+              row.status == 0 ? row.stopStatus != 2 && (row.auditStatus == 1 ? <a onClick={() => this.assignExecution(row.ccbId)}>分配执行</a> : row.auditStatus == 0 ? <span style={{color: '#999'}}>等待分配</span> :
+                <a onClick={() => history.push({pathname: '/ExecutiveMinister/cost-budget/add',state: {id: row.ccbId}})}>重新编辑</a>) : <>
+                <a onClick={() => this.assignExecution(row.ccbId)}>修改</a>
+              </>
             }
+            <Divider type="vertical"/>
+            {
+              row.stopStatus == 1 ? <>
+                <Popconfirm
+                  title={
+                    <>
+                      <label>终止理由 <span style={{color: 'red'}}>(理由需必填)</span></label>
+                      <Input.TextArea style={{height: 100,marginTop: 5}} name="remarks" onChange={this.changeRemaks}/>
+                    </>
+                  }
+                  placement="topRight"
+                  cancelText="取消"
+                  okText="确定"
+                  style={{textAlign: 'center'}}
+                  onConfirm={() => this.termination(row.cmlId,1)}
+                >
+                  <a>终止</a>
+                </Popconfirm>
+              </> : row.stopStatus == 2 ? <span style={{color: 'red'}}>订单已终止</span> : <span>审核中</span>
+            }
+            {/*<TableDropdown*/}
+              {/*key="actionGroup"*/}
+              {/*onSelect={(param) => {*/}
+                {/*param == 'zx' && this.termination(row.ccbId)*/}
+              {/*}}*/}
+              {/*menus={[*/}
+                {/*{ key: 'zx', name: '终止操作' }*/}
+              {/*]}*/}
+            {/*/>*/}
           </>
-        )
+        ]
       }],
       costColumns: [
         {
@@ -187,6 +235,40 @@ class ActivityAllocation extends React.Component{
       }]
     }
   }
+  termination = (cmlId) => {
+    const { dispatch } = this.props;
+    const { memberId , textareaValue } = this.state;
+    if (!textareaValue){
+      notification.warning({
+        message: '操作提示',
+        description: '终止理由内容必须进行填写!!!',
+      })
+      return;
+    }
+    dispatch({
+      type: 'activity/orderStop',
+      payload: {
+        id: cmlId,
+        reason: textareaValue,
+        memberId
+      }
+    }).then(() => {
+      const { activity } = this.props;
+      const { orderStopCode } = activity;
+      if (orderStopCode === 200){
+        this.ref.reload();
+      } else {
+        message.error("操作失败!")
+      }
+    })
+  }
+
+  changeRemaks = (e) => {
+    this.setState({
+      textareaValue: e.target.value
+    })
+  }
+
   del = ({ id }) => {
     const { costId , memberId , } = this.state;
     const { dispatch } = this.props;
@@ -207,8 +289,8 @@ class ActivityAllocation extends React.Component{
   }
   assignExecution = id => {
     const {memberId} = this.state;
-    this.initEmployees(id, memberId);
     this.checkStaff(id, memberId);
+    this.initEmployees(id, memberId);
     this.setState({
       activityVisible: true,
       costId: id,
@@ -335,7 +417,7 @@ class ActivityAllocation extends React.Component{
   }
 
   initTableData = async (params) =>{
-    const { current , pageSize , customName , orderNo , orderTime } = params;
+    const { current , pageSize , orderNo , orderTime, contact , contactPhone } = params;
     const { memberId } = this.state;
     const { dispatch } = this.props;
     let result = {};
@@ -344,7 +426,8 @@ class ActivityAllocation extends React.Component{
       payload: {
         memberId,
         orderNo,
-        customName,
+        contact,
+        contactPhone,
         orderTime,
         pageNo: current,
         pageSize,
@@ -390,8 +473,8 @@ class ActivityAllocation extends React.Component{
     this.setState({
       costVisible: true,
     })
-
   }
+
 
   handleCancel = () => {
     this.setState({
@@ -458,15 +541,19 @@ class ActivityAllocation extends React.Component{
       selectedRowKeys: selectedRowKey,
       selections: true,
       onChange: (selectedRowKeys, selectedRows) => this.onChangeActivity(selectedRowKeys, selectedRows),
-      // getCheckboxProps: record => (console.log(selectedRowKeys)),
+      getCheckboxProps: record => (console.log(record),{
+        disabled: record.level == 1,
+        name: record.name,
+      }),
     }
+    let index_ = 1;
     const formLayout = {
       labelCol: {span: 4},
       wrapperCol: {span: 18}
     }
     const dateFormat = 'YYYY-MM-DD hh:mm:ss';
     return (
-      <PageContainer content="用于对成本预算进行管理">
+      <PageContainer content="用于对活动分配进行管理">
         <ProTable
           headerTitle="查询表格"
           rowKey="key"
@@ -474,8 +561,11 @@ class ActivityAllocation extends React.Component{
             labelWidth: 80,
             span: 8
           }}
+          actionRef={(ref) => (this.ref = ref)}
+          scroll={{ x: 1300 }}
           request={(params, sorter, filter) => this.initTableData({...params, sorter, filter})}
           columns={this.state.columns}
+          dateFormatter="string"
           pagination={{
             pageSize: 10,
             total: total
@@ -582,7 +672,7 @@ class ActivityAllocation extends React.Component{
             >
               {
                 missionInfo.eatArray.map((item, index) => (
-                  <FormItem name="" label={`D${index+1}${(index+1) % 2 == 0 ? '晚餐' : '中餐'}`}>
+                  <FormItem name="" label={`D${(index%2) == 0 ? index_ : index_++}${(index+1) % 2 == 0 ? '晚餐' : '中餐'}`}>
                     {
                       <Input defaultValue={item} disabled/>
                     }
@@ -644,8 +734,7 @@ class ActivityAllocation extends React.Component{
           >
             {
               employeesList.map((item, index) => (
-                <Option value={item.id}
-                        disabled={item.freeStatus == 1 && true}>{`${item.name} -- ${item.freeStatus == 0 ? '空闲' : '繁忙'}`}</Option>
+                <Option value={item.id}>{`${item.name} -- ${item.freeStatus == 0 ? '空闲' :  `${item.customName}+${item.orderNo}`}`}</Option>
               ))
             }
           </Select>

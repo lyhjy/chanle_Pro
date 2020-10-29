@@ -32,12 +32,12 @@ const Model = {
               redirect = redirect.substr(redirect.indexOf('#') + 1);
             }
           } else {
-            window.location.href = '/';
+            // window.location.href = '/salesman';
             return;
           }
         }
 
-        history.replace(redirect || '/');
+        history.replace(redirect || '/salesman');
       }
     },
 

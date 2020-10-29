@@ -38,7 +38,7 @@ class Distrbution extends React.Component{
       },{
         title: '工资总额(元)',dataIndex: 'realMoney',key: 'realMoney',hideInSearch: true,align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       },{
-        title: '备注', dataIndex: 'remarks', key: 'remarks', hideInSearch: true, align: 'center',
+        title: '备注', dataIndex: 'remarks', key: 'remarks',valueType: 'textarea',ellipsis: true,hideInSearch: true,width: 150,align: 'center',
       },{
         title: '领导审核',hideInSearch: true, align: 'center',render: (_,record) => {
           return (<a onClick={() => this.viewReview(record.id)}>查看</a>)
@@ -46,19 +46,21 @@ class Distrbution extends React.Component{
       },{
         title: '操作', dataIndex: 'option', valueType: 'option' , align: 'center',render: (_,recode) => (
           <>
-            <a onClick={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}>修改</a>
+
             {
-              recode.workMoney < 0 || recode.workMoney == '' && <> <Divider type="vertical" />
-                <Popconfirm
-                  title="是否进行分配"
-                  placement="topRight"
-                  cancelText="取消"
-                  okText="确定"
-                  onConfirm={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}
-                >
-                  <a>分配</a>
-                </Popconfirm>
-              </>
+              recode.checkStatus === 0 || recode.checkStatus == 2 ? <a onClick={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}>修改</a> : recode.checkStatus == 1 ?
+                 <span style={{style: "red"}}>已分配</span> : <>
+                  <Popconfirm
+                    title="是否进行分配"
+                    placement="topRight"
+                    cancelText="取消"
+                    okText="确定"
+                    onConfirm={() => {history.push({pathname: '/ExecutiveMinister/distribution/modify',state: {id: recode.id}})}}
+                  >
+                    <a>分配</a>
+                  </Popconfirm>
+
+                </>
             }
 
           </>
@@ -154,7 +156,7 @@ class Distrbution extends React.Component{
         <Modal title="领导审核情况"
                style={{textAlign: 'center'}}
                visible={reviewVisible}
-               width={900}
+               width={800}
                footer={[
                  <div className={styles.tc}>
                    <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>返回</Button>

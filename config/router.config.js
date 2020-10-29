@@ -1,87 +1,96 @@
 export default [
-  // {
-  //   path: '/user',
-  //   component: '../layouts/UserLayout',
-  //   routes: [
-  //     {
-  //       name: 'login',
-  //       path: '/user/login',
-  //       component: './user/login',
-  //     },
-  //   ],MarketingMinister
-  // },
+  {
+    path: '/user',
+    component: '../layouts/UserLayout',
+    routes: [
+      {
+        path: '/user',
+        redirect: '/user/login',
+      },
+      {
+        path: '/user/login',
+        component: './user/login',
+      }
+    ],
+  },
   {
     path: '/',
-    // component: '../layouts/SecurityLayout',
+    component: '../layouts/SecurityLayout',
     routes: [
       {
         path: '/',
         component: '../layouts/BasicLayout',
-        authority: ['admin', 'user'],
+        authority: ['admin'],
         routes: [
+          //业务员
           {
-            path: '/',
-            redirect: '/',
-          },
-          {
-            path: '/finance',
-            name: 'finance',
+            path: '/salesman',
+            name: 'salesman',
             icon: 'dashboard',
-            authority: ['j','a'],
             routes: [
               {
-                name: 'invoicing-application',
+                name: 'report',
                 icon: '',
-                path: '/finance/invoicing',
-                component: './finance/invoicing'
-              }
-            ]
-          },
-          // {
-          //   path: '/GroupMember',
-          //   name: 'group-member',
-          //   icon: 'dashboard',
-          //   authority: ['a'],
-          //   routes: [
-          //     {
-          //       name: 'business-operations',
-          //       icon: '',
-          //       path: '/GroupMember/business',
-          //       component: './GroupMember/business'
-          //     },
-          //     {
-          //       name: 'business-feedback',
-          //       icon: '',
-          //       path: '/GroupMember/feedback-form',
-          //       component: './GroupMember/feedback-form'
-          //     }
-          //   ]
-          // },
-          {
-            path: '/LogisticsMinister',
-            name: 'logistics-minister',
-            icon: 'dashboard',
-            authority: ['h','a'],
-            routes: [
-              {
-                name: 'business-cost',
-                icon: '',
-                path: '/LogisticsMinister/business-cost',
-                component: './LogisticsMinister/business-cost'
+                path: '/salesman/report',
+                component: './salesman/report',
               },
               {
-                name: 'cost-budget',
+                path: '/salesman/report/edit',
+                component: './salesman/report/edit',
+              },
+              {
+                name: 'mission-list',
                 icon: '',
-                path: '/LogisticsMinister/cost-budget',
-                component: './LogisticsMinister/cost-budget'
+                path: '/salesman/mission-list',
+                component: './salesman/mission-list',
+              },
+              {
+                path: '/salesman/mission-list/edit',
+                component: './salesman/mission-list/edit',
+              },
+              {
+                name: 'revenue-forecast',
+                icon: '',
+                path: '/salesman/revenue-forecast',
+                component: './salesman/revenue-forecast',
+              },
+              {
+                name: 'revenue-settlement',
+                icon: '',
+                path: '/salesman/revenue-settlement',
+                component: './salesman/revenue-settlement'
+              },
+              {
+                path: '/salesman/revenue-settlement/edit',
+                component: './salesman/revenue-settlement/edit'
+              },
+              {
+                name: 'invoice',
+                icon: '',
+                path: '/salesman/invoice',
+                component: './salesman/invoice'
+              },
+              {
+                path: '/salesman/invoice/edit',
+                component: './salesman/invoice/edit',
+              },
+              {
+                name: 'contract',
+                icon: '',
+                path: '/salesman/contract',
+                component: './salesman/contract'
+              },
+              {
+                path: '/salesman/contract/edit',
+                component: './salesman/contract/edit',
               }
             ]
           },
+          //业务内勤
           {
             path: '/ActivityManage',
             name: 'activity-manage',
             icon: 'dashboard',
-            authority: ['e','a'],
             routes: [
               {
                 name: 'activity-reservation',
@@ -129,87 +138,11 @@ export default [
               }
             ]
           },
-          {
-            path: '/leadership',
-            name: 'leadership',
-            icon: 'dashboard',
-            authority: ['a'],
-            routes: [
-              {
-                name: 'business-commission',
-                icon: '',
-                path: '/leadership/business-commission',
-                component: './leadership/business-commission'
-              },
-              {
-                name: 'contract-review',
-                icon: '',
-                path: '/leadership/contract-review',
-                component: './leadership/contract-review'
-              },
-              {
-                name: 'staff-profile',
-                icon: '',
-                path: '/leadership/staff-profile',
-                component: './leadership/staff-profile'
-              },
-              {
-                name: 'business-summary',
-                icon: '',
-                path: '/leadership/business-summary',
-                component: './leadership/business-summary'
-              },
-              {
-                name: 'salary-summary',
-                icon: '',
-                path: '/leadership/salary-summary',
-                component: './leadership/salary-summary'
-              }
-            ]
-          },
-          {
-            path: '/ChargeLeadership',
-            name: 'charge-leadership',
-            icon: 'dashboard',
-            authority: ['a'],
-            routes: [
-              {
-                name: 'business-commission',
-                icon: '',
-                path: '/ChargeLeadership/charge-business-commission',
-                component: './ChargeLeadership/charge-business-commission'
-              },
-              {
-                name: 'contract-review',
-                icon: '',
-                path: '/ChargeLeadership/charge-contract-review',
-                component: './ChargeLeadership/charge-contract-review'
-              },
-              {
-                name: 'staff-profile',
-                icon: '',
-                path: '/ChargeLeadership/charge-staff-profile',
-                component: './ChargeLeadership/charge-staff-profile'
-              },
-              {
-                name: 'business-summary',
-                icon: '',
-                path: '/ChargeLeadership/business-summary',
-                component: './ChargeLeadership/business-summary'
-              },
-              {
-                name: 'salary-summary',
-                icon: '',
-                path: '/ChargeLeadership/salary-summary',
-                component: './ChargeLeadership/salary-summary'
-              }
-            ]
-          },
+          //营销部长
           {
             path: '/MarketingMinister',
             name: 'marketing-minister',
             icon: 'dashboard',
-            authority: ['d','a'],
             routes: [
               {
                 name: 'marketing-budget',
@@ -256,11 +189,11 @@ export default [
 
             ]
           },
+          //执行部长
           {
             path: '/ExecutiveMinister',
             name: 'executive-minister',
             icon: 'dashboard',
-            authority: ['c','a'],
             routes: [
               {
                 name: 'activity-allocation',
@@ -311,14 +244,116 @@ export default [
                 icon: '',
                 path: '/ExecutiveMinister/salary-summary',
                 component: './ExecutiveMinister/salary-summary',
+              },
+            ]
+          },
+          //后勤部长
+          {
+            path: '/LogisticsMinister',
+            name: 'logistics-minister',
+            icon: 'dashboard',
+            routes: [
+              {
+                name: 'business-cost',
+                icon: '',
+                path: '/LogisticsMinister/business-cost',
+                component: './LogisticsMinister/business-cost'
+              },
+              {
+                name: 'cost-budget',
+                icon: '',
+                path: '/LogisticsMinister/cost-budget',
+                component: './LogisticsMinister/cost-budget'
               }
             ]
           },
+          //基地分管领导
+          {
+            path: '/ChargeLeadership',
+            name: 'charge-leadership',
+            icon: 'dashboard',
+            routes: [
+              {
+                name: 'business-commission',
+                icon: '',
+                path: '/ChargeLeadership/charge-business-commission',
+                component: './ChargeLeadership/charge-business-commission'
+              },
+              {
+                name: 'contract-review',
+                icon: '',
+                path: '/ChargeLeadership/charge-contract-review',
+                component: './ChargeLeadership/charge-contract-review'
+              },
+              {
+                name: 'staff-profile',
+                icon: '',
+                path: '/ChargeLeadership/charge-staff-profile',
+                component: './ChargeLeadership/charge-staff-profile'
+              },
+              {
+                name: 'business-summary',
+                icon: '',
+                path: '/ChargeLeadership/business-summary',
+                component: './ChargeLeadership/business-summary'
+              },
+              {
+                name: 'salary-summary',
+                icon: '',
+                path: '/ChargeLeadership/salary-summary',
+                component: './ChargeLeadership/salary-summary'
+              },
+              {
+                name: 'order-terminate',
+                icon: '',
+                path: '/ChargeLeadership/order-terminate',
+                component: './ChargeLeadership/order-terminate',
+              }
+            ]
+          },
+          //基地领导
+          {
+            path: '/leadership',
+            name: 'leadership',
+            icon: 'dashboard',
+            routes: [
+              {
+                name: 'business-commission',
+                icon: '',
+                path: '/leadership/business-commission',
+                component: './leadership/business-commission'
+              },
+              {
+                name: 'contract-review',
+                icon: '',
+                path: '/leadership/contract-review',
+                component: './leadership/contract-review'
+              },
+              {
+                name: 'staff-profile',
+                icon: '',
+                path: '/leadership/staff-profile',
+                component: './leadership/staff-profile'
+              },
+              {
+                name: 'business-summary',
+                icon: '',
+                path: '/leadership/business-summary',
+                component: './leadership/business-summary'
+              },
+              {
+                name: 'salary-summary',
+                icon: '',
+                path: '/leadership/salary-summary',
+                component: './leadership/salary-summary'
+              }
+            ]
+          },
+          //综合部
           {
             path: '/GeneralDepartment',
             name: 'general-department',
             icon: 'dashboard',
-            authority: ['b','a'],
             routes: [
               {
                 name: 'contract-initiation',
@@ -346,34 +381,20 @@ export default [
               }
             ]
           },
-          // {
-          //   path: '/welcome',
-          //   name: 'welcome',
-          //   icon: 'smile',
-          //   component: './Welcome',
-          // },
-          // {
-          //   path: '/admin',
-          //   name: 'admin',
-          //   icon: 'crown',
-          //   component: './Admin',
-          //   authority: ['admin'],
-          //   routes: [
-          //     {
-          //       path: '/admin/sub-page',
-          //       name: 'sub-page',
-          //       icon: 'smile',
-          //       component: './Welcome',
-          //       authority: ['admin'],
-          //     },
-          //   ],
-          // },
-          // {
-          //   name: 'list.table-list',
-          //   icon: 'table',
-          //   path: '/list',
-          //   component: './ListTableList',
-          // },
+          //财务
+          {
+            path: '/finance',
+            name: 'finance',
+            icon: 'dashboard',
+            routes: [
+              {
+                name: 'invoicing-application',
+                icon: '',
+                path: '/finance/invoicing',
+                component: './finance/invoicing'
+              }
+            ]
+          },
           {
             component: './404',
           },

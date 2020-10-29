@@ -37,10 +37,6 @@ class BusinessSummary extends React.Component{
         title: '预计业务成本(元)', dataIndex: 'expectCost', key: 'expectCost', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       }, {
         title: '实际业务成本(元)', dataIndex: 'realCost', key: 'realCost', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}`}</span>
-      }, {
-        title: '预计业务毛利(%)', dataIndex: 'rsRate', key: 'rsRate', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}`}</span>
-      }, {
-        title: '实际业务毛利(%)', dataIndex: 'costRate', key: 'costRate', hideInSearch: true, align: 'center',render: (_, recode) => <span>{`${_}`}</span>
       }],
     }
   }
@@ -94,11 +90,21 @@ class BusinessSummary extends React.Component{
     //     memberId
     //   }
     // })
+    let arr = columns;
+    arr.push( {
+      title: '预计业务毛利(元)', dataIndex: 'rsML', key: 'rsML'
+    },{
+      title: '实际业务毛利(元)', dataIndex: 'costMl', key: 'costMl'
+    },{
+      title: '预计业务毛利率(%)',dataIndex: 'rsRate',key: 'rsRate',
+    },{
+      title: '实际业务毛利率(%)',dataIndex: 'costRate',key: 'costRate'
+    });
 
     if (param.length > 0){
-      ExcelUtil.exportExcel(columns, param ,"整体业务汇总表.xlsx")
+      ExcelUtil.exportExcel(arr, param ,"整体业务汇总表.xlsx")
     } else {
-      ExcelUtil.exportExcel(columns, attendanceInfoList ,"整体业务汇总表.xlsx")
+      ExcelUtil.exportExcel(arr, attendanceInfoList ,"整体业务汇总表.xlsx")
     }
   }
 
@@ -115,8 +121,33 @@ class BusinessSummary extends React.Component{
     }
   }
 
+  expandedRowRender = (row) => {
+    const activityRow = [row];
+    return (
+      <ProTable
+        columns={[
+          {
+            title: '预计业务毛利(元)', dataIndex: 'rsML', key: 'rsML'
+          },{
+            title: '实际业务毛利(元)', dataIndex: 'costMl', key: 'costMl'
+          },{
+            title: '预计业务毛利率(%)',dataIndex: 'rsRate',key: 'rsRate',
+          },{
+            title: '实际业务毛利率(%)',dataIndex: 'costRate',key: 'costRate'
+          }
+        ]}
+        headerTitle={false}
+        search={false}
+        options={false}
+        dataSource={activityRow}
+        pagination={false}
+      />
+    )
+  }
+
   render(){
     const { selectData } = this.state;
+    const expandedRowRender = this.expandedRowRender;
     return (
       <PageContainer content="用于对整体业务汇总进行管理" extraContent={
         <Button type="primary" onClick={this.allExport}>全部导出</Button>
@@ -136,6 +167,7 @@ class BusinessSummary extends React.Component{
           rowSelection={{
             onChange: (_, selectedRows) => this.changeRows(selectedRows)
           }}
+          expandable={{expandedRowRender}}
         >
         </ProTable>
         {

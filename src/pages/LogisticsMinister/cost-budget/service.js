@@ -18,3 +18,9 @@ export async function costDetailed(params) {
     data: params
   })
 }
+export async function history(params) {
+  return request(`${url}/operating/cost/history`,{
+    method: 'GET',
+    params: params
+  })
+}

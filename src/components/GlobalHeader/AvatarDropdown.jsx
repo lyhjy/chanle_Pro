@@ -17,10 +17,8 @@ class AvatarDropdown extends React.Component {
           type: 'login/logout',
         });
       }
-
       return;
     }
-
     history.push(`/account/${key}`);
   };
 

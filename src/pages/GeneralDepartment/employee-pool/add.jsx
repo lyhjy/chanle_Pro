@@ -17,11 +17,12 @@ class AddEmployee extends React.Component{
   componentDidMount(){
     const { state } = this.props.location;
     const { dispatch } = this.props;
+    const { memberId } = this.state;
     if (state){
       this.setState({staffId: state.staffId})
       dispatch({
         type: 'generalDepartment/queryEmployeePoll',
-        payload: { staffId: state.staffId },
+        payload: { staffId: state.staffId , memberId },
       }).then(() => {
         const { generalDepartment } = this.props;
         const { employeePollList } = generalDepartment;

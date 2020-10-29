@@ -1,5 +1,5 @@
 import React, { useState , useEffect } from 'react';
-import {Button, Form, Modal, Radio, Select, Table} from "antd";
+import {Button, Form, Modal, Radio, Select, Table , Input } from "antd";
 import styles from "../../../MarketingMinister/marketing-budget/style.less"
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -60,7 +60,8 @@ const ChargeOption = props => {
     onCancel: handleUpdateModalVisible,
     updateModalVisible,
     values,
-    info
+    info,
+    costInfo
   } = props;
   useEffect(() => {
     // if (!modelVisible){
@@ -74,31 +75,44 @@ const ChargeOption = props => {
   }
 
   const renderContent = () => {
+
     return (
       <>
-        <FormItem name="target" label="选中项目查看">
-          <Select
-            style={{
-              width: '100%',
-            }}
-          >
-            <Option value="0">表一</Option>
-            <Option value="1">表二</Option>
-          </Select>
-        </FormItem>
+        {/*<FormItem name="target" label="预计成本">*/}
+          {/*<Select*/}
+            {/*style={{*/}
+              {/*width: '100%',*/}
+            {/*}}*/}
+          {/*>*/}
+            {/*<Option value="0">表一</Option>*/}
+            {/*<Option value="1">表二</Option>*/}
+          {/*</Select>*/}
+          {/*<Input/>*/}
+        {/*</FormItem>*/}
 
+        {/*<FormItem name="" label="实际成本">*/}
+          {/*<Input/>*/}
+        {/*</FormItem>*/}
+        <div style={{textAlign: 'left'}}>
+          <p>
+            <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>预计成本:</label> <span style={{color: 'red',fontSize: 'large'}}>{costInfo.expectCost}</span>&nbsp;&nbsp;元
+            </span>
+            <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>实际成本:</label> <span style={{color: 'red',fontSize: 'large'}}>{costInfo.realCost}</span>&nbsp;&nbsp;元
+            </span>
+          </p>
+        </div>
       </>
     );
   }
+
   return (
     <Modal
       width={800}
-      bodyStyle={{
-        padding: '32px 40px 48px',
-      }}
       style={{textAlign: 'center'}}
       destroyOnClose
-      title="费用明细"
+      title="成本预算"
       footer={[
         <div className={styles.tc}>
           <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={() => handleUpdateModalVisible()}>取消</Button>
@@ -107,7 +121,10 @@ const ChargeOption = props => {
       ]}
       visible={updateModalVisible}
       onCancel={() => handleUpdateModalVisible()}
-    >
+      >
+      {
+        renderContent()
+      }
       {info.length > 0 && <Table
         columns={columns}
         dataSource={info}

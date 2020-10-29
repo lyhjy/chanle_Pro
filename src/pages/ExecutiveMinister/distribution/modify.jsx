@@ -122,22 +122,30 @@ class DistributionMidify extends React.Component{
                        <FormItem name="dapName" label="所属部门">
                          <Input disabled/>
                        </FormItem>
-                       <FormItem name="workMoney" label="工资结构">
-                         <Input style={{width: 330}} defaultValue={salaryAssInfo.workMoney}/>
+                       <Form.Item label="工资结构">
+                         <FormItem name="workMoney" noStyle>
+                           <Input style={{width: 330}} defaultValue={salaryAssInfo.workMoney}/>
+                         </FormItem>
                          <span style={{width: 100,marginLeft: 20}}>1 天</span>
-                       </FormItem>
-
+                       </Form.Item>
                        <FormItem name="days" label="实际天数">
                          <Input placeholder="单位：天"/>
                        </FormItem>
-                       <FormItem name="awardMoney" label="奖惩金额">
-                           <span style={{width: 80,marginRight: 10}}><PlusOutlined /></span>
+
+                       <Form.Item label="奖惩金额">
+                         <span style={{width: 80,marginRight: 10}}> <PlusOutlined /></span>
+                         <FormItem name="awardMoney" noStyle>
                            <Input style={{width: 330}} defaultValue={salaryAssInfo.awardMoney} placeholder="请输入奖励金额"/>
-                       </FormItem>
-                       <FormItem name="punishMoney" label=" ">
-                           <span style={{width: 80,marginRight: 10}}> <MinusOutlined /></span>
+                         </FormItem>
+                       </Form.Item>
+
+                       <Form.Item label=" ">
+                         <span style={{width: 80,marginRight: 10}}> <MinusOutlined /></span>
+                         <FormItem name="punishMoney" noStyle>
                            <Input style={{width: 330}} defaultValue={salaryAssInfo.punishMoney} placeholder="请输入惩罚金额"/>
-                       </FormItem>
+                         </FormItem>
+                       </Form.Item>
+
                      </Col>
                      <Col span={12}>
                        <FormItem name="remarks" label="备注内容">

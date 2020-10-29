@@ -14,14 +14,18 @@ class ActivityReservation extends React.Component{
       pageNo: 1,
       total: 0,
       textareaValue: '',
+
+      activityRow: [],
       columns: [{
-        title: '订单号',dataIndex: 'orderNo',key: 'orderNo',tip: '订单号是唯一的',hideInSearch: true,align: 'center'
+        title: ''
       },{
-        title: '开始时间',dataIndex: 'reserveTimeBegin',key: 'reserveTimeBegin',sorter: true, valueType: 'dateTime',align: 'center',
+        title: '订单号',dataIndex: 'orderNo',key: 'orderNo',tip: '订单号是唯一的',align: 'center'
       },{
-        title: '结束时间',dataIndex: 'reserveTimeEnd',key: 'reserveTimeEnd',sorter: true,valueType: 'dateTime',align: 'center',
+        title: '开始时间',dataIndex: 'reserveTimeBegin',key: 'reserveTimeBegin', valueType: 'dateTime',align: 'center',
       },{
-        title: '类型',dataIndex: 'actType',key: 'actType',hideInSearch: true,align: 'center',
+        title: '结束时间',dataIndex: 'reserveTimeEnd',key: 'reserveTimeEnd',valueType: 'dateTime',align: 'center',
+      },{
+        title: '类型',dataIndex: 'actName',key: 'actName',hideInSearch: true,align: 'center',
       },{
         title: '订单类型',dataIndex: 'orderType',key: 'orderType',hideInSearch: true,align: 'center',
       },{
@@ -33,9 +37,7 @@ class ActivityReservation extends React.Component{
       },{
         title: '联系方式',dataIndex: 'contactPhone',key: 'contactPhone',hideInSearch: true,align: 'center',
       },{
-        title: '注意事项',dataIndex: 'remarks',key: 'remarks',hideInSearch: true,align: 'center',
-      },{
-        title: '业务员',dataIndex: 'memberTruename',key: 'memberTruename',hideInSearch: true,align: 'center',
+        title: '业务员',dataIndex: 'memberTruename',key: 'memberTruename'
       },{
         title: '操作',align: 'center',
         dataIndex: 'option',
@@ -84,12 +86,8 @@ class ActivityReservation extends React.Component{
     }
   }
 
-  componentDidMount(){
-
-  }
-
   initTableData = async (params) => {
-    const { unit , current , reserveTimeEnd , reserveTimeBegin , pageSize } = params;
+    const { unit , current , reserveTimeEnd , reserveTimeBegin , pageSize , memberTruename , orderNo } = params;
     let result = {};
     try {
       await queryFactAppointmentManage({
@@ -98,13 +96,18 @@ class ActivityReservation extends React.Component{
         pageSize,
         unit,
         endTime: reserveTimeEnd,
-        beginTime: reserveTimeBegin
+        beginTime: reserveTimeBegin,
+        orderNo,
+        memberTruename
       }).then((res) => {
         this.setState({
           total: res.result.total
         })
         if (res.result.records.length > 0){
-          result.data = res.result.records
+          result.data = res.result.records;
+          this.setState({
+            activityRow: res.result.records
+          })
         } else {
           result.data = [];
         }
@@ -148,13 +151,34 @@ class ActivityReservation extends React.Component{
       message.error("服务异常!")
     }
   }
+
+  expandedRowRender = (row) => {
+    const { activityList } = this.state;
+    const activityRow = [row];
+    return (
+      <ProTable
+        columns={[
+          {
+            title: '注意事项',dataIndex: 'remarks',key: 'remarks',
+          }
+        ]}
+        headerTitle={false}
+        search={false}
+        options={false}
+        dataSource={activityRow}
+        pagination={false}
+      />
+    )
+  }
+
   render() {
     const { columns , total } = this.state;
+    const expandedRowRender = this.expandedRowRender;
     return (
       <PageContainer content="用于对活动预约进行管理">
         <ProTable
           headerTitle="查询表格"
-          rowKey="key"
+          rowKey="orderNo"
           search={{
             labelWidth: 120,
           }}
@@ -165,7 +189,9 @@ class ActivityReservation extends React.Component{
             total
           }}
           columns={columns}
-          // defaultData={[1]}
+          expandable={{expandedRowRender}}
+          dateFormatter="string"
+          options={false}
         >
         </ProTable>
       </PageContainer>

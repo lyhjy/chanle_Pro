@@ -4,7 +4,7 @@ import { useIntl } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { setAuthority } from '@/utils/authority';
 import cookie from 'react-cookies';
-
+import GoEasy from 'goeasy';
 const { pwa } = defaultSettings; // if pwa is true
 if (pwa) {
   // Notify user if offline now
@@ -100,39 +100,55 @@ if (pwa) {
     });
   }
 }
-setAuthority('a');
-if (window.location.search){
-  const auto = window.location.search.split('level')[1].substr(1);
-  switch (auto) {
-    case '1':
-      setAuthority('a');
-      break;
-    case '2':
-      setAuthority('b')
-      break;
-    case '3':
-      setAuthority('c')
-      break;
-    case '4':
-      setAuthority('d')
-      break;
-    case '5':
-      setAuthority('e')
-      break;
-    // case '6':
-    //   setAuthority('f')
-    //   break;
-    // case '7':
-    //   setAuthority('g')
-    //   break;
-    case '8':
-      setAuthority('h')
-      break;
-    case '9':
-      setAuthority('j')
-      break;
-  }
-}
-global.memberId = cookie.load("memberId");
-console.log(memberId);
+
+//初始化goEasy 全局对象
+
+// global.goEasy = new GoEasy({
+//   host:'hangzhou.goeasy.io',//应用所在的区域地址，杭州：hangzhou.goeasy.io，新加坡：singapore.goeasy.io
+//   appkey: "BC-0f2b76ff6ee0456aaa4cf43ac3aa3579",//替换为您的应用appkey
+//   onConnected: function() {
+//     console.log('连接成功！')
+//   },
+//   onDisconnected: function() {
+//     console.log('连接断开！')
+//   },
+//   onConnectFailed: function(error) {
+//     console.log('连接失败或错误！')
+//   }
+// })
+// setAuthority('a');
+// if (window.location.search){
+//   const auto = window.location.search.split('level')[1].substr(1);
+//   switch (auto) {
+//     case '1':
+//       setAuthority('a');
+//       break;
+//     case '2':
+//       setAuthority('b');
+//       break;
+//     case '3':
+//       setAuthority('c');
+//       break;
+//     case '4':
+//       setAuthority('d');
+//       break;
+//     case '5':
+//       setAuthority('e');
+//       break;
+//     // case '6':
+//     //   setAuthority('f')
+//     //   break;
+//     // case '7':
+//     //   setAuthority('g')
+//     //   break;
+//     case '8':
+//       setAuthority('h');
+//       break;
+//     case '9':
+//       setAuthority('j');
+//       break;
+//   }
+// }
+// global.memberId = cookie.load("memberId");
+// console.log(cookie.loadAll())
 

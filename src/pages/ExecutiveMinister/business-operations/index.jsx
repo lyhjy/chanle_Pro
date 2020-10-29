@@ -3,17 +3,22 @@ import React, {useState} from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {Button, Divider, message, Modal, notification, Popconfirm, Table, Tooltip , Input } from "antd";
-import { queryBusinessList , costReview , costDetailed } from './service';
-import styles from "../../ActivityManage/business-config/style.less";
+import { queryBusinessList , costReview , costDetailed , history } from './service';
+import styles from "../../MarketingMinister/marketing-budget/style.less";
 class BusinessOperations extends React.Component{
   constructor(props){
     super(props);
     this.state = {
       memberId: '执行部长',
       total: 0,
+      pageNo: 1,
+      pageSize: 5,
+      order_no: '',
       costVisible: false,
+      historyVisible: false,
       textareaValue: '',
       costList: [],
+      historyList: [],
       columns: [
         {
           title: '客户名称',dataIndex: 'custom_name',key: 'custom_name',hideInSearch: true,align: 'center',
@@ -39,9 +44,13 @@ class BusinessOperations extends React.Component{
             </>
           )
         },{
-          title: '操作人',dataIndex: 'userName',key: 'userName',hideInSearch: true,align: 'center',
+          title: '操作人',dataIndex: 'review_name',key: 'review_name',hideInSearch: true,align: 'center',render: (_,recode) => {
+            return (
+              <a onClick={() =>viewOperator({order_no: recode.order_no})}></a>
+            )
+          }
         },{
-          title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',valueType: 'dateTime',hideInSearch: true,align: 'center',
+          title: '操作时间',dataIndex: 'review_time',key: 'review_time',valueType: 'dateTime',hideInSearch: true,align: 'center',
         },{
           title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_,recode) => (
             <>
@@ -100,7 +109,7 @@ class BusinessOperations extends React.Component{
           title: '实际小计(元)',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center',render: (_,recode) => <span>{`${_/100}`}</span>
         },
         {
-          title: '备注',dataIndex: 'costRemarks',key: 'costRemarks',align: 'center'
+          title: '备注',dataIndex: 'costRemarks',key: 'costRemarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
       }]
     }
   }
@@ -131,6 +140,31 @@ class BusinessOperations extends React.Component{
   changeRemaks = (e) => {
     this.setState({
       textareaValue: e.target.value
+    })
+  }
+
+  viewOperator = ({ order_no }) => {
+    const { pageNo , pageSize } = this.state;
+    try {
+      history({
+        orderNo: order_no,
+        pageNo,
+        pageSize
+      }).then((res) => {
+        if (res.result.records.length > 0){
+          this.setState({total: res.result.total})
+        } else {
+          this.setState({
+            historyList: []
+          })
+        }
+      })
+    }catch (e) {
+      message.error("服务异常,请重试!")
+    }
+    this.setState({
+      order_no: order_no,
+      historyVisible: true
     })
   }
 

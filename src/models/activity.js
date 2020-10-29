@@ -15,7 +15,13 @@ import {
   getFeedbackId,
   missionAudit,
   missionAssign,
-  operatorCheck
+  operatorCheck,
+  actTypeList,
+  addOrUpdateActType,
+  actTypeDetail,
+  deleteActType,
+  stopOrderCheck,
+  orderStop
 } from '@/services/activityAPI';
 
 const activityModel = {
@@ -37,7 +43,13 @@ const activityModel = {
     missionAcdRes: {},
     assignRes: {},
 
-    operatorList: []
+    operatorList: [],
+
+    typeList: [],
+    typeDetailInfo: {},
+    delTypeCode: '',
+    stopOrderCode: '',
+    orderStopCode: '',
   },
   effects: {
     *missionList({ payload }, { call, put }) {
@@ -140,6 +152,50 @@ const activityModel = {
         payload: response.result,
       });
     },
+    *actTypeList({ payload }, { call, put }) {
+      const response = yield call(actTypeList,payload);
+      yield put({
+        type: 'actType',
+        payload: response.result,
+      });
+    },
+    *addOrUpdateActType({ payload }, { call, put }) {
+      const response = yield call(addOrUpdateActType,payload);
+      if (response.code === 200){
+        message.success("操作成功!");
+        history.push("/ActivityManage/activity-type");
+      } else {
+        message.error("操作失败!")
+      }
+    },
+    *actTypeDetail({ payload }, { call, put }) {
+      const response = yield call(actTypeDetail,payload);
+      yield put({
+        type: 'actTypeDe',
+        payload: response,
+      });
+    },
+    *deleteActType({ payload }, { call, put }) {
+      const response = yield call(deleteActType,payload);
+      yield put({
+        type: 'delType',
+        payload: response,
+      });
+    },
+    *stopOrderCheck({ payload }, { call, put }) {
+      const response = yield call(stopOrderCheck,payload);
+      yield put({
+        type: 'stopOrder',
+        payload: response,
+      });
+    },
+    *orderStop({ payload }, { call, put }) {
+      const response = yield call(orderStop,payload);
+      yield put({
+        type: 'orderZx',
+        payload: response,
+      });
+    },
   },
   reducers: {
     getMission (state, action) {
@@ -180,6 +236,21 @@ const activityModel = {
     },
     operator(state, action) {
       return { ...state, operatorList: action.payload };
+    },
+    actType(state, action) {
+      return { ...state, typeList: action.payload };
+    },
+    actTypeDe(state, action) {
+      return { ...state, typeDetailInfo: action.payload };
+    },
+    delType(state, action) {
+      return { ...state, delTypeCode: action.payload.code };
+    },
+    stopOrder(state, action) {
+      return { ...state, stopOrderCode: action.payload.code };
+    },
+    orderZx(state, action) {
+      return { ...state, orderStopCode: action.payload.code };
     },
   }
 }

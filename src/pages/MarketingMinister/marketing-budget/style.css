@@ -1,0 +1,20 @@
+.smileDark {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  width: 100px;
+}
+.tc {
+  text-align: center;
+}
+.tc button {
+  width: 100px;
+  height: 45px;
+  margin: 0 10px;
+  border-radius: 30px;
+}
+.tc button:last-child {
+  border: 1px solid #3E91F7;
+}
+/*# sourceMappingURL=style.css.map */

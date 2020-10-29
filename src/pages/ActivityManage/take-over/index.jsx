@@ -35,9 +35,9 @@ class TakeOver extends React.Component{
       },{
         title: '餐饮安排',align: 'center',dataIndex: 'food',key: 'food',hideInSearch: true,render: (_,recode) => {return (<a onClick={() => this.clickBasic(recode.id,3)}>查看</a>)}
       },{
-        title: '场地使用',align: 'center',dataIndex: 'groundInfo',key: 'groundInfo',hideInSearch: true
+        title: '场地使用',align: 'center',dataIndex: 'groundInfo',key: 'groundInfo',valueType: 'textarea',ellipsis: true,width: 150,hideInSearch: true
       },{
-        title: '备注',align: 'center',dataIndex: 'remarks',key: 'remarks',valueType: 'textarea',hideInSearch: true,
+        title: '备注',align: 'center',dataIndex: 'remarks',key: 'remarks',valueType: 'textarea',ellipsis: true,width: 150,hideInSearch: true,
       },{
         title: '状态',align: 'center',dataIndex: 'status',key: 'status',hideInSearch: true,render: (_,recode) => {
           let operatorStatus = recode.operatorStatus;
@@ -50,7 +50,6 @@ class TakeOver extends React.Component{
             return (<span style={{color: 'red'}}>未通过</span>)
           }
         }
-
         // valueEnum: {
         //   0: { text: '等待审核', status: 'Default'},
         //   1: { text: '通过', status: 'Processing'},

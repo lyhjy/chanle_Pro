@@ -60,14 +60,16 @@ class CostBudget extends React.Component {
         key: 'groundInfo',
         valueType: 'textarea',
         hideInSearch: true,
+        ellipsis: true,
+        width: 150,
         align: 'center',
       }, {
-        title: '备注', dataIndex: 'remarks', key: 'remarks', valueType: 'textarea', hideInSearch: true, align: 'center'
+        title: '备注', dataIndex: 'remarks', key: 'remarks', valueType: 'textarea',ellipsis: true, width: 150, hideInSearch: true, align: 'center'
       }, {
         title: '操作人', dataIndex: 'userName', key: 'userName', hideInSearch: true, align: 'center',render: (_,recode) => {
           return (<a onClick={() => this.viewOperator({id: recode.id,type: 104})}>{_}</a>)
         }
-      }, {
+      },{
         title: '操作时间', dataIndex: 'timeCreate', key: 'timeCreate', hideInSearch: true, align: 'center',
       }, {
         title: '操作', hideInSearch: true, align: 'center', render: (_, recode) => (
@@ -198,14 +200,21 @@ class CostBudget extends React.Component {
     })
   }
 
-  initTableData = async (params, sorter, filter) => {
-    const {name} = params;
-    const {dispatch} = this.props;
-    const {memberId} = this.state;
+  initTableData = async (params) => {
+    const { orderNo , contact , contactPhone } = params;
+    const { dispatch } = this.props;
+    const { memberId ,  pageNo } = this.state;
     let result = {};
     await dispatch({
       type: 'executiveMinister/actAllocation',
-      payload: {memberId: memberId}
+      payload: {
+        memberId,
+        orderNo,
+        contactPhone,
+        contact,
+        pageNo,
+        pageSize: 10
+      }
     }).then(() => {
       const {executiveMinister} = this.props;
       const {allocationList} = executiveMinister;

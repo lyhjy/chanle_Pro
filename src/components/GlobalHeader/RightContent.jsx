@@ -4,7 +4,9 @@ import React from 'react';
 import { connect, SelectLang } from 'umi';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
+import NoticeIconView from './NoticeIconView';
 import styles from './index.less';
+
 
 const ENVTagColor = {
   dev: 'orange',
@@ -60,13 +62,14 @@ const GlobalHeaderRight = props => {
           {/*<QuestionCircleOutlined />*/}
         {/*</a>*/}
       {/*</Tooltip>*/}
+      <NoticeIconView />
       <Avatar />
       {REACT_APP_ENV && (
         <span>
           <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>
         </span>
       )}
-      <SelectLang className={styles.action} />
+      {/*<SelectLang className={styles.action} />*/}
     </div>
   );
 };

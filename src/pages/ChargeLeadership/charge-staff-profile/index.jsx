@@ -9,7 +9,7 @@ class StaffProfile extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      total: '',
+      total: 0,
       memberId: 'f1e92f22a3b549ada2b3d45d14a3ff710',
       textareaValue: '',
       costList: [],
@@ -17,11 +17,11 @@ class StaffProfile extends React.Component{
       columns: [{
         title: '订单号',dataIndex: 'orderNo',key: 'orderNo',align: 'center',
       },{
-        title: '客户名称',dataIndex: 'customName',key: 'customName',align: 'center',hideInSearch: true
+        title: '客户名称',dataIndex: 'customName',key: 'customName',align: 'center',
       },{
-        title: '出团日期',dataIndex: 'orderNo',key: 'orderNo',align: 'center',hideInSearch: true
+        title: '出团日期',dataIndex: 'orderTime',key: 'orderTime',valueType: 'dateTimeRange',align: 'center'
       },{
-        title: '组员名称',dataIndex: 'dapName',key: 'dapName',align: 'center',hideInSearch: true
+        title: '组员名称',dataIndex: 'dapName',key: 'dapName',align: 'center'
       },{
         title: '工资结构(元)',dataIndex: 'workMoney',key: 'workMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
       },{
@@ -100,7 +100,7 @@ class StaffProfile extends React.Component{
   }
 
   initTableData = async (params) => {
-    const { orderNo , current , pageSize } = params;
+    const { orderNo , current , pageSize , customName , dapName , orderTime } = params;
     const { dispatch } = this.props;
     const { memberId } = this.state;
     let result = {};
@@ -111,13 +111,21 @@ class StaffProfile extends React.Component{
           orderNo,
           memberId,
           pageNo: current,
-          pageSize
+          pageSize,
+          customName,
+          dapName,
+          orderBeginTime: orderTime && orderTime[0],
+          orderEndTime: orderTime && orderTime[1]
         }
       }).then(() => {
         const { leadership } = this.props;
         const { salaryList } = leadership;
         if (salaryList.records.length > 0 ) {
+          this.setState({
+            total: salaryList.total
+          })
           for (let k in salaryList.records){
+            salaryList.records[k].orderTime = [salaryList.records[k].orderBeginTime,salaryList.records[k].orderEndTime];
             salaryList.records[k].realMoney = ((salaryList.records[k].days * salaryList.records[k].workMoney) + salaryList.records[k].apMoney);
           }
           result.data = salaryList.records;
@@ -181,7 +189,7 @@ class StaffProfile extends React.Component{
   }
 
   render() {
-    const { leadershipVisible } = this.state;
+    const { leadershipVisible , total } = this.state;
     return (
       <PageContainer content="用于对员工工资进行管理">
         <ProTable
@@ -193,7 +201,7 @@ class StaffProfile extends React.Component{
           actionRef={(ref) => (this.ref = ref)}
           pagination={{
             pageSize: 10,
-            total: 1
+            total
           }}
           request={(params, sorter, filter) => this.initTableData({ ...params })}
           columns={this.state.columns}

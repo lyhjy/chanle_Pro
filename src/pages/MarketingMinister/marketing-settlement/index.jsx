@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {Button, Divider, Form, message, Modal, Popconfirm, Radio, Row, Table, Input, Tooltip, notification} from 'antd';
 import { connect } from 'umi';
-import styles from "../../ActivityManage/business-config/style.less";
+import styles from "../../MarketingMinister/marketing-budget/style.less";
 const FormItem = Form.Item;
 class MarketingSettlement extends React.Component{
 
@@ -118,14 +118,14 @@ class MarketingSettlement extends React.Component{
           title: '实际小计(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
         },
         {
-          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
+          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
         }
       ]
     }
   }
 
   initTableData = async (params) => {
-    const { contact , contactPhone , orderNo , type , current , pageSize } = params;
+    const { contact , contactPhone , orderNo , current , pageSize , orderTime } = params;
     const { memberId } = this.state;
     const { dispatch } = this.props;
     let result = {};
@@ -139,7 +139,9 @@ class MarketingSettlement extends React.Component{
           contactPhone,
           orderNo,
           memberId,
-          type: 2
+          type: 2,
+          orderBeginTime: orderTime && orderTime[0],
+          orderEndTime: orderTime && orderTime[1]
         }
       }).then(() => {
         const { activity } = this.props;

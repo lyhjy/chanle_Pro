@@ -90,3 +90,39 @@ export async function operatorCheck(params) {
     params: params
   })
 }
+export async function actTypeList(params) {
+  return request(`${url}/act/type/actTypeList`,{
+    method: 'GET',
+    params: params
+  })
+}
+export async function addOrUpdateActType(params) {
+  return request(`${url}/act/type/addOrUpdateActType`,{
+    method: 'POST',
+    data: params
+  })
+}
+export async function actTypeDetail(params) {
+  return request(`${url}/act/type/actTypeDetail`,{
+    method: 'GET',
+    params: params
+  })
+}
+export async function deleteActType(params) {
+  return request(`${url}/act/type/deleteActType`,{
+    method: 'GET',
+    params: params
+  })
+}
+export async function stopOrderCheck(params) {
+  return request(`${url}/mission/list/stopOrderCheck`,{
+    method: 'GET',
+    params: params
+  })
+}
+export async function orderStop(params) {
+  return request(`${url}/act/assign/orderStop`,{
+    method: 'GET',
+    params: params
+  })
+}

@@ -2,18 +2,18 @@ import XLSX from 'xlsx';
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {Button, message, Modal, Table} from "antd";
+import {Button, Modal, Table} from "antd";
 import ExcelUtil from '../../../utils/excelUtil';
 import { connect } from "umi";
 import styles from "../../ActivityManage/business-config/style.less";
-
+import GroupSubsidiary from "./components/GroupSubsidiary";
 class SalarySummary extends React.Component{
-
   constructor(props) {
     super(props);
     this.state = {
       flag: false,
       costVisible: false,
+      verify: true,
       crewDetailList: [],
       columns: [{
         title: '订单号', dataIndex: 'orderNo', key: 'orderNo', align: 'center'
@@ -45,7 +45,7 @@ class SalarySummary extends React.Component{
       costColumns: [{
         title: '组员名称',dataIndex: 'name',key: 'name',align: 'center',
       },{
-        title: '级别',dataIndex: '',key: '',align: 'center',render: (_,recode) => {
+        title: '级别',dataIndex: 'level',key: 'level',align: 'center',render: (_,recode) => {
           return (
             <>
               {
@@ -98,8 +98,6 @@ class SalarySummary extends React.Component{
     await dispatch({
       type: 'generalDepartment/crewCollect',
       payload: {
-        pageNum: current,
-        pageSize,
         orderNo,
         orderBeginTime: orderTime && orderTime[0],
         orderEndTime: orderTime && orderTime[1]
@@ -141,7 +139,6 @@ class SalarySummary extends React.Component{
         flag: false
       })
     }
-
   }
 
   handleCancel = () => {
@@ -150,31 +147,53 @@ class SalarySummary extends React.Component{
     })
   }
 
+  table1 = (key) => {
+    const variable = key === "info" ? false : true;
+    this.setState({
+      verify: variable
+    })
+  }
 
    render(){
-    const { selectData , costVisible , crewDetailList } = this.state;
+    const { selectData , costVisible , crewDetailList , verify } = this.state;
      return (
-       <PageContainer content="用于对组员工资进行管理" extraContent={
-         <Button type="primary" onClick={this.allExport}>全部导出</Button>
-       }>
-         <ProTable
-           headerTitle="查询表格"
-           rowKey="orderNo"
-           search={{
-             labelWidth: 120,
-             width: 100
-           }}
-           actionRef={(ref) => (this.ref = ref)}
-           pagination={{
-             pageSize: 10,
-           }}
-           request={( params ) => this.initTableData({ ...params })}
-           columns={this.state.columns}
-           rowSelection={{
-             onChange: (_, selectedRows) => this.changeRows(selectedRows)
-           }}
-         >
-         </ProTable>
+       <PageContainer content="用于对组员工资进行管理" tabList={
+         [
+           {
+             tab: '订单查询',
+             key: 'base',
+           },
+           {
+             tab: '组员明细查询',
+             key: 'info',
+           },
+         ]
+       } onTabChange={(key) => this.table1(key)}
+       >
+         {
+           verify ? <ProTable
+             headerTitle="查询表格"
+             rowKey="orderNo"
+             search={{
+               labelWidth: 120,
+               width: 100
+             }}
+             actionRef={(ref) => (this.ref = ref)}
+             pagination={{
+               pageSize: 10,
+             }}
+             request={( params ) => this.initTableData({ ...params })}
+             columns={this.state.columns}
+             rowSelection={{
+               onChange: (_, selectedRows) => this.changeRows(selectedRows)
+             }}
+             toolBarRender={() => [
+               <Button type="primary" onClick={this.allExport}>全部导出</Button>
+             ]}
+           >
+           </ProTable> : <GroupSubsidiary/>
+         }
+
          {
            this.state.flag && <div style={{backgroundColor: 'white',marginTop: 20}}>
              <div style={{padding: 20}}>

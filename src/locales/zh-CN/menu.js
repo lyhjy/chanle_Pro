@@ -76,8 +76,9 @@ export default {
   'menu.charge-leadership.staff-profile': '员工工资修改审核',
   'menu.charge-leadership.business-summary': '整体业务汇总表',
   'menu.charge-leadership.salary-summary': '组员工资汇总表',
+  'menu.charge-leadership.order-terminate': '订单终止审核',
   'menu.marketing-minister': '营销部长',
-  'menu.marketing-minister.marketing-budget': '营收预算单审核',
+  'menu.marketing-minister.marketing-budget': '营收预估单审核',
   'menu.marketing-minister.marketing-settlement': '营收结算单审核',
   'menu.marketing-minister.contract-initiation': '合同发起审核',
   'menu.marketing-minister.take-over': '接团任务单审核',
@@ -97,4 +98,11 @@ export default {
   'menu.general-department.employee-pool': '员工库',
   'menu.general-department.salesman-summary': '业务员提成工资汇总表',
   'menu.general-department.salary-summary': '组员工资汇总表',
+  'menu.salesman': '业务员',
+  'menu.salesman.report': '报备单',
+  'menu.salesman.mission-list': '接团任务单',
+  'menu.salesman.revenue-forecast': '营收预估表',
+  'menu.salesman.revenue-settlement': '营收结算单',
+  'menu.salesman.invoice': '开票申请单',
+  'menu.salesman.contract': '合同发起'
 };

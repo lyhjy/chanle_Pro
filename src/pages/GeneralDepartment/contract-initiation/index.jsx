@@ -22,10 +22,10 @@ class ContractInitiation extends React.Component{
       columns: [{
         title: '合同单号',dataIndex: 'contractId',key: 'contractId',align: 'center',
       },{
-        title: '客户名称',dataIndex: 'customName',key: 'customName',hideInSearch: true,align: 'center',
+        title: '客户名称',dataIndex: 'customName',key: 'customName',align: 'center',
       }, {
         title: '合同下载', dataIndex: 'annexUrl', key: 'annexUrl',hideInSearch: true, align: 'center', render: (_,recode) => (
-          <a href={`http://img.shanyangkj.com/img/test/%E4%B8%8B%E8%BD%BD%E6%B5%8B%E8%AF%95.xls`}>下载查看</a>
+          <a href={_}>下载查看</a>
         )
       }
         ,{
@@ -174,7 +174,7 @@ class ContractInitiation extends React.Component{
   }
 
   initTableData = async (params) => {
-    const { contractId , current , pageSize } = params;
+    const { contractId , current , pageSize , customName } = params;
     const { dispatch } = this.props;
     const { memberId } = this.state;
     let result = {};
@@ -186,7 +186,8 @@ class ContractInitiation extends React.Component{
           id: contractId ? contractId : '',
           memberId,
           pageNo: current,
-          pageSize
+          pageSize,
+          customName
         }
       }).then(() => {
         const { generalDepartment } = this.props;

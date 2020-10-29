@@ -20,7 +20,7 @@ class TakeOver extends React.Component{
       textareaValue: '',
       total: 0,
       columns: [{
-        title: '订单号',dataIndex: 'orderNo',key: 'orderNo',align: 'center',tip: '订单号是唯一的',
+        title: '订单号',dataIndex: 'orderNo',key: 'orderNo',align: 'center',copyable: true,tip: '订单号是唯一的',
       },{
         title: '基本信息',align: 'center', dataIndex: 'basic',key: 'basic',hideInSearch: true,render: (_,recode) => {return (<a onClick={() => this.clickBasic(recode.id,1)}>查看</a>)},
       },{
@@ -32,9 +32,9 @@ class TakeOver extends React.Component{
       },{
         title: '餐饮安排',align: 'center',dataIndex: 'food',key: 'food',hideInSearch: true,render: (_,recode) => {return (<a onClick={() => this.clickBasic(recode.id,3)}>查看</a>)}
       },{
-        title: '场地使用',align: 'center',dataIndex: 'groundInfo',key: 'groundInfo',hideInSearch: true
+        title: '场地使用',align: 'center',dataIndex: 'groundInfo',key: 'groundInfo',valueType: 'textarea',ellipsis: true,hideInSearch: true,width: 150
       },{
-        title: '备注',align: 'center',dataIndex: 'remarks',key: 'remarks',valueType: 'textarea',hideInSearch: true,
+        title: '备注',align: 'center',dataIndex: 'remarks',key: 'remarks',valueType: 'textarea',ellipsis: true,hideInSearch: true,width: 150
       },{
         title: '操作人',dataIndex: 'userName',key: 'userName',align: 'center',hideInSearch: true,
       },{

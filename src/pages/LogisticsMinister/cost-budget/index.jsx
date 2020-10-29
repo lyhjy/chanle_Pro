@@ -1,24 +1,26 @@
 import React, { useState, useRef } from 'react';
-import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
+import {PageContainer, FooterToolbar, PageHeaderWrapper} from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import {Divider, Form, message, Modal, notification, Popconfirm, Tooltip , Input } from 'antd';
 import { connect } from 'umi';
 import ChargeOption from "./components/ChargeOption";
-import { queryBusinessList , costReview , costDetailed } from "./service";
-
-
+import OperaHistoryModel from "./components/OperaHistoryModel";
+import { queryBusinessList , costReview , costDetailed , history } from "./service";
 const BusinessCost = props => {
-  const { logisticsMinisterAction = {}, dispatch } = props;
   const [createModalVisible, handleModalVisible] = useState(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
+  const [ createOperaHistoryModalVisible, handleOperaHistoryVisible ] = useState(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const [createCost , handleCost] = useState([]);
   const [total, setTotal] = useState(0);
   const [textareaValue, setTextareaValue] = useState('');
+  const [operatorList, setOperatorList] = useState([]);
+  const [operatorTotal, setOperatorTotal ] = useState(0);
   const actionRef = useRef();
   const [row, setRow] = useState();
   const memberId = '后勤部长';
   const [selectedRowsState, setSelectedRows] = useState([]);
+  const [orderNo, setOrderNo] = useState("");
 
   const columns = [
     {
@@ -38,9 +40,10 @@ const BusinessCost = props => {
         <a onClick={() =>{handleUpdateModalVisible(true);setStepFormValues(record);view(record.order_no)}}>查看</a>
       )
     },{
-      title: '操作人',dataIndex: 'userName',key: 'userName',hideInSearch: true,align: 'center',
+      title: '操作人',dataIndex: 'review_name',key: 'review_name',hideInSearch: true,align: 'center',render: (_,recode) =>
+        <a onClick={() =>viewOperator({order_no: recode.order_no})}>{_}</a>
     },{
-      title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',valueType: 'dateTime',hideInSearch: true,align: 'center',
+      title: '操作时间',dataIndex: 'review_time',key: 'review_time',valueType: 'dateTime',hideInSearch: true,align: 'center',
     },{
       title: '操作',dataIndex: 'option',valueType: 'option',align: 'center',render: (_,recode) => (
         <>
@@ -79,18 +82,40 @@ const BusinessCost = props => {
         </>
       )
     }]
+  const viewOperator = ({ order_no }) => {
+    try {
+      history({
+        orderNo: order_no,
+        // pageNo: 1,
+        // pageSize: 5
+      }).then((res) => {
+        if (res.result.records.length > 0){
+          setOperatorTotal(res.result.total)
+          setOperatorList(res.result.records)
+        } else {
+          setOperatorList([]);
+        }
+      })
+    }catch (e) {
+      message.error("服务异常,请重试!")
+    }
+    handleOperaHistoryVisible(true)
+    setOrderNo(order_no);
+    // setOperatorVisible(false)
+  }
 
   const initTableData = async (params) => {
-    const { current , pageSize , order_no , custom_name , contact } = params;
+    const { current , pageSize , order_no , custom_name ,  contact , contact_phone } = params;
     let result = {};
     try {
       await queryBusinessList({
         memberId,
         pageNo: current,
         pageSize,
-        order_no,
+        orderNo: order_no,
         custom_name,
-        contact
+        name: contact,
+        phone: contact_phone
       }).then((res) => {
         if (res.result.records.length > 0){
           for (let i in res.result.records){
@@ -187,7 +212,7 @@ const BusinessCost = props => {
         >
         </ChargeOption>
       }
-
+      <OperaHistoryModel onCancel={() => handleOperaHistoryVisible(false)} modalVisible={createOperaHistoryModalVisible} info={operatorList} total={operatorTotal} ></OperaHistoryModel>
     </PageContainer>
   )
 }

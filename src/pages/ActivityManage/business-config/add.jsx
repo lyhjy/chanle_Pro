@@ -44,14 +44,13 @@ class BusinessConfig extends React.Component{
 
   submitForm = params =>{
     const { dispatch } = this.props;
-    const { orderType , orderJx , rate } = params;
+    const { orderType , rate } = params;
     const { id , operatorId } = this.state;
     let num = Number(rate) / 100;
     dispatch({
       type: 'activity/addOrUpdateOrderType',
       payload: {
         orderType,
-        orderJx,
         rate: num,
         id,
         operatorId
@@ -92,24 +91,16 @@ class BusinessConfig extends React.Component{
               <Input/>
             </FormItem>
             <FormItem
-              label="订单简写"
-              name="orderJx"
-              rules={[
-                {
-                  required: true,
-                  message: '请输入订单简写'
-                }
-              ]}
-            >
-              <Input/>
-            </FormItem>
-            <FormItem
               label="提成比例(%)"
               name="rate"
               rules={[
                 {
                   required: true,
                   message: '请输入提成比例'
+                },
+                {
+                  pattern: new RegExp(/^[1-9]\d*$/, "g"),
+                  message: '请输入数字'
                 }
               ]}
             >

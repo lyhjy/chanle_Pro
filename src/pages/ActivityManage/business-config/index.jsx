@@ -3,7 +3,7 @@ import {connect, history, Link} from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import {Form, message, Button, Input, Space, Modal, Table, Divider, Popconfirm } from 'antd';
 import ProTable from '@ant-design/pro-table';
-import styles from './style.less'
+import styles from '../../MarketingMinister/marketing-budget/style.less';
 class BushinessConfig extends React.Component{
   constructor(props) {
     super(props);
@@ -20,15 +20,13 @@ class BushinessConfig extends React.Component{
       pageSize: 5,
       columns: [{
         title: '业务类型', dataIndex: 'orderType', key: 'orderType', align: 'center'
-      }, {
-        title: '订单简写', dataIndex: 'orderJx', key: 'orderJx', align: 'center'
-      }, {
+      },{
         title: '提成比例(%)', dataIndex: 'rate', key: 'rate', align: 'center',render: (_,recode) => {
           return (
             <span>{`${_}%`}</span>
           )
         }
-      }, {
+      },{
         title: '领导审核', dataIndex: 'leadership', key: 'leadership', align: 'center', render: (_,record) => {
           return (<a onClick={() => this.viewReview(record.id)}>查看</a>)
         },
@@ -63,24 +61,24 @@ class BushinessConfig extends React.Component{
         )
       }],
       modelColumns: [{
-        title: '职位',dataIndex: 'levelName',key: 'levelName',align: 'center'
-      },{
-        title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
-      },{
-        title: '状态',dataIndex: 'operatorStatus',key: 'operatorStatus',align: 'center',render: (_,record) => {
-          return (
-            _ == 1 ? <a>已通过</a> : <span style={{color: 'red'}}>未通过</span>
-          )
-        }
-      }],
-      operatorColumns: [{
-        title: '操作人',dataIndex: 'linkMemberName',key: 'linkMemberName',align: 'center'
-      },{
-        title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',align: 'center'
-      },{
-        title: '操作状态',dataIndex: 'logStatus',key: 'logStatus',align: 'center',render: (_,recode) => {
-          switch (Number(_)) {
-            case 1: return <span>添加</span>
+              title: '职位',dataIndex: 'levelName',key: 'levelName',align: 'center'
+            },{
+              title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
+            },{
+              title: '状态',dataIndex: 'operatorStatus',key: 'operatorStatus',align: 'center',render: (_,record) => {
+              return (
+              _ == 1 ? <a>已通过</a> : <span style={{color: 'red'}}>未通过</span>
+              )
+            }
+            }],
+            operatorColumns: [{
+              title: '操作人',dataIndex: 'linkMemberName',key: 'linkMemberName',align: 'center'
+            },{
+              title: '操作时间',dataIndex: 'timeCreate',key: 'timeCreate',align: 'center'
+            },{
+              title: '操作状态',dataIndex: 'logStatus',key: 'logStatus',align: 'center',render: (_,recode) => {
+              switch (Number(_)) {
+              case 1: return <span>添加</span>
               break;
             case 2: return <span>修改</span>
               break;
@@ -218,6 +216,7 @@ class BushinessConfig extends React.Component{
     this.setState({
       leadershipVisible: false,
       operatorVisible: false,
+      viewVisible: false,
     })
   }
   handleTableChange = pagination => {
@@ -226,6 +225,8 @@ class BushinessConfig extends React.Component{
   }
   render(){
     const { columns , leadershipVisible , total , operatorVisible } = this.state;
+    const table_style = {'border-collapse': 'collapse','margin': '0 auto','text-align': 'center'};
+    const table_p = {'display': 'inline-block','text-align': 'right','margin-top': 70};
     return(
       <PageContainer content="用于对业务提成进行管理" extraContent={
         <Button type="primary" onClick={this.addConfig}>新增配置</Button>
@@ -291,3 +292,4 @@ class BushinessConfig extends React.Component{
 export default connect(({ activity }) => ({
   activity
 }))(BushinessConfig);
+

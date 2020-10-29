@@ -6,6 +6,7 @@ import {Button, message, Modal, Table} from "antd";
 import ExcelUtil from '../../../utils/excelUtil';
 import { connect } from "umi";
 import styles from "../../ActivityManage/business-config/style.less";
+
 class SalesmanSummary extends React.Component{
 
   constructor(props){
@@ -14,35 +15,68 @@ class SalesmanSummary extends React.Component{
       total: 0,
       flag: false,
       costVisible: false,
-      columns: [{
-        title: '订单类型',dataIndex: 'orderType',key: 'orderType',align: 'center'
-      },{
-        title: '订单号',dataIndex: 'orderNo',key: 'orderNo',align: 'center'
-      },{
-        title: '业务员',dataIndex: 'memberName',key: 'memberName',align: 'center',hideInSearch: true,
-      },{
-        title: '业务类型',dataIndex: 'actType',key: 'actType',align: 'center',hideInSearch: true
-      },{
-        title: '业务单位',dataIndex: 'customName',key: 'customName',align: 'center'
-      },{
-        title: '业务日期',dataIndex: 'orderTime',key: 'orderTime',align: 'center',valueType: 'dateRange'
-      },{
-        title: '业务人次',dataIndex: 'personNum',key: 'personNum',align: 'center',hideInSearch: true
-      },{
-        title: '业务营收(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
-      },{
-        title: '回款日期',dataIndex: 'collectionDate',key: 'collectionDate',align: 'center',hideInSearch: true
-      },{
-        title: '到账营收(元)',dataIndex: 'finishMoney',key: 'finishMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
-      },{
-        title: '提成比例(%)',dataIndex: 'rate',key: 'rate',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_*100}%`}</span>
-      },{
-        title: '提成合计(元)',dataIndex: 'amount',key: 'amount',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
-      }],
+      menuList: [],
       attendanceInfoList: [],
       selectData: []
     }
   }
+
+  componentDidMount(){
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'generalDepartment/getMenu',
+    }).then(() => {
+      const { generalDepartment } = this.props;
+      const { menuList } = generalDepartment;
+      const { result } = menuList;
+      // result.map(item => item.orderType)
+      let arr = this.changeKey(result,['id','text']);
+      this.setState({
+        menuList: arr
+      })
+    })
+  }
+
+  changeKey (arr, key) {
+    let newArr = [];
+    arr.forEach((item, index) => {
+      let newObj = {};
+      for (var i = 0; i < key.length; i++) {
+        newObj[key[i]] = item[Object.keys(item)[i]]
+      }
+      newArr.push(newObj);
+    })
+    return newArr;
+  }
+
+  columns = () => [{
+    title: '订单类型',dataIndex: 'orderType',key: 'orderType',align: 'center',
+    filters: true,
+    valueEnum: this.state.menuList
+  },{
+    title: '订单号',dataIndex: 'orderNo',key: 'orderNo',align: 'center'
+  },{
+    title: '业务员',dataIndex: 'memberName',key: 'memberName',align: 'center',hideInSearch: true,
+  },{
+    title: '业务类型',dataIndex: 'actType',key: 'actType',align: 'center',hideInSearch: true
+  },{
+    title: '业务单位',dataIndex: 'customName',key: 'customName',align: 'center'
+  },{
+    title: '业务日期',dataIndex: 'orderTime',key: 'orderTime',align: 'center',valueType: 'dateRange'
+  },{
+    title: '业务人次',dataIndex: 'personNum',key: 'personNum',align: 'center',hideInSearch: true
+  },{
+    title: '业务营收(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
+  },{
+    title: '回款日期',dataIndex: 'collectionDate',key: 'collectionDate',align: 'center',hideInSearch: true
+  },{
+    title: '到账营收(元)',dataIndex: 'finishMoney',key: 'finishMoney',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
+  },{
+    title: '提成比例(%)',dataIndex: 'rate',key: 'rate',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_*100}%`}</span>
+  },{
+    title: '提成合计(元)',dataIndex: 'amount',key: 'amount',align: 'center',hideInSearch: true,render: (_, recode) => <span>{`${_}`}</span>
+  }];
+
   initTableData = async (params) => {
     const { dispatch } = this.props;
     const { current , pageSize , orderNo , orderType , orderTime } = params;
@@ -165,7 +199,7 @@ class SalesmanSummary extends React.Component{
             total: this.state.total
           }}
           request={( params ) => this.initTableData({ ...params })}
-          columns={this.state.columns}
+          columns={this.columns()}
           rowSelection={{
             onChange: (_, selectedRows) => this.changeRows(selectedRows)
           }}

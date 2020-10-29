@@ -74,8 +74,22 @@ export async function crewCollect(params) {
   })
 }
 
+export async function getMenu(params) {
+  return request(`${url}/order/type/query/menu`,{
+    method: 'GET',
+    params: params
+  })
+}
+
 export async function detailCollect(params) {
   return request(`${url}/mission/list/crew/detail`,{
+    method: 'GET',
+    params: params
+  })
+}
+
+export async function queryGroup(params) {
+  return request(`${url}/mission/list/crew/group`,{
     method: 'GET',
     params: params
   })
