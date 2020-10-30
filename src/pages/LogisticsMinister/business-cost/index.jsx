@@ -158,7 +158,7 @@ const BusinessCost = props => {
   }
 
   const view = async params => {
-    const { id , expectCost , realCost } = params;
+    const { id , expectCost , expectCostRate } = params;
     try {
       await viewCost({
         id,
@@ -166,7 +166,7 @@ const BusinessCost = props => {
       }).then((res) => {
         if (res.result.length > 0){
           handleCost(res.result);
-          setCostInfo({expectCost,realCost});
+          setCostInfo({expectCost,expectCostRate});
         }
       })
     }catch (e) {
