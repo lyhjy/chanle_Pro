@@ -1,6 +1,6 @@
 import { connect , history } from "umi";
 import { PageContainer } from '@ant-design/pro-layout';
-import {Button, Form, Input, Space , Row , Col } from "antd";
+import {Button, Form, Input, Space , Row , Col , message } from "antd";
 const FormItem = Form.Item;
 import React from "react";
 
@@ -10,7 +10,7 @@ class AddActivityType extends React.Component{
     super(props);
     this.state = {
       info: {},
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
+      memberId: sessionStorage.getItem("memberId"),
       id: 0,
     }
   }
@@ -40,20 +40,38 @@ class AddActivityType extends React.Component{
       }
     })
   }
+  checkName = async ({ name }) => {
+    let res = true;
+    const { dispatch } = this.props;
+    await dispatch({
+      type: 'activity/actTypeCheckName',
+      payload: {
+        name
+      }
+    }).then(() => {
+      const { activity } = this.props;
+      const { actCheckNameInfo } = activity;
+      if (actCheckNameInfo.code === 201){
+        message.error(actCheckNameInfo.msg);
+        res = false;
+      }
+    });
+    return res;
+  }
 
   submitForm = params => {
     const { dispatch } = this.props;
     const { actName , actJx } = params;
     const { id , memberId } = this.state;
-    dispatch({
-      type: 'activity/addOrUpdateActType',
-      payload: {
-        actName,
-        actJx,
-        memberId,
-        id
-      }
-    })
+    // dispatch({
+    //   type: 'activity/addOrUpdateActType',
+    //   payload: {
+    //     actName,
+    //     actJx,
+    //     memberId,
+    //     id
+    //   }
+    // })
   }
 
   render(){

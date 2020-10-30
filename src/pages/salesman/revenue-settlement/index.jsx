@@ -36,7 +36,7 @@ class RevenueSettlement extends React.Component{
           }
         }],
       auditColumns: [{
-        title: '职位',dataIndex: 'operator',key: 'operator',
+        title: '职位',dataIndex: 'operator',key: 'operator',align: 'center'
       },{
         title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
       },{
@@ -74,22 +74,22 @@ class RevenueSettlement extends React.Component{
           }
         },
         {
-          title: '单价(元)',dataIndex: 'price',key: 'price',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
+          title: '单价(元)',dataIndex: 'price',key: 'price',align: 'center',render: (_, recode) => <span>{`${_?_:0}`}</span>
         },
         {
-          title: '预计数量',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center'
+          title: '预计数量',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center',render: (_, recode) => <span>{_?_:0}</span>
         },
         {
-          title: '预计小计(元)',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
+          title: '预计小计(元)',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center',render: (_, recode) => <span>{`${_?_:0}`}</span>
         },
         {
-          title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
+          title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center',render: (_, recode) => <span>{_?_:0}</span>
         },
         {
-          title: '实际小计(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
+          title: '实际小计(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_?_:0}`}</span>
         },
         {
-          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
+          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_?_:'无'}</div>
         }
       ]
     }

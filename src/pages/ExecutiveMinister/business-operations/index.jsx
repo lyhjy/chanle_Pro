@@ -40,7 +40,12 @@ class BusinessOperations extends React.Component{
         },{
           title: '费用明细',align: 'center',render: (_, recode) => (
             <>
-              <a onClick={() => {this.showCostDetail({orderNo: recode.order_no})}}>查看</a>
+              <a onClick={() => {this.showCostDetail({orderNo: recode.order_no});this.setState({
+                real_cost: recode.real_cost,
+                expect_cost_rate: recode.expect_cost_rate,
+                expect_cost: recode.expect_cost,
+                real_cost_rate: recode.real_cost_rate
+              })}}>查看</a>
             </>
           )
         },{
@@ -83,7 +88,7 @@ class BusinessOperations extends React.Component{
                   >
                     <a>驳回</a>
                   </Popconfirm>
-                </> : recode.review_status == 1 ? <span>已通过</span> : <><Tooltip title={recode.reviewOrigin}><span style={{color: 'red'}}>已驳回</span></Tooltip></>
+                </> : recode.review_status == 1 ? <span>已通过</span> : <><Tooltip title={recode.review_origin}><span style={{color: 'red'}}>已驳回</span></Tooltip></>
               }
 
             </>
@@ -94,22 +99,22 @@ class BusinessOperations extends React.Component{
           title: '项目',dataIndex: 'costType',key: 'costType',align: 'center'
         },
         {
-          title: '单价(元)',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center',render: (_,recode) => <span>{`${_/100}`}</span>
+          title: '单价(元)',dataIndex: 'costPriceUnit',key: 'costPriceUnit',align: 'center',render: (_,recode) => <span>{`${_ ? _/100 : 0}`}</span>
         },
         {
-          title: '预计数量',dataIndex: 'costQuantityExpected',key: 'costQuantityExpected',align: 'center'
+          title: '预计数量',dataIndex: 'costQuantityExpected',key: 'costQuantityExpected',align: 'center',render: (_,recode) => <span>{`${_ ? _ : 0}`}</span>
         },
         {
-          title: '预计小计(元)',dataIndex: 'costPriceExpected',key: 'costPriceExpected',align: 'center',render: (_,recode) => <span>{`${_/100}`}</span>
+          title: '预计小计(元)',dataIndex: 'costPriceExpected',key: 'costPriceExpected',align: 'center',render: (_,recode) => <span>{`${_ ? _ : 0} `}</span>
         },
         {
-          title: '实际数量',dataIndex: 'costQuantityReal',key: 'costQuantityReal',align: 'center'
+          title: '实际数量',dataIndex: 'costQuantityReal',key: 'costQuantityReal',align: 'center',render: (_,recode) => <span>{_?_: 0}</span>
         },
         {
-          title: '实际小计(元)',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center',render: (_,recode) => <span>{`${_/100}`}</span>
+          title: '实际小计(元)',dataIndex: 'costPriceReal',key: 'costPriceReal',align: 'center',render: (_,recode) => <span>{`${_ ? _ : 0}`}</span>
         },
         {
-          title: '备注',dataIndex: 'costRemarks',key: 'costRemarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
+          title: '备注',dataIndex: 'costRemarks',key: 'costRemarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_?_:'无'}</div>
       }]
     }
   }
@@ -123,7 +128,7 @@ class BusinessOperations extends React.Component{
       }).then((res) => {
         if (res.result.length > 0){
           this.setState({
-            costList: res.result
+            costList: res.result,
           })
         }else {
           message.error("操作失败!")
@@ -167,7 +172,6 @@ class BusinessOperations extends React.Component{
       historyVisible: true
     })
   }
-
 
   modifyTableData = ({ orderNo , reviewStatus }) => {
     const { memberId , textareaValue } = this.state;
@@ -233,8 +237,9 @@ class BusinessOperations extends React.Component{
       costVisible: false,
     })
   }
+
   render() {
-    const { costVisible , costList } = this.state;
+    const { costVisible , costList , real_cost , expect_cost_rate , real_cost_rate , expect_cost } = this.state;
     return (
       <PageContainer content="用于对业务成本单进行管理">
         <ProTable
@@ -268,6 +273,22 @@ class BusinessOperations extends React.Component{
             this.handleCancel
           }
         >
+          <div style={{textAlign: 'left'}}>
+            <p>
+            <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>预计成本:</label> <span style={{color: 'red',fontSize: 'large'}}>{expect_cost}</span>&nbsp;&nbsp;元
+            </span>
+            <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>实际成本:</label> <span style={{color: 'red',fontSize: 'large'}}>{real_cost}</span>&nbsp;&nbsp;元
+            </span>
+            <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>预计税费(10%):</label> <span style={{color: 'red',fontSize: 'large'}}>{expect_cost_rate}</span>&nbsp;&nbsp;元
+            </span>
+            <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>实际税费(10%):</label> <span style={{color: 'red',fontSize: 'large'}}>{real_cost_rate}</span>&nbsp;&nbsp;元
+            </span>
+            </p>
+          </div>
           <Table columns={this.state.costColumns} dataSource={costList} pagination={{
             pageSize: 5
           }}>

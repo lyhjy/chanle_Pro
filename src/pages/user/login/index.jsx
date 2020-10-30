@@ -19,29 +19,28 @@ const LoginMessage = ({ content }) => (
 
 const Login = props => {
   const { userLogin = {}, submitting } = props;
-  const { status, type: loginType } = userLogin;
-  const [autoLogin, setAutoLogin] = useState(true);
-  const [type, setType] = useState('account');
-
+  const { info } = userLogin;
+  const [ autoLogin , setAutoLogin] = useState(true);
+  const [plat, setType] = useState('pc');
   const handleSubmit = values => {
     const { dispatch } = props;
     dispatch({
       type: 'login/login',
-      payload: { ...values, type },
+      payload: { ...values, plat },
     });
   };
-
   return (
     <div className={styles.main}>
-      <LoginForm activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-
-        <Tab key="account" tab="账户密码登录">
-          {status === 'error' && loginType === 'account' && !submitting && (
-            <LoginMessage content="账户或密码错误!!!" />
+      <LoginForm activeKey={plat} onTabChange={setType} onSubmit={handleSubmit}>
+        <div style={{textAlign: 'center',margin: 25}}>
+          <label style={{fontWeight: 'bold',fontSize: 20}}>账户密码登录</label>
+        </div>
+        {/*<Tab key="account" tab="账户密码登录">*/}
+          {info.code === 500 && !submitting && (
+            <LoginMessage content={info.msg} />
           )}
-
           <UserName
-            name="userName"
+            name="name"
             placeholder="用户名"
             rules={[
               {
@@ -51,7 +50,7 @@ const Login = props => {
             ]}
           />
           <Password
-            name="password"
+            name="pass"
             placeholder="密码"
             rules={[
               {
@@ -60,7 +59,7 @@ const Login = props => {
               },
             ]}
           />
-        </Tab>
+        {/*</Tab>*/}
         <Submit loading={submitting}>登录</Submit>
         {/*<div className={styles.other}>*/}
           {/*<Link className={styles.register} to="/user/register">*/}
@@ -81,7 +80,7 @@ const Login = props => {
   );
 };
 
-export default connect(({ login, loading }) => ({
+export default connect(({ login , loading }) => ({
   userLogin: login,
   submitting: loading.effects['login/login'],
 }))(Login);

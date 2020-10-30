@@ -12,6 +12,7 @@ class AddReport extends React.Component{
     this.state = {
       memberId: 'e140e402a4ca4ea4ae2f86f9dd88f629',
       sub_type: 0,
+      id: 0,
       actTypeList: [],
       orderTypeList: [],
       reportInfo: {},
@@ -30,6 +31,9 @@ class AddReport extends React.Component{
     report_id = sessionStorage.getItem('report_id');
 
     if (report_id){
+      this.setState({
+        id: report_id
+      })
       dispatch({
         type: 'salesman/reportDetail',
         payload: {
@@ -52,6 +56,7 @@ class AddReport extends React.Component{
     this.getActType();
     this.getOrderType();
   }
+
   getActType = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -66,6 +71,7 @@ class AddReport extends React.Component{
       }
     })
   }
+
   getOrderType = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -84,12 +90,12 @@ class AddReport extends React.Component{
   onFinish = params => {
     const { reserveTime } = params;
     const { dispatch } = this.props;
-    const { memberId , sub_type } = this.state;
+    const { memberId , sub_type , id } = this.state;
     params.reserveTimeBegin = moment(reserveTime[0]).format('YYYY-MM-DD HH:mm:ss');
     params.reserveTimeEnd = moment(reserveTime[1]).format('YYYY-MM-DD HH:mm:ss');
-    params.id = 0;
+    params.id = id;
     params.memberId = memberId;
-    params.audit = sub_type;
+    params.audit = 1;
     params.contract = 0,
     delete params.reserveTime;
     dispatch({
@@ -179,8 +185,8 @@ class AddReport extends React.Component{
           <Row gutter={24}>
             <Col span={24} offset={11}>
               <Space size={20}>
-                <Button type="primary" onClick={() =>this.changeSubmit(0)} htmlType="submit">保存</Button>
-                <Button htmlType="submit" onClick={() =>this.changeSubmit(1)}>提交</Button>
+                <Button type="primary" htmlType="submit">提交</Button>
+                <Button onClick={() => history.go(-1)}>取消</Button>
               </Space>
             </Col>
           </Row>

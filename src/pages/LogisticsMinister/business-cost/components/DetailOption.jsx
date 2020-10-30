@@ -17,38 +17,41 @@ const columns = [
       switch (Number(_)) {
         case 1: return <span>活动组织费</span>;
           break;
-        case 2: return <span>餐费</span>;
+        case 2: return <span>器材及产地费</span>;
           break;
-        case 3: return <span>住宿费</span>;
+        case 3: return <span>餐费</span>;
           break;
-        case 4: return <span>车费</span>;
+        case 4: return <span>住宿费</span>;
           break;
-        case 5: return <span>其他1</span>;
+        case 5: return <span>车费</span>;
           break;
-        case 6: return <span>其他2</span>
+        case 6: return <span>其他1</span>
           break;
+        case 7: return <span>其他2</span>
+          break;
+        case 8: return <span>其他3</span>
         default:
           return <spna>项目类型错误</spna>
       }
     }
   },
   {
-    title: '单价(元)', dataIndex: 'price', key: 'price', align: 'center', render: (_, recode) => <span>{`${_?_:0}`}</span>
+    title: '单价(元)', dataIndex: 'price', key: 'price', align: 'center', render: (_, recode) => <span>{`${_?_: 0}`}</span>
   },
   {
-    title: '预计数量',dataIndex: 'expectNum',key: 'expectNum',align: 'center'
+    title: '预计数量',dataIndex: 'expectNum',key: 'expectNum',align: 'center',render: (_, recode) => <span>{`${_?_: 0}`}</span>
   },
   {
     title: '预计金额(元)',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_?_:0}`}</span>
   },
   {
-    title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
+    title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center',render: (_, recode) => <span>{`${_?_: 0}`}</span>
   },
   {
     title: '实际金额(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_?_:0}`}</span>
   },
   {
-    title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
+    title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_?_:'无'}</div>
   }
 ]
 
@@ -99,10 +102,11 @@ const ChargeOption = props => {
               <label>预计成本:</label> <span style={{color: 'red',fontSize: 'large'}}>{costInfo.expectCost}</span>&nbsp;&nbsp;元
             </span>
             <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
-              <label>实际成本:</label> <span style={{color: 'red',fontSize: 'large'}}>{costInfo.realCost}</span>&nbsp;&nbsp;元
+              <label>预计税费(10%):</label> <span style={{color: 'red',fontSize: 'large'}}>{costInfo.expectCostRate}</span>&nbsp;&nbsp;元
             </span>
           </p>
         </div>
+
       </>
     );
   }

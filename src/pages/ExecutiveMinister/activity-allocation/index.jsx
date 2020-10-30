@@ -26,7 +26,7 @@ class ActivityAllocation extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
+      memberId: sessionStorage.getItem("memberId"),
       costVisible: false,
       activityVisible: false,
       basicInfoVisible: false,
@@ -154,22 +154,16 @@ class ActivityAllocation extends React.Component{
           }
         },
         {
-          title: '单价(元)',dataIndex: 'price',key: 'price',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
+          title: '单价(元)',dataIndex: 'price',key: 'price',align: 'center',render: (_, recode) => <span>{`${_ ? _ : 0}`}</span>
         },
         {
-          title: '预计数量',dataIndex: 'expectNum',key: 'expectNum',align: 'center'
+          title: '预计数量',dataIndex: 'expectNum',key: 'expectNum',align: 'center',render: (_,recode) => <span>{_?_:0}</span>
         },
         {
-          title: '预计金额(元)',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
+          title: '预计金额(元)',dataIndex: 'expectMoney',key: 'expectMoney',align: 'center',render: (_, recode) => <span>{`${_ ? _ : 0}`}</span>
         },
         {
-          title: '实际数量',dataIndex: 'realNum',key: 'realNum',align: 'center'
-        },
-        {
-          title: '实际金额(元)',dataIndex: 'realMoney',key: 'realMoney',align: 'center',render: (_, recode) => <span>{`${_}`}</span>
-        },
-        {
-          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
+          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{`${_ ? _ : '无'}`}</div>
         }],
         activityColumns: [{
           title: '姓名', dataIndex: 'name', key: 'name', align: 'center'
@@ -466,7 +460,9 @@ class ActivityAllocation extends React.Component{
       const { result } = feeList;
       if (result.costDetails.length > 0) {
         this.setState({
-          costList: result.costDetails
+          costList: result.costDetails,
+          expectCostRate: result.expectCostRate,
+          expectCost: result.expectCost
         })
       }
     })
@@ -536,7 +532,8 @@ class ActivityAllocation extends React.Component{
   }
 
   render(){
-    const { costVisible , costList , activityVisible , employeesList , assignList , selectedRowKey , selectedLevel , total , missionInfo , operatorVisible } = this.state;
+    const { costVisible , costList , activityVisible , employeesList , assignList , selectedRowKey , selectedLevel , total , missionInfo , operatorVisible
+    , expectCost , expectCostRate } = this.state;
     const rowSelection = {
       selectedRowKeys: selectedRowKey,
       selections: true,
@@ -694,11 +691,22 @@ class ActivityAllocation extends React.Component{
               <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={this.handleCancel}>确定</Button>
             </div>
           ]}
+
           centered={true}
           onCancel={
             this.handleCancel
           }
         >
+          <div style={{textAlign: 'left'}}>
+            <p>
+            <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>预计成本:</label> <span style={{color: 'red',fontSize: 'large'}}>{expectCost}</span>&nbsp;&nbsp;元
+            </span>
+              <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>预计税费(10%):</label> <span style={{color: 'red',fontSize: 'large'}}>{expectCostRate}</span>&nbsp;&nbsp;元
+            </span>
+            </p>
+          </div>
           <Table columns={this.state.costColumns} dataSource={costList} pagination={{
             pageSize: 5
           }}>

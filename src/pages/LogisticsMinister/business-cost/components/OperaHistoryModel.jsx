@@ -48,7 +48,6 @@ const OperaHistoryModel = props => {
 
   const handleTableChange = param => {
     const { pagination , id } = param;
-    console.log(param)
     this.viewOperator({ id, type: 107,no: pagination});
   }
 

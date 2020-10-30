@@ -51,7 +51,7 @@ export async function addOrUpdateOrderType(params) {
 export async function delCommission(params) {
   return request(`${url}/order/type/delete`,{
     method: 'POST',
-    data: params
+    params: params
   })
 }
 export async function serviceConfigDetail(params) {
@@ -122,6 +122,13 @@ export async function stopOrderCheck(params) {
 }
 export async function orderStop(params) {
   return request(`${url}/act/assign/orderStop`,{
+    method: 'GET',
+    params: params
+  })
+}
+
+export async function actTypeCheckName(params) {
+  return request(`${url}/act/type/actTypeCheckName`, {
     method: 'GET',
     params: params
   })

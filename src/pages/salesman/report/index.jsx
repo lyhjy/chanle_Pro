@@ -41,7 +41,7 @@ class Report extends React.Component{
           }
         }],
       auditColumns: [{
-        title: '职位',dataIndex: 'operator',key: 'operator',
+        title: '职位',dataIndex: 'operator',key: 'operator',align: 'center'
       },{
         title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
       },{

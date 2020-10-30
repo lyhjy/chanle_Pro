@@ -82,7 +82,7 @@ class AddInvoice extends React.Component{
     params.audit = 1;
     params.actDateBegin = moment(actTime[0]).format('YYYY-MM-DD HH:mm:ss');
     params.actDateEnd = moment(actTime[1]).format('YYYY-MM-DD HH:mm:ss');
-    params.collectionDate = moment(collectionDate);
+    params.collectionDate = moment(collectionDate).format("YYYY-MM-DD HH:mm:ss");
     delete params.actTime;
     delete params.orderTime;
     dispatch({
@@ -187,8 +187,8 @@ class AddInvoice extends React.Component{
           <Row gutter={24}>
             <Col span={24} offset={11}>
               <Space size={20}>
-                <Button onClick={() => history.go(-1)}>取消</Button>
                 <Button type="primary" htmlType="submit">提交</Button>
+                <Button onClick={() => history.go(-1)}>取消</Button>
               </Space>
             </Col>
           </Row>

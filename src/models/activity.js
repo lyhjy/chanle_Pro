@@ -21,7 +21,8 @@ import {
   actTypeDetail,
   deleteActType,
   stopOrderCheck,
-  orderStop
+  orderStop,
+  actTypeCheckName
 } from '@/services/activityAPI';
 
 const activityModel = {
@@ -50,6 +51,7 @@ const activityModel = {
     delTypeCode: '',
     stopOrderCode: '',
     orderStopCode: '',
+    actCheckNameInfo: {},
   },
   effects: {
     *missionList({ payload }, { call, put }) {
@@ -196,6 +198,13 @@ const activityModel = {
         payload: response,
       });
     },
+    *actTypeCheckName({ payload }, { call, put }) {
+      const response = yield call(actTypeCheckName,payload);
+      yield put({
+        type: 'actCheck',
+        payload: response,
+      });
+    },
   },
   reducers: {
     getMission (state, action) {
@@ -251,6 +260,9 @@ const activityModel = {
     },
     orderZx(state, action) {
       return { ...state, orderStopCode: action.payload.code };
+    },
+    actCheck(state, action) {
+      return { ...state, actCheckNameInfo: action.payload };
     },
   }
 }

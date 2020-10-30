@@ -133,6 +133,13 @@ export async function detailRS(params) {
   })
 }
 
+export async function addOrUpdateRS(params) {
+  return request(`${url}/revenue/statement/addOrUpdateRS`,{
+    method: 'POST',
+    data: params
+  })
+}
+
 
 
 

@@ -92,14 +92,34 @@ const ChargeOption = props => {
       visible={updateModalVisible}
       onCancel={() => handleUpdateModalVisible()}
     >
-      {info.length > 0 && <Table
-        columns={columns}
-        dataSource={info}
-        pagination={{
-          pageSize: 5
-        }}
-      >
-      </Table>}
+      {info.length > 0 &&
+        <>
+          <div style={{textAlign: 'left'}}>
+            <p>
+            <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>预计成本:</label> <span style={{color: 'red',fontSize: 'large'}}>{values.expect_cost}</span>&nbsp;&nbsp;元
+            </span>
+              <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>实际成本:</label> <span style={{color: 'red',fontSize: 'large'}}>{values.real_cost}</span>&nbsp;&nbsp;元
+            </span>
+              <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>预计税费(10%):</label> <span style={{color: 'red',fontSize: 'large'}}>{values.expect_cost_rate}</span>&nbsp;&nbsp;元
+            </span>
+              <span style={{width:'50%',display: 'inline-block',fontWeight: 'bold'}}>
+              <label>实际税费(10%):</label> <span style={{color: 'red',fontSize: 'large'}}>{values.real_cost_rate}</span>&nbsp;&nbsp;元
+            </span>
+            </p>
+          </div>
+          <Table
+            columns={columns}
+            dataSource={info}
+            pagination={{
+              pageSize: 5
+            }}
+          >
+          </Table>
+        </>
+      }
     </Modal>
   )
 }

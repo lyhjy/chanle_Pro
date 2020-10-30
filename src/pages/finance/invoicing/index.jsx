@@ -37,16 +37,20 @@ const Invoicing = (props) => {
   const [operatorVisible , setOperatorVisible] = useState(false);
   const [operatorList, setOperatorList] = useState([]);
   const [operatorTotal, setOperatorTotal ] = useState(0)
+  const { currentInfo = {} } = props;
+  let rs = currentInfo.currentUser.result;
 
   const initTableData = async params => {
     const { current, pageSize , orderNo } = params;
+
     let result = {};
     try {
+
       await queryInvoicing({
         pageNum: current,
         pageSize,
         orderNo,
-        memberId: '财务'
+        memberId: rs ? rs.memberId : ''
       }).then((res) => {
         if (res.result.list.length > 0){
           setTotal(res.result.total);
@@ -231,7 +235,8 @@ const Invoicing = (props) => {
   )
 
 }
-export default connect(({ activity }) => ({
+export default connect(({ activity, user}) => ({
   // submitting: loading.effects['invoicing/invoicingApplication'],
-  activity
+  activity,
+  currentInfo: user
 }))(Invoicing);

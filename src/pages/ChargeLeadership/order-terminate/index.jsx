@@ -17,7 +17,7 @@ class OrderTerminate extends React.Component{
       foodVisible: false,
       costVisible: false,
       operatorVisible: false,
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff710',
+      memberId: sessionStorage.getItem("memberId"),
       current: 1,
       pageSize: 5,
       total: 0,

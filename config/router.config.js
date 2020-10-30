@@ -22,11 +22,16 @@ export default [
         component: '../layouts/BasicLayout',
         authority: ['admin'],
         routes: [
+          {
+            path: '/',
+            component: './Welcome'
+          },
           //业务员
           {
             path: '/salesman',
             name: 'salesman',
             icon: 'dashboard',
+            authority: ['1'],
             routes: [
               {
                 name: 'report',
@@ -53,6 +58,10 @@ export default [
                 icon: '',
                 path: '/salesman/revenue-forecast',
                 component: './salesman/revenue-forecast',
+              },
+              {
+                path: '/salesman/revenue-forecast/edit',
+                component: './salesman/revenue-forecast/edit',
               },
               {
                 name: 'revenue-settlement',
@@ -91,6 +100,7 @@ export default [
             path: '/ActivityManage',
             name: 'activity-manage',
             icon: 'dashboard',
+            authority: ['5'],
             routes: [
               {
                 name: 'activity-reservation',
@@ -143,6 +153,7 @@ export default [
             path: '/MarketingMinister',
             name: 'marketing-minister',
             icon: 'dashboard',
+            authority: ['4'],
             routes: [
               {
                 name: 'marketing-budget',
@@ -194,7 +205,14 @@ export default [
             path: '/ExecutiveMinister',
             name: 'executive-minister',
             icon: 'dashboard',
+            authority: ['3'],
             routes: [
+              {
+                name: 'reported',
+                icon: '',
+                path: '/ExecutiveMinister/reported',
+                component: './ExecutiveMinister/reported'
+              },
               {
                 name: 'activity-allocation',
                 icon: '',
@@ -252,6 +270,7 @@ export default [
             path: '/LogisticsMinister',
             name: 'logistics-minister',
             icon: 'dashboard',
+            authority: ['8'],
             routes: [
               {
                 name: 'business-cost',
@@ -272,6 +291,7 @@ export default [
             path: '/ChargeLeadership',
             name: 'charge-leadership',
             icon: 'dashboard',
+            authority: ['7'],
             routes: [
               {
                 name: 'business-commission',
@@ -316,6 +336,7 @@ export default [
             path: '/leadership',
             name: 'leadership',
             icon: 'dashboard',
+            authority: ['6'],
             routes: [
               {
                 name: 'business-commission',
@@ -354,6 +375,7 @@ export default [
             path: '/GeneralDepartment',
             name: 'general-department',
             icon: 'dashboard',
+            authority: ['2'],
             routes: [
               {
                 name: 'contract-initiation',
@@ -386,6 +408,7 @@ export default [
             path: '/finance',
             name: 'finance',
             icon: 'dashboard',
+            authority: ['9'],
             routes: [
               {
                 name: 'invoicing-application',

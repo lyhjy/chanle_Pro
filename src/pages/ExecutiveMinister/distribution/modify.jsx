@@ -16,6 +16,7 @@ class DistributionMidify extends React.Component{
   constructor(props){
     super(props);
     this.state = {
+      memberId: sessionStorage.getItem("memberId"),
       id: '',
       assignInfo: {},
       salaryAssInfo: {},

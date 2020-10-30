@@ -5,7 +5,7 @@ import moment from "moment";
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const RadioButton = Radio.Button;
-class RevenueSettlementAdd extends React.Component{
+class revenueForecastAdd extends React.Component{
 
   constructor(props) {
     super(props);
@@ -21,52 +21,54 @@ class RevenueSettlementAdd extends React.Component{
   }
 
   componentDidMount(){
-    const { memberId , type } = this.state;
+    const { memberId } = this.state;
     const { history , dispatch } = this.props;
     const { location } = history;
-    let orderNum,settlementId;
+    let orderNum,revenueId;
     if (typeof(location.state) != "undefined"){
       const { orderNo } = location.state;
       const { id } = location.state;
-      sessionStorage.setItem('settlement_orderno',orderNo);
-      sessionStorage.setItem('settlement_id',id);
+      sessionStorage.setItem('revenue_orderno',orderNo);
+      sessionStorage.setItem('revenue_id',id);
     }
-    orderNum = sessionStorage.getItem('settlement_orderno');
-    settlementId = sessionStorage.getItem('settlement_id');
-    if (orderNum){
-      dispatch({
-        type: 'salesman/revenueStatement',
-        payload: {
-          orderNo: orderNum,
-          memberId
-        }
-      }).then(() => {
-        const { salesman } = this.props;
-        const { revenueStatementInfo } = salesman;
-        if (JSON.stringify(revenueStatementInfo) != "{}"){
-          revenueStatementInfo.orderTime = [moment(revenueStatementInfo.orderBeginTime),moment(revenueStatementInfo.orderEndTime)];
-          this.refs.formRef.setFieldsValue(revenueStatementInfo)
-        }
-      })
-    }
-    if (settlementId){
+    orderNum = sessionStorage.getItem('revenue_orderno');
+    revenueId = sessionStorage.getItem('revenue_id');
+    // if (orderNum){
+    //   dispatch({
+    //     type: 'salesman/revenueStatement',
+    //     payload: {
+    //       orderNo: orderNum,
+    //       memberId
+    //     }
+    //   }).then(() => {
+    //     const { salesman } = this.props;
+    //     const { revenueStatementInfo } = salesman;
+    //     if (JSON.stringify(revenueStatementInfo) != "{}"){
+    //       revenueStatementInfo.orderTime = [moment(revenueStatementInfo.orderBeginTime),moment(revenueStatementInfo.orderEndTime)];
+    //       this.refs.formRef.setFieldsValue(revenueStatementInfo)
+    //     }
+    //   })
+    // }
+    if (revenueId){
+
       this.setState({
-        id: settlementId
+        id: revenueId
       })
       dispatch({
         type: 'salesman/detailRS',
         payload: {
           memberId,
-          id: settlementId
+          id: revenueId
         }
       }).then(() => {
         const { salesman } = this.props;
         const { detailRSInfo } = salesman;
         if (JSON.stringify(detailRSInfo) != "{}") {
+          detailRSInfo.orderTime = [moment(detailRSInfo.orderBeginTime),moment(detailRSInfo.orderEndTime)];
           this.setState({
-            costDetails: detailRSInfo.revenueDetails
+            costDetails: detailRSInfo.expenseDetails
           })
-          detailRSInfo.revenueDetails.map((item,index) => {
+          detailRSInfo.expenseDetails.map((item,index) => {
             this.refs.formRef.setFieldsValue({
               [`price${item.type}`]: item.price,
               [`remarks${item.type}`]: item.remark,
@@ -79,6 +81,7 @@ class RevenueSettlementAdd extends React.Component{
             var parent = document.getElementById(`show${Number(index+1)}`);
             parent.getElementsByTagName('input')[0].value = item.id;
           })
+
           this.setState({id: detailRSInfo.id})
           this.refs.formRef.setFieldsValue(detailRSInfo)
         }
@@ -125,7 +128,6 @@ class RevenueSettlementAdd extends React.Component{
     const { flag , costDetails , id , memberId } = this.state;
     const { dispatch } = this.props;
     const { contact , contactPhone , orderNo, orderTime, personNum, reserveMoney, realMoney } = e;
-    // let costDetails = [];
     this.switchType(flag);
     costDetails.reverse();
     const res = new Map();
@@ -143,12 +145,14 @@ class RevenueSettlementAdd extends React.Component{
       costDetails: deduplication,
       memberId,
       audit: 1,
-      type: 2
+      type: 1
     };
+
     dispatch({
       type: 'salesman/addOrUpdateRS',
       payload: data
     })
+
     console.log(data)
   }
 
@@ -226,6 +230,9 @@ class RevenueSettlementAdd extends React.Component{
               <FormItem label="出团日期" name="orderTime">
                 <RangePicker disabled showTime style={{width: '100%'}}/>
               </FormItem>
+              <FormItem label="客户名称" name="customName">
+                <Input disabled pleceholder="请输入客户名称"/>
+              </FormItem>
               <FormItem label="活动人数" name="personNum">
                 <Input disabled pleceholder="请输入活动人数"/>
               </FormItem>
@@ -238,9 +245,6 @@ class RevenueSettlementAdd extends React.Component{
               <FormItem label="预计营收" name="reserveMoney">
                 <Input pleceholder="请输入预计营收"/>
               </FormItem>
-              <FormItem label="实际营收" name="realMoney">
-                <Input pleceholder="请输入实际营收"/>
-              </FormItem>
             </Col>
             <Col span={12}>
               <span style={{fontWeight: 'bold'}}>项目费用填写</span>
@@ -248,9 +252,9 @@ class RevenueSettlementAdd extends React.Component{
                 <Radio.Group defaultValue={1} buttonStyle="solid" onChange={(e) => this.radioBtnChange(e)}>
                   {
                     type.map((item,index) => (
-                        <RadioButton value={index+1}>
-                          {item.title}
-                        </RadioButton>
+                      <RadioButton value={index+1}>
+                        {item.title}
+                      </RadioButton>
                     ))
                   }
                 </Radio.Group>
@@ -271,15 +275,7 @@ class RevenueSettlementAdd extends React.Component{
                     >
                       <Input/>
                     </FormItem>
-                    <FormItem name={`reserveMoney${index+1}`} label="预计金额">
-                      <Input disabled/>
-                    </FormItem>
-                    <FormItem name={`realNum${index+1}`} label="实际数量"
-                              onChange={(e) => this.setStateRealNumKey(e,index)}
-                    >
-                      <Input />
-                    </FormItem>
-                    <FormItem name={`realMoney${index+1}`} label="实际金额">
+                    <FormItem name={`reserveMoney${index+1}`} label="预计小计">
                       <Input disabled/>
                     </FormItem>
                     <FormItem name={`remarks${index+1}`} label="备注">
@@ -304,4 +300,4 @@ class RevenueSettlementAdd extends React.Component{
 }
 export default connect(({ salesman }) => ({
   salesman
-}))(RevenueSettlementAdd);
+}))(revenueForecastAdd);

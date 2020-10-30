@@ -101,6 +101,7 @@ const BusinessCost = props => {
 
   const initTableData = async (params) => {
     const { orderNo , current , contact , contactPhone , pageSize } = params;
+    console.log(global.memberId)
     let result = {};
     try {
       await queryTable({

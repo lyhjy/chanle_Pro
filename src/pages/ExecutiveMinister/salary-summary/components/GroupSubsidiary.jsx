@@ -89,7 +89,6 @@ class GroupSubsidiary extends React.Component{
   }
 
   changeRows = rows => {
-    debugger
     if (rows.length > 0){
       this.setState({
         flag: true,

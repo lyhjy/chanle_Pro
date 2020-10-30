@@ -13,13 +13,13 @@ class AddCost extends React.Component{
     super(props);
     this.state = {
       revenueInfo: {},
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
+      memberId: sessionStorage.getItem("memberId"),
       flag: 1,
       id: 0,
       expectCostTotal: 0,
 
       costDetails: [],
-      type: [{title: '人工费',value: 1},{title: '器材及产地费',value: 2},{title: '餐费',value: 3},{title: '住宿费',value: 4},{title: '车费',value: 5},{title: '其他1',value: 6},{title: '其他2',value: 7},{title: '其他3',value: 8},{title: '税费 (10%)',value: 9}]
+      type: [{title: '人工费',value: 1},{title: '器材及产地费',value: 2},{title: '餐费',value: 3},{title: '住宿费',value: 4},{title: '车费',value: 5},{title: '其他1',value: 6},{title: '其他2',value: 7},{title: '其他3',value: 8}]
     }
   }
   componentDidMount(){
@@ -35,7 +35,9 @@ class AddCost extends React.Component{
     }
     orderNum = sessionStorage.getItem('orderNo');
     cb_id = sessionStorage.getItem('cb_id');
+
     if (orderNum != 'undefined' && orderNum != '' && orderNum != ''){
+
         dispatch({
           type: 'executiveMinister/revenueReady',
           payload: {
@@ -62,30 +64,28 @@ class AddCost extends React.Component{
         const { budgetInfo } = executiveMinister;
 
         if (budgetInfo){
-          // this.setState({ revenueInfo : revenueInfo})
-          // for (let k in budgetInfo.costDetails){
+          this.setState({
+            costDetails: budgetInfo.costDetails
+          })
 
-            // budgetInfo.costDetails.price = budgetInfo.costDetails[k].price;
-          //   let price = this.modifyJsonKey(budgetInfo.costDetails[k],"price",`price${Number(k + 1)}`);
-          //   budgetInfo.costDetails[k].price
-          //   console.log(price)
-          // }
           budgetInfo.orderTime = [moment(budgetInfo.orderBeginTime),moment(budgetInfo.orderEndTime)];
           budgetInfo.costDetails.map((item,index) => {
             this.refs.formRef.setFieldsValue({
-              [`price${index+1}`]: item.price,
-              [`remarks${index+1}`]: item.remark,
-              [`expectNum${index+1}`]: item.expectNum,
-              [`expectMoney${index+1}`]: item.expectMoney,
-              [`realNum${index+1}`]: item.realNum,
-              [`realMoney${index+1}`]: item.realMoney
+              [`price${item.feeType}`]: item.price,
+              [`remarks${item.feeType}`]: item.remark,
+              [`expectNum${item.feeType}`]: item.expectNum,
+              [`expectMoney${item.feeType}`]: item.expectMoney,
+              [`realNum${item.feeType}`]: item.realNum,
+              [`realMoney${item.feeType}`]: item.realMoney,
+              [`remarks${item.feeType}`]: item.remarks
             })
             var parent = document.getElementById(`show${Number(index+1)}`);
             parent.getElementsByTagName('input')[0].value = item.id;
-          })
-          this.setState({id: budgetInfo.id})
+          });
 
-          this.refs.formRef.setFieldsValue(budgetInfo)
+          this.setState({id: budgetInfo.id});
+
+          this.refs.formRef.setFieldsValue(budgetInfo);
         }
       })
     }
@@ -100,8 +100,7 @@ class AddCost extends React.Component{
 
   onFinish = e => {
     const { type , flag , costDetails , id , memberId } = this.state;
-    const {contact, contactPhone, customName, orderNo, orderTime, personNum, expectCost, realCost, expectMoney, expectNum, price, realMoeny, realNum, remark} = e;
-
+    const {contact, contactPhone, customName, orderNo, orderTime, personNum, expectCost, expectCostRate, expectMoney, expectNum, price, realMoeny, realNum, remark} = e;
     const { dispatch } = this.props;
     // let costDetails = [];
     this.switchType(flag);
@@ -118,7 +117,7 @@ class AddCost extends React.Component{
       orderEndTime: moment(orderTime[1]).format('YYYY-MM-DD HH:mm:ss'),
       personNum,
       expectCost,
-      realCost,
+      expectCostRate,
       costDetails: deduplication,
       memberId,
     };
@@ -135,7 +134,7 @@ class AddCost extends React.Component{
     let obj = document.getElementById(`show${type}`)
     let objInput = obj.getElementsByTagName('input');
     let objTextarea = obj.getElementsByTagName('textarea');
-    let data = {feeType: type,remarks: objTextarea[0].value};
+    let data = {feeType: String(type),remarks: objTextarea[0].value};
     let i = 0;
     while (i < objInput.length){
       switch (i) {
@@ -199,21 +198,15 @@ class AddCost extends React.Component{
     const r_num = this.refs.formRef.getFieldValue(`realNum${index+1}`);
     if (e_num > 0 ) {
       let e_total = (e.target.value * e_num);
-      let increase = expectCostTotal ? ( expectCostTotal + e_total ): e_total;
       this.refs.formRef.setFieldsValue({
         [`expectMoney${index+1}`]: e_total,
-        expectCost: increase
       })
-      this.setState({expectCostTotal: increase})
-    }else {
-
     }
     if (r_num) {
       this.refs.formRef.setFieldsValue({
         [`realMoney${index+1}`]: e.target.value * r_num
       })
     }
-
   }
 
   setStateExpectNumKey = (e, index) => {
@@ -224,30 +217,14 @@ class AddCost extends React.Component{
       let increase = expectCostTotal ? ( expectCostTotal + e_total ) : e_total;
       this.refs.formRef.setFieldsValue({
         [`expectMoney${index+1}`]: e_total,
-        expectCost: increase
       })
       this.setState({expectCostTotal: increase})
     }
   }
 
-  setStateRealNumKey = (e, index) => {
-    const num = this.refs.formRef.getFieldValue(`price${index+1}`);
-    if (num > 0 ) {
-      this.refs.formRef.setFieldsValue({
-        [`realMoney${index+1}`]: e.target.value * num
-      })
-    }
+  setStateExpectCostKey = (e) => {
+    this.refs.formRef.setFieldsValue({"expectCostRate": (e.target.value / 10)})
   }
-
-  // setStateExpectMoneyKey = (e, index) => {
-  //   const { expectCostTotal } = this.state;
-  //   const price = this.refs.formRef.getFieldValue(`expectMoney${index}`);
-  //   console.log(price)
-  //   // console.log(expectCostTotal)
-  //   this.refs.formRef.setFieldsValue({
-  //     expectCost: expectCostTotal
-  //   })
-  // }
 
   render(){
     const { flag , type } = this.state;
@@ -285,10 +262,10 @@ class AddCost extends React.Component{
                 <FormItem name='contactPhone' label="联系方式">
                   <Input disabled/>
                 </FormItem>
-                <FormItem name='expectCost' label="预计成本">
+                <FormItem name='expectCost' label="预计成本" onChange={(e) => this.setStateExpectCostKey(e)}>
                   <Input/>
                 </FormItem>
-                <FormItem name='realCost' label="实际成本">
+                <FormItem name='expectCostRate' label="预计税费(10%)">
                   <Input/>
                 </FormItem>
               </Col>
@@ -313,7 +290,7 @@ class AddCost extends React.Component{
                       <div>
                         <input type="hidden" name="id"/>
                       </div>
-                        <FormItem name={`price${index+1}`} label="单价" ref={(ref) => {console.log(ref)}}
+                        <FormItem name={`price${index+1}`} label="预计单价"
                           onChange={(e) => this.setStatePriceKey(e,index)}
                         >
                           <Input/>
@@ -323,17 +300,7 @@ class AddCost extends React.Component{
                         >
                           <Input/>
                         </FormItem>
-                        <FormItem name={`expectMoney${index+1}`} label="预计金额"
-                          onChange={(e) => this.setStateExpectMoneyKey(e,index)}
-                        >
-                          <Input disabled/>
-                        </FormItem>
-                        <FormItem name={`realNum${index+1}`} label="实际数量"
-                          onChange={(e) => this.setStateRealNumKey(e,index)}
-                        >
-                          <Input />
-                        </FormItem>
-                        <FormItem name={`realMoney${index+1}`} label="实际金额">
+                        <FormItem name={`expectMoney${index+1}`} label="预计金额">
                           <Input disabled/>
                         </FormItem>
                         <FormItem name={`remarks${index+1}`} label="备注">

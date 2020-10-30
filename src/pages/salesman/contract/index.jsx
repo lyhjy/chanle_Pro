@@ -1,14 +1,16 @@
 import React from 'react';
 import { connect , history } from "umi";
-import {Button, message} from "antd";
+import {Button, message, Modal, Table} from "antd";
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
+import styles from "../../MarketingMinister/marketing-budget/style.less";
 class Contract extends React.Component{
 
   constructor(props){
     super(props);
     this.state = {
       memberId: 'e140e402a4ca4ea4ae2f86f9dd88f629',
+      auditVisible: false,
       columns: [{
         title: '客户名称',dataIndex: 'customName',key: 'customName',align: 'center'
       },{
@@ -26,7 +28,7 @@ class Contract extends React.Component{
       },{
         title: '备注',dataIndex: 'remarks',key: 'remarks',hideInSearch: true,align: 'center'
       },{
-        title: '审核记录',align: 'center',render: (_,recode) => <a>查看</a>
+        title: '审核记录',align: 'center',render: (_,recode) => <a onClick={() => this.viewAudit({ id: recode.id })}>查看</a>,
       },{
         title: '操作',align: 'center',render: (_,recode) => {
           const { audit } = recode;
@@ -34,6 +36,22 @@ class Contract extends React.Component{
           return res;
         }
       }],
+      auditColumns: [{
+        title: '职位',dataIndex: 'operator',key: 'operator',align: 'center'
+      },{
+        title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
+      },{
+        title: '操作',dataIndex: 'operatorStatus',key: 'operatorStatus',align: 'center',render: (_,recode) => {
+          return(
+            <>
+              {
+                _ == 1 ? <span >已通过</span> : <span style={{color: 'red'}}>已驳回</span>
+              }
+            </>
+          )
+        }
+      }],
+
       total: 0
     }
   }
@@ -71,8 +89,36 @@ class Contract extends React.Component{
     return result;
   }
 
+  viewAudit = ({ id }) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'salesman/businessManagerCheck',
+      payload: {
+        id,
+        type: 2
+      }
+    }).then(() => {
+      const { salesman } = this.props;
+      const { businessList } = salesman;
+      if (businessList.length > 0){
+        this.setState({
+          businessList
+        })
+      }
+    })
+    this.setState({
+      auditVisible: true
+    })
+  }
+
+  handleCancel = () => {
+    this.setState({
+      auditVisible: false,
+    })
+  }
+
   render(){
-    const { columns , total } = this.state;
+    const { columns , total , auditVisible , businessList } = this.state;
     return (
       <PageContainer content="用于对活动类型进行管理">
         <ProTable
@@ -88,6 +134,28 @@ class Contract extends React.Component{
           request={(params, sorter, filter) => this.initTableData({ ...params })}
         >
         </ProTable>
+        <Modal
+          title="审核记录"
+          style={{textAlign: 'center'}}
+          visible={auditVisible}
+          width={800}
+          footer={[
+            <div className={styles.tc}>
+              <Button key="cancel" className="ant-btn-custom-circle" size="large" onClick={this.handleCancel}>取消</Button>
+              <Button key="confirm" style={{width: '160px'}} className="ant-btn-custom-circle" type="primary" size="large" onClick={this.handleCancel}>确定</Button>
+            </div>
+          ]}
+          centered={true}
+          onCancel={
+            this.handleCancel
+          }
+        >
+
+          <Table columns={this.state.auditColumns} dataSource={businessList} pagination={{
+            pageSize: 5
+          }}>
+          </Table>
+        </Modal>
       </PageContainer>
     )
   }

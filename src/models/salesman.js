@@ -17,7 +17,8 @@ import {
   revenueStatement,
   missionDetail,
   addOrUpdateMission,
-  detailRS
+  detailRS,
+  addOrUpdateRS
 } from '@/services/salesmanAPI';
 import { message } from 'antd';
 import { history } from "umi";
@@ -184,6 +185,16 @@ const salesmanModel = {
         type: 'detailrS',
         payload: response.result,
       });
+    },
+    *addOrUpdateRS({ payload }, { call, put }) {
+      const response = yield call(addOrUpdateRS, payload);
+      if (response.code === 200){
+        message.success("操作成功!");
+        // history.push("/salesman/revenue-settlement");
+        history.go(-1)
+      }else {
+        message.error("操作失败!");
+      }
     },
   },
   reducers:{

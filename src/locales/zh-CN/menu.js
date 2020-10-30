@@ -86,6 +86,7 @@ export default {
   'menu.marketing-minister.business-summary': '整体业务汇总表',
   'menu.marketing-minister.salary-summary': '组员工资汇总表',
   'menu.executive-minister': '执行部长',
+  'menu.executive-minister.reported': '预约报备管理',
   'menu.executive-minister.activity-allocation': '活动分配',
   'menu.executive-minister.cost-budget': '成本预算',
   'menu.executive-minister.business-operations': '业务操作成本审核',

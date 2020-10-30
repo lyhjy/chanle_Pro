@@ -185,6 +185,7 @@ class TakeOver extends React.Component{
 
   render(){
     const { missionList , total , missionInfo } = this.state;
+    let index_ = 1;
     const formLayout = {
       labelCol: {span: 4},
       wrapperCol: {span: 18}
@@ -302,7 +303,7 @@ class TakeOver extends React.Component{
             >
               {
                 missionInfo.eatArray.map((item,index) => (
-                  <FormItem name="" label={`D${index+1}${(index+1) % 2 == 0 ? '晚餐' : '中餐'}`}>
+                  <FormItem name="" label={`D${(index%2) == 0 ? index_ : index_++}${(index+1) % 2 == 0 ? '晚餐' : '中餐'}`}>
                     {
                       <Input defaultValue={item} disabled/>
                     }

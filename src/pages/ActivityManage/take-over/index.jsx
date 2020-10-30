@@ -17,7 +17,7 @@ class TakeOver extends React.Component{
       foodVisible: false,
       siteVisible: false,
       missionInfo: {},
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
+      memberId: sessionStorage.getItem("memberId"),
       visible: false,
       dapId: 1,
       total: 0,

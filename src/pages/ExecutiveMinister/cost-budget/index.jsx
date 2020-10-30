@@ -23,10 +23,11 @@ class CostBudget extends React.Component {
       assignList: [],
       leaderIds: [],
       missionInfo: {},
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
+      memberId: sessionStorage.getItem("memberId"),
       costId: '',
       pageNo: 1,
       pageSize: 5,
+      total: 0,
       id: '',
       operatorTotal: 0,
       operatorList: [],
@@ -201,7 +202,7 @@ class CostBudget extends React.Component {
   }
 
   initTableData = async (params) => {
-    const { orderNo , contact , contactPhone } = params;
+    const { orderNo , contact , contactPhone , current } = params;
     const { dispatch } = this.props;
     const { memberId ,  pageNo } = this.state;
     let result = {};
@@ -212,13 +213,16 @@ class CostBudget extends React.Component {
         orderNo,
         contactPhone,
         contact,
-        pageNo,
+        pageNo: current,
         pageSize: 10
       }
     }).then(() => {
       const {executiveMinister} = this.props;
       const {allocationList} = executiveMinister;
       if (allocationList.records) {
+        this.setState({
+          total: allocationList.total
+        })
         result.data = allocationList.records;
       } else {
         result.data = allocationList
@@ -255,7 +259,7 @@ class CostBudget extends React.Component {
   }
 
   render() {
-    const {basicInfoVisible, missionInfo , operatorVisible } = this.state;
+    const {basicInfoVisible, missionInfo , operatorVisible , total } = this.state;
     const formLayout = {
       labelCol: {span: 4},
       wrapperCol: {span: 18}
@@ -270,7 +274,8 @@ class CostBudget extends React.Component {
             labelWidth: 120,
           }}
           pagination={{
-            current: 10
+            pageSize: 10,
+            total,
           }}
           request={(params, sorter, filter) => this.initTableData({...params, sorter, filter})}
           columns={this.state.columns}

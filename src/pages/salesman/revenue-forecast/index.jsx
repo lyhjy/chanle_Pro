@@ -32,7 +32,7 @@ class RevenueForecast extends React.Component{
         {
           title: '操作', dataIndex: 'option', valueType: 'option', align: 'center', render: (_,recode) => {
             const { audit } = recode;
-            const res = audit > 0 ? <a onClick={() => history.push({pathname: '/salesman/report/edit',state: ''})}>修改</a> : <span>已提交</span>;
+            const res = audit == 0 ? <a onClick={() => history.push({pathname: '/salesman/revenue-forecast/edit',state: {orderNo: recode.orderNo,id: recode.id}})}>修改</a> : <span>已提交</span>;
             return res;
           }
         }],
@@ -58,20 +58,20 @@ class RevenueForecast extends React.Component{
           }
         },
         {
-          title: '单价(元)',dataIndex: 'price',key: 'price',align: 'center'
+          title: '单价(元)',dataIndex: 'price',key: 'price',align: 'center',render: (_,recode) => <span>{_?_:0}</span>
         },
         {
-          title: '预计数量',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center'
+          title: '预计数量',dataIndex: 'reserveNum',key: 'reserveNum',align: 'center',render: (_,recode) => <span>{_?_:0}</span>
         },
         {
-          title: '预计小计(元)',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center'
+          title: '预计小计(元)',dataIndex: 'reserveMoney',key: 'reserveMoney',align: 'center',render: (_,recode) => <span>{_?_:0}</span>
         },
         {
-          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_}</div>
+          title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center',width: '20%', render: (_,recode) => <div className={styles.smileDark} title={_}>{_?_: '无'}</div>
         }
       ],
       auditColumns: [{
-        title: '职位',dataIndex: 'operator',key: 'operator',
+        title: '职位',dataIndex: 'operator',key: 'operator',align: 'center'
       },{
         title: '备注',dataIndex: 'remarks',key: 'remarks',align: 'center'
       },{

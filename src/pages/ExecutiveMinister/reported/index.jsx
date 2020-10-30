@@ -1,20 +1,19 @@
 import React from 'react';
+import { connect } from "umi";
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import {message, Popconfirm} from 'antd'
-import { queryFactAppointmentManage , reportAuditing } from './service'
-// import styles from './style.less'
-import { Divider , Input , notification , Tooltip } from "antd";
+import { Divider, message , notification , Popconfirm, Tooltip , Input } from "antd";
+import { queryFactAppointmentManage , reportAuditing } from "./service";
+class Reported extends React.Component{
 
-class ActivityReservation extends React.Component{
   constructor(props){
     super(props);
     this.state = {
       pageSize: 10,
       pageNo: 1,
       total: 0,
+      memberId: sessionStorage.getItem("memberId"),
       textareaValue: '',
-
       activityRow: [],
       columns: [{
         title: ''
@@ -88,10 +87,12 @@ class ActivityReservation extends React.Component{
 
   initTableData = async (params) => {
     const { unit , current , reserveTimeEnd , reserveTimeBegin , pageSize , memberTruename , orderNo } = params;
+
+    const { memberId } = this.state;
     let result = {};
     try {
       await queryFactAppointmentManage({
-        memberId: sessionStorage.getItem("memberId"),
+        memberId,
         pageNo: current,
         pageSize,
         unit,
@@ -126,7 +127,7 @@ class ActivityReservation extends React.Component{
   }
 
   modifyTableData = async (id,status) => {
-    const { pageSize , pageNo , textareaValue } = this.state;
+    const { pageSize , pageNo , textareaValue , memberId } = this.state;
     if (status == 2){
       if (!textareaValue){
         notification.warning({
@@ -140,7 +141,7 @@ class ActivityReservation extends React.Component{
       await reportAuditing({
         id: id,
         status: status,
-        memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
+        memberId,
         remarks: textareaValue
       }).then((res) => {
         if (res.code === 200){
@@ -178,7 +179,7 @@ class ActivityReservation extends React.Component{
       <PageContainer content="用于对活动预约进行管理">
         <ProTable
           headerTitle="查询表格"
-          rowKey="orderNo"
+          rowKey="id"
           search={{
             labelWidth: 120,
           }}
@@ -198,4 +199,6 @@ class ActivityReservation extends React.Component{
     )
   }
 }
-export default ActivityReservation;
+export default connect(({ activity }) => ({
+  activity
+}))(Reported);

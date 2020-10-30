@@ -37,7 +37,8 @@ const BusinessCost = props => {
       title: '联系方式',dataIndex: 'contact_phone',key: 'contact_phone',align: 'center',
     },{
       title: '费用明细',align: 'center',render: (_, record) => (
-        <a onClick={() =>{handleUpdateModalVisible(true);setStepFormValues(record);view(record.order_no)}}>查看</a>
+        <a onClick={() =>{handleUpdateModalVisible(true);setStepFormValues(record);
+        view(record.order_no)}}>查看</a>
       )
     },{
       title: '操作人',dataIndex: 'review_name',key: 'review_name',hideInSearch: true,align: 'center',render: (_,recode) =>
@@ -76,7 +77,7 @@ const BusinessCost = props => {
               >
                 <a>驳回</a>
               </Popconfirm>
-            </> : recode.review_status == 1 ? <span>已通过</span> : <><Tooltip title="已驳回"><span style={{color: 'red'}}>已驳回</span></Tooltip></>
+            </> : recode.review_status == 1 ? <span>已通过</span> : <><Tooltip title={recode.review_origin}><span style={{color: 'red'}}>已驳回</span></Tooltip></>
           }
 
         </>
@@ -153,7 +154,7 @@ const BusinessCost = props => {
         memberId,
         orderNo,
         reviewStatus,
-        remarks: textareaValue
+        reviewOrigin: textareaValue
       }).then((res) => {
         if (res.code === 200){
           actionRef.current.reload();

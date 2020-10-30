@@ -10,7 +10,7 @@ class BushinessConfig extends React.Component{
     this.state = {
       leadershipVisible: false,
       operatorVisible: false,
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
+      memberId: sessionStorage.getItem("memberId"),
       costList: [],
       operatorList: [],
       id: '',

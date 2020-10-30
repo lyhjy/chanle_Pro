@@ -7,7 +7,7 @@ import { getPageQuery } from '@/utils/utils';
 const Model = {
   namespace: 'login',
   state: {
-    status: undefined,
+    info: {},
   },
   effects: {
     *login({ payload }, { call, put }) {
@@ -17,11 +17,10 @@ const Model = {
         payload: response,
       }); // Login successfully
 
-      if (response.status === 'ok') {
+      if (response.code === 200 ) {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params;
-
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
 
@@ -32,12 +31,12 @@ const Model = {
               redirect = redirect.substr(redirect.indexOf('#') + 1);
             }
           } else {
-            // window.location.href = '/salesman';
+            window.location.href = '/';
             return;
           }
         }
 
-        history.replace(redirect || '/salesman');
+        history.replace('/');//redirect ||
       }
     },
 
@@ -53,11 +52,16 @@ const Model = {
         });
       }
     },
+
   },
   reducers: {
-    changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
-      return { ...state, status: payload.status, type: payload.type };
+    changeLoginStatus( state, { payload }) {
+      if (payload.result){
+        setAuthority(payload.result.level);
+        global.memberId = payload.result.memberId;
+        sessionStorage.setItem("memberId",payload.result.memberId);
+      }
+      return { ...state, info: payload || {} };
     },
   },
 };

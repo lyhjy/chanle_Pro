@@ -9,7 +9,7 @@ class Distrbution extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
+      memberId: sessionStorage.getItem("memberId"),
       reviewVisible: false,
       total: 0,
       costList: [],

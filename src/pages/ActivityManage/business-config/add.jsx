@@ -8,7 +8,7 @@ class BusinessConfig extends React.Component{
     super(props);
     this.state = {
       id: 0,
-      operatorId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
+      operatorId: sessionStorage.getItem("memberId"),
       info: {}
     }
   }

@@ -12,7 +12,7 @@ class BusinessSummary extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff70',
+      memberId: sessionStorage.getItem("memberId"),
       total: 0,
       flag: false,
       selectData: [],

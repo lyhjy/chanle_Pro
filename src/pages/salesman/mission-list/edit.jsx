@@ -75,7 +75,7 @@ class AddMission extends React.Component{
     }
     params.orderBeginTime = moment(reserveTime[0]).format('YYYY-MM-DD HH:mm:ss');
     params.orderEndTime = moment(reserveTime[1]).format('YYYY-MM-DD HH:mm:ss');
-    params.eatJsonArray = JSON.stringify(eatJsonArray);
+    params.eatJsonArray = eatJsonArray;
     params.audit = 1;
     params.memberId = memberId;
     params.id = missionId;
@@ -107,7 +107,7 @@ class AddMission extends React.Component{
           <Row gutter={24}>
             <Col span={12}>
               <FormItem label="订单号" name="orderNo">
-                <Input placeholder="请输入订单号"/>
+                <Input disabled placeholder="请输入订单号"/>
               </FormItem>
               <FormItem label="活动日期" name="reserveTime">
                 <RangePicker showTime style={{width: '100%'}} pleceholder="请输入活动日期"/>
@@ -179,7 +179,7 @@ class AddMission extends React.Component{
           <Row gutter={24}>
             <Col span={24} offset={11}>
               <Space size={20}>
-                <Button type="primary" htmlType="submit">确定</Button>
+                <Button type="primary" htmlType="submit">提交</Button>
                 <Button htmlType="submit" onClick={() =>history.go(-1)}>取消</Button>
               </Space>
             </Col>
