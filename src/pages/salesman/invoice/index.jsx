@@ -13,7 +13,7 @@ class Invoice extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      memberId: 'e140e402a4ca4ea4ae2f86f9dd88f629',
+      memberId: sessionStorage.getItem("memberId"),
       total: 0,
       auditVisible: false,
       modalVisible: false,

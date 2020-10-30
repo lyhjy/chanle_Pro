@@ -51,7 +51,7 @@ class RevenueSettlement extends React.Component{
         }
       }],
       total: 0,
-      memberId: 'e140e402a4ca4ea4ae2f86f9dd88f629',
+      memberId: sessionStorage.getItem("memberId"),
       costColumns: [
         {
           title: '项目',dataIndex: 'type',key: 'type',align: 'center',render: (_,recode) => {

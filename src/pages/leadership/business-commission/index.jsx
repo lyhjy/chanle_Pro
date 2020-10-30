@@ -13,7 +13,7 @@ class BusinessCommission extends React.Component{
       pageNo: 1,
       pageSize: 10,
       total: '',
-      memberId: '基地领导',
+      memberId: sessionStorage.getItem("memberId"),
       id: '',
       textareaValue: '',
       operatorList: [],

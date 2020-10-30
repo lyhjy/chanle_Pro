@@ -11,7 +11,7 @@ class EmployeePool extends React.Component{
     super(props);
     this.state = {
       total: 0,
-      memberId: '综合部',
+      memberId: sessionStorage.getItem("memberId"),
       operatorVisible: false,
       operatorList: [],
       operatorTotal: 0,

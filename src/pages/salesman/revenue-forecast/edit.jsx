@@ -15,7 +15,7 @@ class revenueForecastAdd extends React.Component{
       expectCostTotal: 0,
       flag: 1,
       costDetails: [],
-      memberId: "e140e402a4ca4ea4ae2f86f9dd88f629",
+      memberId: sessionStorage.getItem("memberId"),
       type: [{title: '活动组织费',value: 1},{title: '餐费',value: 2},{title: '住宿费',value: 3},{title: '车费',value: 4},{title: '其他1',value: 5},{title: '其他2',value: 6},{title: '其他3',value: 7}],
     }
   }

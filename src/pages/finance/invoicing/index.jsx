@@ -39,6 +39,7 @@ const Invoicing = (props) => {
   const [operatorTotal, setOperatorTotal ] = useState(0)
   const { currentInfo = {} } = props;
   let rs = currentInfo.currentUser.result;
+  const memberId = sessionStorage.getItem("memberId");
 
   const initTableData = async params => {
     const { current, pageSize , orderNo } = params;
@@ -95,7 +96,7 @@ const Invoicing = (props) => {
                     placement="topRight"
                     cancelText="取消"
                     okText="确定"
-                    onConfirm={() => modifyTableData({ id: recode.id,status: 1,memberId: '财务'})}
+                    onConfirm={() => modifyTableData({ id: recode.id,status: 1,memberId})}
                     // onCancel={}
                   >
                     <a>通过</a>
@@ -112,7 +113,7 @@ const Invoicing = (props) => {
                     cancelText="取消"
                     okText="确定"
                     style={{textAlign: 'center'}}
-                    onConfirm={() => modifyTableData({ id: recode.id,status: 2,memberId: '财务'})}
+                    onConfirm={() => modifyTableData({ id: recode.id,status: 2,memberId})}
                     // onCancel={}
                   >
                     <a>驳回</a>
@@ -157,7 +158,7 @@ const Invoicing = (props) => {
     try {
       await getOderInfo({
         id: id,
-        memberId: '财务'
+        memberId
       }).then((res) => {
        setOrderInfo(res.result)
       })
@@ -172,7 +173,7 @@ const Invoicing = (props) => {
     try {
       await getInvoicingInfo({
         id: id,
-        memberId: '财务'
+        memberId
       }).then((res) => {
         res.result.collectionType = res.result.collectionType == 1 ? "支付宝" : res.result.collectionType == 2 ? "微信" : "银行卡"
         setInvoiceInfo(res.result)
@@ -187,7 +188,7 @@ const Invoicing = (props) => {
       operatorCheck({
         id,
         type,
-        memberId: '财务'
+        memberId
       }).then((res) => {
 
         if (res.result.records.length > 0){

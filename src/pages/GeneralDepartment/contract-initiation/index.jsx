@@ -13,7 +13,7 @@ class ContractInitiation extends React.Component{
       pageNo: 1,
       pageSize: 10,
       total: '',
-      memberId: '综合部',
+      memberId: sessionStorage.getItem("memberId"),
       id: '',
       textareaValue: '',
       operatorList: [],

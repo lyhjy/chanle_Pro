@@ -8,7 +8,7 @@ class AddEmployee extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      memberId: '综合部',
+      memberId: sessionStorage.getItem("memberId"),
       dropList: [],
       detailInfo: {},
       staffId: '',

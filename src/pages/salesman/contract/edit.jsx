@@ -10,7 +10,7 @@ class AddContract extends React.Component{
     this.state = {
       fileList: [],
       contractId: 0,
-      memberId: 'e140e402a4ca4ea4ae2f86f9dd88f629'
+      memberId: sessionStorage.getItem("memberId")
     }
   }
 

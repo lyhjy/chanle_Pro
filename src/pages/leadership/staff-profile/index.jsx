@@ -11,7 +11,7 @@ class StaffProfile extends React.Component{
     this.state = {
       total: 0,
       costList: [],
-      memberId: 'f1e92f22a3b549ada2b3d45d14a3ff71',
+      memberId: sessionStorage.getItem("memberId"),
       leadershipVisible: false,
       textareaValue: '',
       columns: [{

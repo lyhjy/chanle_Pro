@@ -13,7 +13,7 @@ class MissionList extends React.Component{
     super(props);
     this.state = {
       total: 0,
-      memberId: 'e140e402a4ca4ea4ae2f86f9dd88f629',
+      memberId: sessionStorage.getItem("memberId"),
       missionInfo: {},
       costList: [],
       basicInfoVisible: false,

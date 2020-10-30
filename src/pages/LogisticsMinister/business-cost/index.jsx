@@ -22,7 +22,7 @@ const BusinessCost = props => {
   const [operatorList, setOperatorList] = useState([]);
   const [operatorTotal, setOperatorTotal ] = useState(0)
   const [costInfo,setCostInfo] = useState({});
-  const memberId = "后勤部长";
+  const memberId = sessionStorage.getItem("memberId");
   const getData = () => {
     dispatch({
       type: 'logisticsMinister/selectBusinessCost',
@@ -101,7 +101,6 @@ const BusinessCost = props => {
 
   const initTableData = async (params) => {
     const { orderNo , current , contact , contactPhone , pageSize } = params;
-    console.log(global.memberId)
     let result = {};
     try {
       await queryTable({
