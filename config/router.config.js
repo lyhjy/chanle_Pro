@@ -100,7 +100,7 @@ export default [
             path: '/ActivityManage',
             name: 'activity-manage',
             icon: 'dashboard',
-            authority: ['5'],
+            authority: ['5','6','7'],
             routes: [
               {
                 name: 'activity-reservation',
@@ -153,7 +153,7 @@ export default [
             path: '/MarketingMinister',
             name: 'marketing-minister',
             icon: 'dashboard',
-            authority: ['4'],
+            authority: ['4','6','7'],
             routes: [
               {
                 name: 'marketing-budget',
@@ -205,7 +205,7 @@ export default [
             path: '/ExecutiveMinister',
             name: 'executive-minister',
             icon: 'dashboard',
-            authority: ['3'],
+            authority: ['3','6','7'],
             routes: [
               {
                 name: 'reported',
@@ -270,7 +270,7 @@ export default [
             path: '/LogisticsMinister',
             name: 'logistics-minister',
             icon: 'dashboard',
-            authority: ['8'],
+            authority: ['8','6','7'],
             routes: [
               {
                 name: 'business-cost',
@@ -291,7 +291,7 @@ export default [
             path: '/ChargeLeadership',
             name: 'charge-leadership',
             icon: 'dashboard',
-            authority: ['7'],
+            authority: ['7','6'],
             routes: [
               {
                 name: 'business-commission',
@@ -336,7 +336,7 @@ export default [
             path: '/leadership',
             name: 'leadership',
             icon: 'dashboard',
-            authority: ['6'],
+            authority: ['6','7'],
             routes: [
               {
                 name: 'business-commission',
@@ -375,7 +375,7 @@ export default [
             path: '/GeneralDepartment',
             name: 'general-department',
             icon: 'dashboard',
-            authority: ['2'],
+            authority: ['2','6','7'],
             routes: [
               {
                 name: 'contract-initiation',
@@ -408,7 +408,7 @@ export default [
             path: '/finance',
             name: 'finance',
             icon: 'dashboard',
-            authority: ['9'],
+            authority: ['9','6','7'],
             routes: [
               {
                 name: 'invoicing-application',

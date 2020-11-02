@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect , history } from 'umi';
-import { Form , Button , Input , Select , Space } from "antd";
+import moment from "moment";
+import { Form , Button , Input , Select , Space , DatePicker } from "antd";
 const FormItem = Form.Item;
 const { Option } = Select;
 class AddEmployee extends React.Component{
@@ -26,6 +27,8 @@ class AddEmployee extends React.Component{
       }).then(() => {
         const { generalDepartment } = this.props;
         const { employeePollList } = generalDepartment;
+        let time = moment(employeePollList.list[0].hireDate);
+        employeePollList.list[0].hireDate = time;
         this.refs.hx.setFieldsValue(employeePollList.list[0])
         this.setState({
           detailInfo: employeePollList.list[0]
@@ -52,6 +55,7 @@ class AddEmployee extends React.Component{
   submitForm = async event => {
     const { memberId } = this.state;
     event.memberId = memberId; //默认
+    event.hireDate = moment(event.hireDate).format("YYYY-MM-DD");
     const { dispatch } = this.props;
     const { staffId , dropList } = this.state;
     if (isNaN(event.sector)){
@@ -59,6 +63,7 @@ class AddEmployee extends React.Component{
     }else {
       event.sectorId = event.sector
     }
+
     // event.sectorId = dropList.filter((res) => res.name == event.sector)[0].id;
     if (staffId > 0) {
       event.id = staffId;
@@ -107,6 +112,12 @@ class AddEmployee extends React.Component{
                   ))
                 }
               </Select>
+            </FormItem>
+            <FormItem label="职称" name="rank"  rules={[{ required: true, message: '职称为必填字段!' }]}>
+              <Input placeholder="请输入职称"/>
+            </FormItem>
+            <FormItem label="入职时间" name="hireDate" rules={[{ required: true, message: '入职时间为必填字段!' }]}>
+              <DatePicker style={{width: '100%'}}></DatePicker>
             </FormItem>
             <Form.Item wrapperCol={{ span: 15, offset: 10 }}>
               <Space size={30}>
