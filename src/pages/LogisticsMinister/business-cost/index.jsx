@@ -92,7 +92,7 @@ const BusinessCost = props => {
                 // onCancel={}
               >
                 <a>驳回</a>
-              </Popconfirm></> : record.auditStatus == 1 ? <span>已通过</span> : <><Tooltip title="已驳回"><span style={{color: 'red'}}>已驳回</span></Tooltip></>
+              </Popconfirm></> : record.auditStatus == 1 ? <span>已通过</span> : <><Tooltip title={record.rejectReason}><span style={{color: 'red'}}>已驳回</span></Tooltip></>
           }
         </>
       )

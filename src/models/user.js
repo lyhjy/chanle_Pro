@@ -23,6 +23,11 @@ const UserModel = {
   },
   reducers: {
     saveCurrentUser(state, action) {
+
+      if (JSON.stringify(action.payload.result) != "{}"){
+        sessionStorage.setItem("unitId",action.payload.result.unitId)
+      }
+
       return { ...state, currentUser: action.payload || {} };
     },
 

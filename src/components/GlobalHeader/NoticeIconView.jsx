@@ -175,28 +175,14 @@ class GlobalHeaderRight extends Component {
         // clearClose
       >
         <NoticeIcon.Tab
+          style={{textAlign: 'left'}}
           tabKey="event"
           title="待办"
           emptyText="你已完成所有待办"
           // count={1}
           list={noticeData.event}
-          showViewMore
-        />
-        <NoticeIcon.Tab
-          tabKey="notification"
-          // count={unreadMsg.notification}
-          // list={noticeData.notification}
-          title=" "
-          // emptyText="你已查看所有通知"
-          showViewMore
-        />
-        <NoticeIcon.Tab
-          tabKey="message"
-          // count={unreadMsg.message}
-          // list={noticeData.message}
-          title=" "
-          // emptyText="您已读完所有消息"
-          showViewMore
+          showViewMore={false}
+          showClear={false}
         />
       </NoticeIcon>
     );

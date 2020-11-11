@@ -18,7 +18,7 @@ const BusinessCost = props => {
   const [operatorTotal, setOperatorTotal ] = useState(0);
   const actionRef = useRef();
   const [row, setRow] = useState();
-  const memberId = '后勤部长';
+  const memberId = sessionStorage.getItem("memberId");
   const [selectedRowsState, setSelectedRows] = useState([]);
   const [orderNo, setOrderNo] = useState("");
 

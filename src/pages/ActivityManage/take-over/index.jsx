@@ -18,6 +18,7 @@ class TakeOver extends React.Component{
       siteVisible: false,
       missionInfo: {},
       memberId: sessionStorage.getItem("memberId"),
+      level_: global.level,
       visible: false,
       dapId: 1,
       total: 0,
@@ -147,30 +148,36 @@ class TakeOver extends React.Component{
 
   submitDispatch = ({ id }) => {
     const { dispatch } = this.props;
-    const { dapId , memberId } = this.state;
-    dispatch({
-      type: 'activity/missionAssign',
-      payload: {
-        memberId,
-        dapId,
-        id
-      }
-    }).then(() => {
-      const { activity } = this.props;
-      const { assignRes } = activity;
-      if (assignRes.code === 200){
-        message.success("分派操作完成!");
-        setTimeout(() => {
-          this.ref.reload();
-        },1000)
-      }else {
-        message.error("分派操作失败!")
-      }
-    })
+    const { dapId , memberId , level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
+    if (tax){
+      message.error("该用户没有操作的权限!");
+    }else {
+      dispatch({
+        type: 'activity/missionAssign',
+        payload: {
+          memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId,
+          dapId,
+          id
+        }
+      }).then(() => {
+        const { activity } = this.props;
+        const { assignRes } = activity;
+        if (assignRes.code === 200){
+          message.success("分派操作完成!");
+          setTimeout(() => {
+            this.ref.reload();
+          },1000)
+        }else {
+          message.error("分派操作失败!")
+        }
+      })
+    }
   }
   clickBasic = async (id,target) =>{
     const { dispatch } = this.props;
-    const { memberId } = this.state;
+    const { memberId , level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
     switch (target) {
       case 1: this.setState({basicInfoVisible: true});
       break;
@@ -182,7 +189,10 @@ class TakeOver extends React.Component{
     }
     await dispatch({
       type: 'activity/missionCheck',
-      payload: {id: id, memberId}
+      payload: {
+          id: id,
+          memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId
+      }
     }).then(() => {
       const { activity } = this.props;
       const { missionsList } = activity;
@@ -204,39 +214,45 @@ class TakeOver extends React.Component{
   }
 
   modifyTableData = async ({ id , status }) => {
-    const { memberId , textareaValue } = this.state;
+
+    const { memberId , textareaValue , level_ } = this.state;
     const { dispatch } = this.props;
-    if (status == 2){
-      if (!textareaValue){
-        notification.warning({
-          message: '操作提示',
-          description: '驳回内容必须进行填写!!!',
+
+    let tax = level_ === 6 || level_ === 7 ? true : false;
+    if (tax){
+      message.error("该用户没有操作的权限!");
+    }else {
+      if (status == 2){
+        if (!textareaValue){
+          notification.warning({
+            message: '操作提示',
+            description: '驳回内容必须进行填写!!!',
+          })
+          return;
+        }
+      }
+      try {
+        await dispatch({
+          type: 'activity/missionAudit',
+          payload: {
+            memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId,
+            id,
+            status,
+            remarks: textareaValue
+          }
+        }).then(() => {
+          const { activity } = this.props;
+          const { missionAcdRes } = activity;
+          if (missionAcdRes.code === 200){
+            this.ref.reload();
+          } else {
+            message.error("操作失败!")
+          }
         })
-        return;
+      }catch (e) {
+        message.error("服务异常!")
       }
     }
-    try {
-      await dispatch({
-        type: 'activity/missionAudit',
-        payload: {
-          memberId,
-          id,
-          status,
-          remarks: textareaValue
-        }
-      }).then(() => {
-        const { activity } = this.props;
-        const { missionAcdRes } = activity;
-        if (missionAcdRes.code === 200){
-          this.ref.reload();
-        } else {
-          message.error("操作失败!")
-        }
-      })
-    }catch (e) {
-      message.error("服务异常!")
-    }
-
   }
 
   initTableData = async (params) => {

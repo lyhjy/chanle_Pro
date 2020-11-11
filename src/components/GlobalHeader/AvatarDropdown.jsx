@@ -21,7 +21,6 @@ class AvatarDropdown extends React.Component {
     }
     history.push(`/account/${key}`);
   };
-
   render() {
     const {
       currentUser = {
@@ -52,6 +51,7 @@ class AvatarDropdown extends React.Component {
         </Menu.Item>
       </Menu>
     );
+    global.level = currentUser.result.levelId;
     return currentUser.result && currentUser.result.userName ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>

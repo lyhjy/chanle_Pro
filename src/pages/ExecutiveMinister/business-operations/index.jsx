@@ -9,7 +9,7 @@ class BusinessOperations extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      memberId: '执行部长',
+      memberId: sessionStorage.getItem("memberId"),
       total: 0,
       pageNo: 1,
       pageSize: 5,

@@ -4,7 +4,7 @@ import ProTable from '@ant-design/pro-table';
 import {message, Popconfirm} from 'antd'
 import { queryFactAppointmentManage , reportAuditing } from './service'
 // import styles from './style.less'
-import { Divider , Input , notification , Tooltip } from "antd";
+import { Divider , Input , notification , Tooltip , Alert } from "antd";
 
 class ActivityReservation extends React.Component{
   constructor(props){
@@ -13,8 +13,8 @@ class ActivityReservation extends React.Component{
       pageSize: 10,
       pageNo: 1,
       total: 0,
+      level_: global.level,
       textareaValue: '',
-
       activityRow: [],
       columns: [{
         title: ''
@@ -88,10 +88,12 @@ class ActivityReservation extends React.Component{
 
   initTableData = async (params) => {
     const { unit , current , reserveTimeEnd , reserveTimeBegin , pageSize , memberTruename , orderNo } = params;
+    const { level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
     let result = {};
     try {
       await queryFactAppointmentManage({
-        memberId: sessionStorage.getItem("memberId"),
+        memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : sessionStorage.getItem("memberId"),
         pageNo: current,
         pageSize,
         unit,
@@ -126,30 +128,36 @@ class ActivityReservation extends React.Component{
   }
 
   modifyTableData = async (id,status) => {
-    const { pageSize , pageNo , textareaValue } = this.state;
-    if (status == 2){
-      if (!textareaValue){
-        notification.warning({
-          message: '操作提示',
-          description: '驳回内容必须进行填写!!!',
+    const { pageSize , pageNo , textareaValue , level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
+    if (tax){
+      message.error("该用户没有操作的权限!");
+    }else {
+      if (status == 2){
+        if (!textareaValue){
+          notification.warning({
+            message: '操作提示',
+            description: '驳回内容必须进行填写!!!',
+          })
+          return;
+        }
+      }
+      try {
+        await reportAuditing({
+          id: id,
+          status: status,
+          memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : sessionStorage.getItem("memberId"),
+          remarks: textareaValue
+        }).then((res) => {
+          if (res.code === 200){
+            this.ref.reload();
+          }
         })
-        return;
+      }catch (e) {
+        message.error("服务异常!")
       }
     }
-    try {
-      await reportAuditing({
-        id: id,
-        status: status,
-        memberId: 'f1e92f22a3b549ada2b3d45d14a3ff78',
-        remarks: textareaValue
-      }).then((res) => {
-        if (res.code === 200){
-          this.ref.reload();
-        }
-      })
-    }catch (e) {
-      message.error("服务异常!")
-    }
+
   }
 
   expandedRowRender = (row) => {
@@ -178,7 +186,7 @@ class ActivityReservation extends React.Component{
       <PageContainer content="用于对活动预约进行管理">
         <ProTable
           headerTitle="查询表格"
-          rowKey="orderNo"
+          rowKey="id"
           search={{
             labelWidth: 120,
           }}

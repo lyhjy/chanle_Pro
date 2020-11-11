@@ -11,6 +11,7 @@ class BushinessConfig extends React.Component{
       leadershipVisible: false,
       operatorVisible: false,
       memberId: sessionStorage.getItem("memberId"),
+      level_: global.level,
       costList: [],
       operatorList: [],
       id: '',
@@ -55,7 +56,16 @@ class BushinessConfig extends React.Component{
             }
             <>
               { record.status != 1 && <Divider type="vertical" /> }
-              <Link to={{pathname: '/ActivityManage/business-config/add',state: {id: record.id}}}>编辑</Link>
+
+              <Link onClick={() => {
+                let tax = this.state.level_ === 6 || this.state.level_ === 7 ? true : false;
+                if (tax){
+                  message.error("该用户没有操作的权限!")
+                } else {
+                  history.push({pathname: '/ActivityManage/business-config/add',state: {id: record.id}})
+                }
+                //to={{pathname: '/ActivityManage/business-config/add',state: {id: record.id}}}
+              }}>编辑</Link>
             </>
           </>
         )
@@ -111,13 +121,14 @@ class BushinessConfig extends React.Component{
 
   viewOperator = ({ id , type , no }) => {
     const { dispatch } = this.props;
-    const { memberId , pageSize , pageNo } = this.state;
+    const { memberId , pageSize , pageNo , level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
     dispatch({
       type: 'activity/operatorCheck',
       payload: {
         id,
         type,
-        memberId,
+        memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId,
         pageNo: no ? no : pageNo,
         pageSize
       }
@@ -143,10 +154,12 @@ class BushinessConfig extends React.Component{
 
   viewReview = id => {
     const { dispatch } = this.props;
-    const { memberId } = this.state;
+    const { memberId , level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
+
     dispatch({
       type: 'activity/costCheck',
-      payload: { id: id , memberId: memberId , type: 7 }
+      payload: { id: id , memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId , type: 7 }
     }).then(() => {
       const { activity } = this.props;
       const { costList } = activity;
@@ -160,8 +173,14 @@ class BushinessConfig extends React.Component{
     })
   }
 
-  addConfig(){
-    history.push('/ActivityManage/business-config/add')
+  addConfig = () => {
+    const { level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
+    if (tax){
+      message.error("该用户没有操作的权限!")
+    } else {
+      history.push('/ActivityManage/business-config/add')
+    }
   }
   editConfig = () => {
     const { id } = this.state;
@@ -169,8 +188,9 @@ class BushinessConfig extends React.Component{
   }
   initTableData = async (params) => {
     const { dispatch } = this.props;
-    const { memberId } = this.state;
+    const { memberId , level_ } = this.state;
     const { current , pageSize } = params;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
     let result = {};
     try {
       await dispatch({
@@ -178,7 +198,7 @@ class BushinessConfig extends React.Component{
         payload: {
           pageNo: current,
           pageSize,
-          memberId
+          memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId
         }
       }).then(() => {
         const { activity } = this.props;
@@ -198,19 +218,24 @@ class BushinessConfig extends React.Component{
   
   del = id => {
     const { dispatch } = this.props;
-    const { memberId } = this.state;
-    dispatch({
-      type: 'activity/delCommission',
-      payload: {id: id,memberId: memberId}
-    }).then(() => {
-      const { activity } = this.props;
-      const { delCode } = activity;
-      if (delCode === 200) {
-        this.ref.reload();
-      }else {
-        message.error("操作失败!")
-      }
-    })
+    const { memberId , level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
+    if (tax){
+      message.error("该用户没有操作的权限!");
+    }else {
+      dispatch({
+        type: 'activity/delCommission',
+        payload: {id: id,memberId: level_ ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId}
+      }).then(() => {
+        const { activity } = this.props;
+        const { delCode } = activity;
+        if (delCode === 200) {
+          this.ref.reload();
+        }else {
+          message.error("操作失败!")
+        }
+      })
+    }
   }
   handleCancel = () =>{
     this.setState({

@@ -26,10 +26,12 @@ class AddActivityType extends React.Component{
 
   initData = ({ id }) => {
     const { dispatch } = this.props;
+    const { memberId } = this.state;
     dispatch({
       type: 'activity/actTypeDetail',
       payload: {
         id,
+        memberId
       }
     }).then(() => {
       const { activity } = this.props;
@@ -51,7 +53,7 @@ class AddActivityType extends React.Component{
     }).then(() => {
       const { activity } = this.props;
       const { actCheckNameInfo } = activity;
-      if (actCheckNameInfo.code === 201){
+      if (actCheckNameInfo.code === 202){
         message.error(actCheckNameInfo.msg);
         res = false;
       }
@@ -63,15 +65,20 @@ class AddActivityType extends React.Component{
     const { dispatch } = this.props;
     const { actName , actJx } = params;
     const { id , memberId } = this.state;
-    // dispatch({
-    //   type: 'activity/addOrUpdateActType',
-    //   payload: {
-    //     actName,
-    //     actJx,
-    //     memberId,
-    //     id
-    //   }
-    // })
+    let rs = this.checkName({name: actName});
+    rs.then((res) => {
+      if (res){
+        dispatch({
+          type: 'activity/addOrUpdateActType',
+          payload: {
+            actName,
+            actJx,
+            memberId,
+            id
+          }
+        })
+      }
+    })
   }
 
   render(){

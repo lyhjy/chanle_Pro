@@ -82,6 +82,7 @@ class Distrbution extends React.Component{
 
   initTableData = async ( params ) =>{
     const { current , pageSize , orderNo , name , customName } = params;
+    const { memberId } = this.state;
     const { dispatch } = this.props;
     let result = {};
     await dispatch({
@@ -90,6 +91,7 @@ class Distrbution extends React.Component{
         pageNo: current,
         pageSize,
         orderNo,
+        memberId,
         customName: customName,
         employeeName: name
       }

@@ -12,6 +12,7 @@ class ActivityType extends React.Component{
       pageSize: 5,
       id: 0,
       memberId: sessionStorage.getItem("memberId"),
+      level_: global.level,
       operatorVisible: false,
       columns: [{
           title: '活动类型', dataIndex: 'actName', key: 'actName', align: 'center'
@@ -40,7 +41,15 @@ class ActivityType extends React.Component{
 
               <>
                 { record.status != 1 && <Divider type="vertical" /> }
-                <Link to={{pathname: '/ActivityManage/activity-type/add',state: {id: record.id}}}>修改</Link>
+                <Link onClick={() => {
+                  let tax = this.state.level_ === 6 || this.state.level_ === 7 ? true : false;
+                  if (tax){
+                    message.error("该用户没有操作的权限!");
+                  } else {
+                    history.push({pathname: '/ActivityManage/activity-type/add',state: {id: record.id}})
+                  }
+                  //to={{pathname: '/ActivityManage/activity-type/add',state: {id: record.id}}}
+                }}>修改</Link>
               </>
             </>
           )
@@ -85,22 +94,28 @@ class ActivityType extends React.Component{
 
   del = id => {
     const { dispatch } = this.props;
-    const { memberId } = this.state;
-    dispatch({
-      type: 'activity/deleteActType',
-      payload: {
-        id: id,
-        memberId
-      },
-    }).then(() => {
-      const { activity } = this.props;
-      const { delTypeCode } = activity;
-      if (delTypeCode !== 200){
-        message.error("操作失败!")
-      } else {
-        this.ref.reload();
-      }
-    })
+    const { memberId , level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
+    if (tax){
+      message.error("该用户没有操作的权限!")
+    }else {
+      dispatch({
+        type: 'activity/deleteActType',
+        payload: {
+          id: id,
+          memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId
+        },
+      }).then(() => {
+        const { activity } = this.props;
+        const { delTypeCode } = activity;
+        if (delTypeCode !== 200){
+          message.error("操作失败!")
+        } else {
+          this.ref.reload();
+        }
+      })
+    }
+
   }
 
   viewOperator = ({ id , type , no }) => {
@@ -137,8 +152,9 @@ class ActivityType extends React.Component{
 
   initTableData = async (params) => {
     const { dispatch } = this.props;
-    const { memberId } = this.state;
+    const { memberId , level_ } = this.state;
     const { current , pageSize } = params;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
     let result = {};
     try {
       await dispatch({
@@ -146,7 +162,7 @@ class ActivityType extends React.Component{
         payload: {
           pageNo: current,
           pageSize,
-          memberId
+          memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId
         }
       }).then(() => {
         const { activity } = this.props;
@@ -166,8 +182,15 @@ class ActivityType extends React.Component{
     return result;
   }
 
-  addConfig(){
-    history.push('/ActivityManage/activity-type/add')
+  addConfig = () => {
+    const { level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
+    if (tax){
+      message.error("该用户没有操作的权限!");
+    }else {
+      history.push('/ActivityManage/activity-type/add')
+    }
+
   }
 
   handleCancel = () => {

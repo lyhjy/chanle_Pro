@@ -33,7 +33,7 @@ class BusinessConfig extends React.Component{
     }).then(() => {
       const { activity } = this.props;
       const { comDetailInfo } = activity;
-      if (JSON.stringify(comDetailInfo) != "{}"){
+      if (JSON.stringify(comDetailInfo) != "{}" && typeof(comDetailInfo) != "undefined"){
         comDetailInfo.rate = comDetailInfo.rate * 100;
         this.refs.com.setFieldsValue(comDetailInfo)
         this.setState({info: comDetailInfo});

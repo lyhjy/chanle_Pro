@@ -133,7 +133,7 @@ class MissionList extends React.Component{
     const dateFormat = 'YYYY-MM-DD hh:mm:ss';
     let index_ = 1;
     return(
-      <PageContainer content="用于对活动类型进行管理">
+      <PageContainer content="用于对接团任务单进行管理">
         <ProTable
           headerTitle="查询表格"
           rowKey="key"

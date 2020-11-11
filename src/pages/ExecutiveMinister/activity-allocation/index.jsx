@@ -453,7 +453,7 @@ class ActivityAllocation extends React.Component{
 
     dispatch({
       type: 'executiveMinister/checkFeeDetail',
-      payload: {id: id, memberId , costList }
+      payload: {id: id, memberId }
     }).then(() => {
       const { executiveMinister } = this.props;
       const { feeList } = executiveMinister;
@@ -492,6 +492,7 @@ class ActivityAllocation extends React.Component{
     })
     setTimeout(() => {
       this.setState({activityVisible: false})
+      this.ref.reload();
     },500)
   }
   configCostDetail = () => {

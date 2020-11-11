@@ -10,6 +10,7 @@ class MarketingSettlement extends React.Component{
     super(props)
     this.state = {
       memberId: sessionStorage.getItem("memberId"),
+      level_: global.level,
       costVisible: false,
       costList: [],
       total: 0,
@@ -131,8 +132,9 @@ class MarketingSettlement extends React.Component{
 
   initTableData = async (params) => {
     const { contact , contactPhone , orderNo , type , current , pageSize , orderTime } = params;
-    const { memberId } = this.state;
+    const { memberId , level_ } = this.state;
     const { dispatch } = this.props;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
     let result = {};
     try {
       await dispatch({
@@ -143,7 +145,7 @@ class MarketingSettlement extends React.Component{
           contact,
           contactPhone,
           orderNo,
-          memberId,
+          memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId,
           orderBeginTime: orderTime && orderTime[0],
           orderEndTime: orderTime && orderTime[1],
           type: 2
@@ -175,12 +177,13 @@ class MarketingSettlement extends React.Component{
 
   showCostDetail = async id => {
     const { dispatch } = this.props;
-    const { memberId } = this.state;
+    const { memberId , level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
     await dispatch({
       type: 'activity/revenueStatementDetail',
       payload: {
         id: id,
-        memberId: memberId
+        memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId,
       }
     }).then(() => {
       const { activity } = this.props;
@@ -197,42 +200,48 @@ class MarketingSettlement extends React.Component{
   }
 
   modifyTableData = ({ id , status }) => {
-    const { memberId , textareaValue} = this.state;
+    const { memberId , textareaValue , level_ } = this.state;
     const { dispatch } = this.props;
-    if (status == 2){
-      if (!textareaValue){
-        notification.warning({
-          message: '操作提示',
-          description: '驳回内容必须进行填写!!!',
-        })
-        return;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
+    if (tax){
+      message.error("该用户没有操作的权限!");
+    }else {
+      if (status == 2){
+        if (!textareaValue){
+          notification.warning({
+            message: '操作提示',
+            description: '驳回内容必须进行填写!!!',
+          })
+          return;
+        }
       }
+      dispatch({
+        type: 'activity/revenueStatementsReview',
+        payload: {
+          id,
+          status,
+          memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId,
+          remarks: textareaValue
+        }
+      }).then(() => {
+        const { activity } = this.props;
+        const { revenueReviewCode } = activity;
+        if (revenueReviewCode === 200){
+          this.ref.reload();
+        } else {
+          message.error("操作失败!")
+        }
+      })
     }
-    dispatch({
-      type: 'activity/revenueStatementsReview',
-      payload: {
-        id,
-        status,
-        memberId,
-        remarks: textareaValue
-      }
-    }).then(() => {
-      const { activity } = this.props;
-      const { revenueReviewCode } = activity;
-      if (revenueReviewCode === 200){
-        this.ref.reload();
-      } else {
-        message.error("操作失败!")
-      }
-    })
   }
 
   viewFeedback = ({ id }) => {
     const { dispatch } = this.props;
-    const { memberId } = this.state;
+    const { memberId , level_ } = this.state;
+    let tax = level_ === 6 || level_ === 7 ? true : false;
     dispatch({
       type: 'activity/getFeedbackId',
-      payload: { id , memberId }
+      payload: { id , memberId: tax ? 'f1e92f22a3b549ada2b3d45d14a3ff78' : memberId }
     }).then(() => {
       const { activity } = this.props;
       const { feedbackInfo } = activity;

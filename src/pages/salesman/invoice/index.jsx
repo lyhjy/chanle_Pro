@@ -1,9 +1,8 @@
 import React from 'react';
 import {connect, history} from "umi";
 import {Button, Col, Form, message, Modal, Row, Select, Table , Input } from "antd";
-
+import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from "@ant-design/pro-table";
-import PageContainer from "@ant-design/pro-layout/lib/PageContainer";
 import styles from "../../MarketingMinister/marketing-budget/style.less";
 import { getInvoicingInfo } from "../../finance/invoicing/service";
 const FormItem = Form.Item;
@@ -94,10 +93,11 @@ class Invoice extends React.Component{
   }
 
   viewInvoice = async ({id}) => {
+    const { memberId } = this.state;
     try {
       await getInvoicingInfo({
         id,
-        memberId: '财务'
+        memberId,
       }).then((res) => {
         res.result.collectionType = res.result.collectionType == 1 ? "支付宝" : res.result.collectionType == 2 ? "微信" : "银行卡"
         this.setState({

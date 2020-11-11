@@ -120,7 +120,7 @@ class Contract extends React.Component{
   render(){
     const { columns , total , auditVisible , businessList } = this.state;
     return (
-      <PageContainer content="用于对活动类型进行管理">
+      <PageContainer content="用于对合同发起进行管理">
         <ProTable
           headerTitle="查询表格"
           rowKey="key"

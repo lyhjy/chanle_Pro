@@ -419,6 +419,10 @@ export default [
             ]
           },
           {
+            path: '/exception/403',
+            component: './403',
+          },
+          {
             component: './404',
           },
         ],

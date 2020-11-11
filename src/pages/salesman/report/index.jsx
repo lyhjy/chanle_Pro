@@ -128,7 +128,7 @@ class Report extends React.Component{
   render(){
     const { total , columns , auditVisible , businessList } = this.state;
     return (
-      <PageContainer content="用于对活动类型进行管理">
+      <PageContainer content="用于对报备单进行管理">
         <ProTable
           headerTitle="查询表格"
           rowKey="key"

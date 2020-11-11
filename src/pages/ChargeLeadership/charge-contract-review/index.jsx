@@ -16,13 +16,18 @@ class ContractReview extends React.Component{
       columns: [{
         title: '业务类型',dataIndex: 'orderType',key: 'orderType',align: 'center',
       },{
-        title: '订单简写',dataIndex: 'orderJx',key: 'orderJx',align: 'center',
-      },{
         title: '提成比例(%)',dataIndex: 'rate',key: 'rate',align: 'center',render: (_, recode) => <span>{`${_*100}%`}</span>
       },{
         title: '审核状态',dataIndex: 'status',key: 'status',hideInSearch: true,align: 'center',render: (_,record) => {
           return (<a onClick={() => this.viewReview(record.id)}>查看</a>)
         },
+      },{
+        title: '内勤操作状态',dataIndex: 'updateStatus',key: 'updateStatus',align: 'center',render: (_,recode) => {
+          let status_rs = _ == 1 ? '添加' : _ == 2 ? '修改' : '删除';
+          return (
+            <span>{`${status_rs}业务提成`}</span>
+          )
+        }
       },{
         title: '操作人',dataIndex: 'userName',key: 'userName',align: 'center',
       },{
