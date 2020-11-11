@@ -9,6 +9,7 @@ const FormItem = Form.Item;
 const RadioButton = Radio.Button;
 const { RangePicker } = DatePicker;
 class AddCost extends React.Component{
+
   constructor(props) {
     super(props);
     this.state = {
@@ -17,11 +18,11 @@ class AddCost extends React.Component{
       flag: 1,
       id: 0,
       expectCostTotal: 0,
-
       costDetails: [],
       type: [{title: '人工费',value: 1},{title: '器材及产地费',value: 2},{title: '餐费',value: 3},{title: '住宿费',value: 4},{title: '车费',value: 5},{title: '其他1',value: 6},{title: '其他2',value: 7},{title: '其他3',value: 8}]
     }
   }
+
   componentDidMount(){
     const { flag , memberId } = this.state;
     const { history , dispatch } = this.props;
@@ -64,24 +65,24 @@ class AddCost extends React.Component{
         const { budgetInfo } = executiveMinister;
 
         if (budgetInfo){
-          this.setState({
-            costDetails: budgetInfo.costDetails
-          })
+          // this.setState({
+          //   costDetails: budgetInfo.costDetails
+          // })
 
           budgetInfo.orderTime = [moment(budgetInfo.orderBeginTime),moment(budgetInfo.orderEndTime)];
-          budgetInfo.costDetails.map((item,index) => {
-            this.refs.formRef.setFieldsValue({
-              [`price${item.feeType}`]: item.price,
-              [`remarks${item.feeType}`]: item.remark,
-              [`expectNum${item.feeType}`]: item.expectNum,
-              [`expectMoney${item.feeType}`]: item.expectMoney,
-              [`realNum${item.feeType}`]: item.realNum,
-              [`realMoney${item.feeType}`]: item.realMoney,
-              [`remarks${item.feeType}`]: item.remarks
-            })
-            var parent = document.getElementById(`show${Number(index+1)}`);
-            parent.getElementsByTagName('input')[0].value = item.id;
-          });
+          // budgetInfo.costDetails.map((item,index) => {
+          //   this.refs.formRef.setFieldsValue({
+          //     [`price${item.feeType}`]: item.price,
+          //     [`remarks${item.feeType}`]: item.remark,
+          //     [`expectNum${item.feeType}`]: item.expectNum,
+          //     [`expectMoney${item.feeType}`]: item.expectMoney,
+          //     [`realNum${item.feeType}`]: item.realNum,
+          //     [`realMoney${item.feeType}`]: item.realMoney,
+          //     [`remarks${item.feeType}`]: item.remarks
+          //   })
+          //   var parent = document.getElementById(`show${Number(index+1)}`);
+          //   parent.getElementsByTagName('input')[0].value = item.id;
+          // });
 
           this.setState({id: budgetInfo.id});
 
@@ -91,7 +92,7 @@ class AddCost extends React.Component{
     }
 
   }
-  
+
   modifyJsonKey = (obj , oddkey , newkey ) => {
     let val = obj[oddkey];
     delete obj[oddkey];
@@ -102,7 +103,6 @@ class AddCost extends React.Component{
     const { type , flag , costDetails , id , memberId } = this.state;
     const {contact, contactPhone, customName, orderNo, orderTime, personNum, expectCost, expectCostRate, expectMoney, expectNum, price, realMoeny, realNum, remark} = e;
     const { dispatch } = this.props;
-    // let costDetails = [];
     this.switchType(flag);
     costDetails.reverse();
     const res = new Map();
@@ -121,20 +121,23 @@ class AddCost extends React.Component{
       costDetails: deduplication,
       memberId,
     };
-    dispatch({
-      type: 'executiveMinister/addOrUpdateCostBudget',
-      payload: data
-    })
+    // dispatch({
+    //   type: 'executiveMinister/addOrUpdateCostBudget',
+    //   payload: data
+    // })
     // costDetails: [{
     //         expectMoney, price, realMoeny, realNum, expectNum, remark, id: 0, feeType: 1
     //       }]
     console.log(data)
   }
+
   switchType = (type) => {
+    const { costDetails } = this.state;
     let obj = document.getElementById(`show${type}`)
     let objInput = obj.getElementsByTagName('input');
     let objTextarea = obj.getElementsByTagName('textarea');
     let data = {feeType: String(type),remarks: objTextarea[0].value};
+
     let i = 0;
     while (i < objInput.length){
       switch (i) {
@@ -155,41 +158,23 @@ class AddCost extends React.Component{
       }
       i++;
     }
-    console.log(data)
     this.state.costDetails.push(data);
+    if (costDetails.length > 0){
+      this.state.costDetails.push(data);
+      const res = new Map();
+      costDetails.filter(item => !res.has(item.feeType) && res.set(item.feeType, 1));
+    }
   }
 
   radioBtnChange = e => {
-    const { costDetails } = this.state;
+    if (e.target.value > 1){
+      this.switchType(1)
+    }
     this.setState({
       flag: e.target.value
     })
-    this.switchType((e.target.value - 1) == 0 ? 1 : e.target.value - 1);
-    // let obj = document.getElementById(`show${(e.target.value - 1) == 0 ? 1 : e.target.value - 1}`);
-    // let objInput = obj.getElementsByTagName('input');
-    // let i = 0;
-    // let data = {feeType: e.target.value};
-    // while (i < objInput.length){
-    //   switch (i) {
-    //     case 0: data.price = objInput[i].value
-    //       break;
-    //     case 1: data.expectNum = objInput[i].value
-    //       break;
-    //     case 2: data.expectMoney = objInput[i].value
-    //       break;
-    //     case 3: data.realNum = objInput[i].value
-    //       break;
-    //     case 4: data.realMoeny = objInput[i].value
-    //       break;
-    //     case 5: data.remark = objInput[i].value
-    //       break;
-    //   }
-    //   i++;
-    // }
-    // const res = new Map();
-    // const news = costDetails.filter(item => !res.has(item.feeType) && res.set(item.feeType, 1));
-    // console.log(news);
-    // this.state.costDetails.push(data)
+    this.switchType(e.target.value);
+    // this.switchType(e.target.value);
   }
 
   setStatePriceKey = (e, index) => {
@@ -262,10 +247,13 @@ class AddCost extends React.Component{
                 <FormItem name='contactPhone' label="联系方式">
                   <Input disabled/>
                 </FormItem>
-                <FormItem name='expectCost' label="预计成本" onChange={(e) => this.setStateExpectCostKey(e)}>
+                <FormItem name='expectCost' label="预计成本" onChange={(e) => this.setStateExpectCostKey(e)}
+                  rules={[{required: true,message: '预计成本不能为空!'}]}
+                >
                   <Input/>
                 </FormItem>
-                <FormItem name='expectCostRate' label="预计税费(10%)">
+                <FormItem name='expectCostRate' label="预计税费(10%)" labelCol={{span: 5}}
+                   rules={[{required: true,message: '预计税费(10%)不能为空!'}]}>
                   <Input/>
                 </FormItem>
               </Col>
